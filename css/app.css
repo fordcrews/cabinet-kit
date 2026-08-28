@@ -318,7 +318,8 @@ button {
 
 .btn.stay { background: var(--cream); }
 .btn.deal,
-.btn.back { grid-column: 1 / -1; }
+.btn.back,
+#btn-roll { grid-column: 1 / -1; }
 
 .btn.ghost {
   background: transparent;
@@ -625,7 +626,8 @@ button {
   #view-game .table,
   #view-game .columns-table,
   #view-game .eleven-table,
-  #view-game .power-table {
+  #view-game .power-table,
+  #view-game .yacht-table {
     flex: 1 1 0;
     min-width: 0;
     min-height: 0;
@@ -904,5 +906,179 @@ button {
   .power-well .card {
     width: 44px;
     height: 60px;
+  }
+}
+
+
+/* Yacht — five dice + scorecard */
+.yacht-table {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: 10px;
+}
+
+.yacht-dice {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 4px 0;
+}
+
+.yacht-die {
+  width: 56px;
+  height: 56px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px;
+  border: 2px solid var(--gold-dim);
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--ink);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
+}
+
+.yacht-die.is-held {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold), 0 6px 12px rgba(0, 0, 0, 0.35);
+}
+
+.yacht-die.is-blank {
+  background: linear-gradient(#16382c, #0d241c);
+  color: var(--gold);
+}
+
+.yacht-die:disabled {
+  opacity: 1;
+}
+
+.yacht-die .pip {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin: auto;
+  background: transparent;
+}
+
+.yacht-die .pip.on {
+  background: var(--ink);
+}
+
+.yacht-die .die-blank {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+  font-size: 1.4rem;
+  color: var(--gold-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.yacht-card {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px 0 4px;
+}
+
+.yacht-section {
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+  padding: 6px 4px 2px;
+}
+
+.yacht-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  width: 100%;
+  padding: 6px 12px;
+  border: 2px solid var(--gold-dim);
+  border-radius: 10px;
+  background: linear-gradient(#0a241c, #061510);
+  color: var(--cream);
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-align: left;
+}
+
+button.yacht-row.is-open:active {
+  transform: translateY(1px);
+}
+
+.yacht-row.is-filled {
+  opacity: 0.72;
+  border-style: solid;
+  background: linear-gradient(#12261f, #0a1814);
+}
+
+.yacht-row.is-meta {
+  border-color: transparent;
+  background: transparent;
+  min-height: 36px;
+  color: var(--muted);
+}
+
+.yacht-row.is-bonus .yacht-row-val,
+.yacht-row.is-total .yacht-row-val {
+  color: var(--gold);
+}
+
+.yacht-row-val {
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+  min-width: 2ch;
+  text-align: right;
+}
+
+.yacht-row-val.is-preview {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+@media (orientation: landscape) {
+  .yacht-table {
+    flex-direction: row;
+    align-items: stretch;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .yacht-dice {
+    flex: 0 0 auto;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 10px 0 0;
+    max-width: 72px;
+  }
+
+  .yacht-die {
+    width: 52px;
+    height: 52px;
+  }
+
+  .yacht-card {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .yacht-row {
+    min-height: 36px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
   }
 }
