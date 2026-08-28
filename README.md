@@ -2,14 +2,16 @@
 
 Phone-browser card cabinet. Short sessions, big buttons, no App Store, no accounts, no ads, no IAP. Remix by duplicating JSON.
 
-v0 ships one playable sample — **Run 21** — plus an author format so a second game is a file drop, not a rewrite.
+v0.2 ships three playable samples — **Run 21**, **Zip 21**, and **Chug 21** — plus an author format so another title is a file drop, not a rewrite.
 
 ## Play on a phone
 
 1. Serve the folder over **http** (not `file://` — service workers need an origin).
 2. Open the page in Safari or Chrome.
 3. Add to Home Screen for the standalone PWA.
-4. Tap **Run 21**. HIT / STAY. DEAL again. **CABINET** returns to the menu.
+4. Tap a game on the cabinet. **CABINET** returns to the menu.
+
+GitHub Pages: https://fordcrews.github.io/cabinet-kit/
 
 Works offline after the first load (service worker + manifest).
 
@@ -22,7 +24,9 @@ From this directory:
 
 Then visit http://localhost:8080 on the computer or http://<lan-ip>:8080 on a phone.
 
-GitHub Pages later: enable Pages on main (root). .nojekyll is included so static files are served as-is. Relative URLs work at / or /cabinet-kit/.
+    node --test tests/engine.test.js tests/columns.test.js
+
+GitHub Pages: enable Pages on main (root). .nojekyll is included so static files are served as-is. Relative URLs work at / or /cabinet-kit/.
 
 ## Run 21 (sample)
 
@@ -41,41 +45,67 @@ Original rules, not a licensed cabinet clone.
 
 Session score and round count stay on the marquee until you leave for the cabinet.
 
-## How to add a second game
+## Zip 21
 
-1. Duplicate games/run21.json (or write a new file).
-2. Change id, title, labels, target, runBonus, copy.
-3. Add the filename to games/index.json games array.
+Four lanes. One incoming card. Tap a column to drop it.
+
+- Same 52-card shoe and soft aces as Run 21.
+- Clear a lane on exact 21 (score + target, plus optional clearBonus).
+- Five cards under 21 also clear (score + that total).
+- Over 21 busts the lane: penalty (default 10), lane empties, the incoming card is consumed — it does not stay.
+- Three SKIPs: toss the incoming card and draw the next.
+- Play through one shoe. When the last card is placed or skipped, the sitting is done.
+- If skips are gone you can still tap a lane and take the bust.
+
+## Chug 21
+
+Same engine as Zip (`columns21`) with different JSON knobs: five wells, one spill, mug pieces.
+
+- Values still come from a 52-card shoe (A = 11/1 soft, faces = 10) but render as gold/cream mugs with the rank.
+- **Chug** a 21. **Spill** once to pass on a mug. A slosh over 21 dumps the well.
+
+## How to add a game
+
+1. Duplicate a JSON file under `games/` (run21, zip21, or chug21).
+2. Change id, title, labels, copy, and the knobs for that type.
+3. Add the filename to `games/index.json` games array.
 4. Reload. The cabinet lists every file in that index.
 
-v0 engine only plays type run21. Other types need js/engine.js and js/app.js extended. Copy and scoring knobs stay in JSON.
+Engine keys: `run21` (HIT/STAY) and `columns21` (place/skip). Copy and scoring knobs stay in JSON.
 
 ## JSON fields
 
-Documented from games/run21.json. Unknown extra fields are ignored.
+Unknown extra fields are ignored.
 
-games/run21.json:
-- id (string): Hash route id. Unique.
-- type (string): Engine key. v0: run21 only.
-- title (string): Cabinet row + in-game marquee.
-- tagline (string): Subtitle on the cabinet button.
-- blurb (string): Longer description (optional).
-- target (number): Bust line and Run total (21).
-- runBonus (number): Extra points on a two-card target.
-- thinDeck (number): Reshuffle when remaining shoe is below this.
-- startingCards (number): Cards dealt to start a round (2).
-- labels.hit stay deal again back: Button copy.
-- labels.bust run stayOk: Banner prefixes.
-- labels.score round total deck: HUD captions.
-- copy.idle playing bust run stay: Status explanations.
+Shared:
+- id (string): Hash route id. Unique. Played at `#/play/:id`.
+- type (string): `run21` or `columns21`.
+- title, tagline, blurb: Cabinet row + in-game marquee.
+- target (number): Bust line (21).
+- thinDeck (number): Run 21 reshuffles under this. Columns games default 0 (one shoe, then done).
+- labels / copy: Button and banner strings.
+
+Run 21 extras: runBonus, startingCards, labels.hit stay deal again, copy.idle playing bust run stay.
+
+Columns 21 extras:
+- columns (number): Lane count. Zip 4, Chug 5.
+- skips (number): Passes. Zip 3, Chug 1.
+- maxCards (number): Five-under clear (5).
+- bustPenalty (number): Points lost on a bust (10). Column empties.
+- clearBonus (number): Extra on an exact target clear (0).
+- piece (`card` | `mug`): Playing-card faces vs numbered mugs.
+- labels.skip / clear / skips / incoming.
+- copy.playing clear bust skip done.
 
 games/index.json:
-- games (string array): Filenames under games/ to list. Order is menu order.
+- games (string array): Filenames under games/. Order is menu order.
 
 ## Tests
 
 Engine is pure JS. Browser: window.CabinetEngine. Node: module.exports.
 
-    node --test tests/engine.test.js
+    node --test tests/engine.test.js tests/columns.test.js
 
-Covers bust, 21, ace 1-vs-11, face cards, Run bonus, stay scoring, thin/empty deck reshuffle.
+Run 21: bust, 21, ace 1-vs-11, face cards, Run bonus, stay scoring, thin/empty deck reshuffle.
+
+Columns: exact 21 clear, five-under clear, bust penalty empties the lane, skip decrements, cannot skip at 0, soft ace in a column, Zip/Chug column counts from JSON.
