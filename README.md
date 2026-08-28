@@ -2,7 +2,7 @@
 
 Phone-browser card cabinet. Short sessions, big buttons, no App Store, no accounts, no ads, no IAP. Remix by duplicating JSON.
 
-v0.4 ships three playable samples — **Run 21**, **Zip 21**, and **Chug 21** — plus an author format so another title is a file drop, not a rewrite.
+v0.5 ships five playable samples — **Run 21**, **Zip 21**, **Chug 21**, **11 Up**, and **Power Solitaire** — plus an author format so another title is a file drop, not a rewrite.
 
 ## Play on a phone
 
@@ -24,7 +24,7 @@ From this directory:
 
 Then visit http://localhost:8080 on the computer or http://<lan-ip>:8080 on a phone.
 
-    node --test tests/engine.test.js tests/columns.test.js tests/runlanes.test.js
+    node --test tests/*.test.js
 
 GitHub Pages: enable Pages on main (root). .nojekyll is included so static files are served as-is. Relative URLs work at / or /cabinet-kit/.
 
@@ -64,14 +64,41 @@ Same engine as Zip (`columns21`) with different JSON knobs: five wells, one spil
 - Values still come from a 52-card shoe (A = 11/1 soft, faces = 10) but render as gold/cream mugs with the rank.
 - **Chug** a 21. **Spill** once to pass on a mug. A slosh over 21 dumps the well.
 
+
+## 11 Up
+
+Original pair-off table. Not a licensed cabinet clone.
+
+- Standard 52-card shoe. A = 1, 2–10 pip. Jacks, Queens, Kings are faces.
+- 4×4 grid. Deal 12 face-up cards (4 empty cells). The rest of the shoe is the stock.
+- Tap two **open** cards (anything on the grid in v0) that make 11:
+  - Number cards whose values **sum to 11** (A+10, 2+9, 3+8, 4+7, 5+6).
+  - Two of the **same face** (two Jacks, two Queens, two Kings). J+Q is not a pair.
+- A legal pair is removed for **+pairScore** (default 11). An illegal second tap deselects.
+- **NEXT CARD** drops the next stock card into the first empty cell and subtracts **passPenalty** (default 5). Disabled when the grid is full or the stock is empty.
+- **TAKE SCORE** banks the round. If the grid is fully empty, add **clearBonus** (default 50).
+- **DEAL AGAIN** after a take deals a fresh 12-card grid.
+
+## Power Solitaire
+
+Klondike with a boost. Original rules, not a branded clone.
+
+- Ranks **A, 2–10, J** only. No Kings or Queens. Jacks are high.
+- **3 decks** at once (132 cards). Tableau is a 7-column Klondike deal from a mixed shoe (28 cards: 1…7, top face-up, rest face-down and flip when uncovered). Remainder splits into **3 stock piles**. Each stock top is face-up. Empty stocks stay empty (no recycle in v0).
+- Tableau builds **descending rank, alternating color**. Empty column: **only a Jack**.
+- Four suit foundations. Each well climbs A→J three times in sequence (max 33 per suit; next rank is count % 11). Win when all **132** cards are home.
+- v0 moves **single cards** only (JSON `moves: "single"`). Tap a stock top or tableau top, then a destination (tableau column or foundation).
+- Score **+foundationScore** (default 10) per card to a foundation.
+- **DEAL AGAIN** reshuffles. **CABINET** returns to the menu.
+
 ## How to add a game
 
-1. Duplicate a JSON file under `games/` (run21, zip21, or chug21).
+1. Duplicate a JSON file under `games/` (run21, zip21, chug21, elevenup, or powersol).
 2. Change id, title, labels, copy, and the knobs for that type.
 3. Add the filename to `games/index.json` games array.
 4. Reload. The cabinet lists every file in that index.
 
-Engine keys: `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
+Engine keys: `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), `elevenup` (11 Up pairs), `powersol` (Power Solitaire), and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
 
 ## JSON fields
 
@@ -79,7 +106,7 @@ Unknown extra fields are ignored.
 
 Shared:
 - id (string): Hash route id. Unique. Played at `#/play/:id`.
-- type (string): `runlanes`, `columns21`, or `run21`.
+- type (string): `runlanes`, `columns21`, `elevenup`, `powersol`, or `run21`.
 - title, tagline, blurb: Cabinet row + in-game marquee.
 - target (number): Bust line (21).
 - thinDeck (number): Run 21 reshuffles under this. Columns games default 0 (one shoe, then done).
@@ -99,6 +126,11 @@ Columns 21 extras:
 - labels.skip / clear / skips / incoming.
 - copy.playing clear bust skip done.
 
+
+11 Up (`elevenup`) extras: pairScore (11), passPenalty (5), clearBonus (50), cells (16), dealCount (12), labels.next take stock, copy.playing pair illegal next take clear done full.
+
+Power Solitaire (`powersol`) extras: foundationScore (10), columns (7), decks (3), moves (`single`), labels.home stock again, copy.playing move foundation illegal won.
+
 games/index.json:
 - games (string array): Filenames under games/. Order is menu order.
 
@@ -106,10 +138,14 @@ games/index.json:
 
 Engine is pure JS. Browser: window.CabinetEngine. Node: module.exports.
 
-    node --test tests/engine.test.js tests/columns.test.js tests/runlanes.test.js
+    node --test tests/*.test.js
 
 Run 21 HIT/STAY engine: bust, 21, ace 1-vs-11, face cards, Run bonus, stay scoring, thin/empty deck reshuffle.
 
 Run lanes: 5 columns from JSON, one skip then skip at 0 throws, place under 21 stays open, 21 locks with cards still showing, bust locks and scores 0, stay locks at current total, cannot place on locked, all five locked ends the round, deal again resets lanes.
 
 Columns: exact 21 clear, five-under clear, bust penalty empties the lane, skip decrements, cannot skip at 0, soft ace in a column, Zip/Chug column counts from JSON.
+
+11 Up: 5+6 and A+10 legal, 2+8 illegal, two Jacks legal, J+Q illegal, next fills empty and penalizes, take on a clear adds bonus, cannot next if the grid is full.
+
+Power Solitaire: no K/Q in the 132-card shoe, Jack only on empty column, alt-color descending, foundation A then 2 of the same suit, stock tap moves to a legal tableau.
