@@ -256,3 +256,82 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+
+/* Play-feel: keypad, legal discs, shoot timing, quiz kind + fat answers */
+.sudoku-cell.is-given {
+  font-weight: 800;
+}
+.sudoku-cell.is-entry {
+  color: var(--cream);
+}
+.sudoku-cell.is-selected {
+  box-shadow: 0 0 0 3px var(--gold);
+  z-index: 1;
+}
+.sudoku-cell.box-left {
+  border-left-width: 3px;
+}
+.sudoku-cell.box-top {
+  border-top-width: 3px;
+}
+.sudoku-digit {
+  min-height: 44px;
+}
+.sudoku-digit.is-current {
+  box-shadow: 0 0 0 3px var(--felt-edge), 0 0 0 5px var(--gold);
+}
+.sudoku-clear {
+  min-height: 44px;
+}
+
+.reversi-board {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+.reversi-cell {
+  min-width: 0;
+  min-height: 44px;
+}
+.reversi-hint {
+  width: 28%;
+  height: 28%;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0.85;
+  display: block;
+}
+.reversi-cell.is-legal {
+  box-shadow: inset 0 0 0 2px var(--gold);
+}
+
+.hoops-court.is-lined-up .hoops-rim {
+  box-shadow: 0 0 0 3px var(--ok), 0 0 12px rgba(125, 255, 179, 0.45);
+  border-color: var(--ok);
+}
+.btn.is-hot,
+#btn-shoot.is-hot {
+  box-shadow: 0 4px 0 var(--gold-dim), 0 0 0 3px var(--ok);
+}
+
+.quiz-q[data-kind]::before {
+  content: attr(data-kind);
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  font-weight: 800;
+}
+.quiz-table.is-jumble .quiz-q[data-kind]::before {
+  color: var(--ok);
+}
+.quiz-choice {
+  min-height: 56px;
+}
+
+@media (orientation: landscape) {
+  .reversi-cell { min-height: 44px; }
+  .quiz-choice { min-height: 48px; }
+  .sudoku-digit { min-height: 44px; }
+  .hoops-court { min-height: 0; }
+}
