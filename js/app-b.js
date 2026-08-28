@@ -127,6 +127,11 @@
       window.CabinetPlay.renderPower(playCtx());
       return;
     }
+    if (isYacht()) {
+      setMode("yacht");
+      window.CabinetPlay.renderYacht(playCtx());
+      return;
+    }
     setMode("run21");
     renderRun();
   }
@@ -142,10 +147,10 @@
     ui.scoreBlock.hidden = true;
   }
   function startGame(def) {
-    const PLAYABLE = { run21: 1, columns21: 1, runlanes: 1, elevenup: 1, powersol: 1 };
+    const PLAYABLE = { run21: 1, columns21: 1, runlanes: 1, elevenup: 1, powersol: 1, yacht: 1 };
     if (!def || !PLAYABLE[def.type]) {
       ui.list.innerHTML =
-        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "powersol", and "run21". See README.</li>';
+        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "powersol", "yacht", and "run21". See README.</li>';
       openCabinet();
       return;
     }
@@ -158,6 +163,8 @@
       session = E.createElevenSession(def);
     } else if (def.type === "powersol") {
       session = E.createPowerSession(def);
+    } else if (def.type === "yacht") {
+      session = E.createYachtSession(def);
     } else {
       session = E.createSession(def);
     }
@@ -222,12 +229,12 @@
     openCabinet();
   }
   ui.hit.addEventListener("click", function () {
-    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || session.status !== "playing") return;
+    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || session.status !== "playing") return;
     E.hit(session);
     renderGame();
   });
   ui.stay.addEventListener("click", function () {
-    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || session.status !== "playing") return;
+    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || session.status !== "playing") return;
     E.stay(session);
     renderGame();
   });
@@ -247,6 +254,12 @@
     }
     if (isPower()) {
       session = E.createPowerSession(gameDef);
+      renderGame();
+      return;
+    }
+    if (isYacht()) {
+      if (session.status !== "done") return;
+      session = E.createYachtSession(gameDef);
       renderGame();
       return;
     }
@@ -326,6 +339,36 @@
     }
     renderGame();
   });
+  if (ui.roll) {
+    ui.roll.addEventListener("click", function () {
+      if (!session || !isYacht() || session.status !== "playing") return;
+      if (session.rollsLeft <= 0) return;
+      E.rollYacht(session);
+      renderGame();
+    });
+  }
+  if (ui.yachtDice) {
+    ui.yachtDice.addEventListener("click", function (ev) {
+      if (!session || !isYacht() || session.status !== "playing") return;
+      const die = ev.target.closest("[data-die]");
+      if (!die) return;
+      E.toggleHold(session, Number(die.getAttribute("data-die")));
+      renderGame();
+    });
+  }
+  if (ui.yachtCard) {
+    ui.yachtCard.addEventListener("click", function (ev) {
+      if (!session || !isYacht() || session.status !== "playing") return;
+      const row = ev.target.closest("[data-cat]");
+      if (!row || row.disabled) return;
+      try {
+        E.scoreYacht(session, row.getAttribute("data-cat"));
+      } catch (err) {
+        return;
+      }
+      renderGame();
+    });
+  }
   ui.back.addEventListener("click", function () {
     location.hash = "#/";
   });
