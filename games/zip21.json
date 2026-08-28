@@ -24,10 +24,10 @@
     "total": "LANE"
   },
   "copy": {
-    "playing": "Drop the card on a lane. Hit 21 to Zip. Five under still pays.",
+    "playing": "Drop the card. Hit 21 to Zip.",
     "clear": "Lane zipped.",
-    "bust": "Over 21. Lane dumps. Penalty.",
-    "skip": "Card tossed. Next up.",
-    "done": "Shoe is empty. That's the sitting."
+    "bust": "Over 21. Penalty.",
+    "skip": "Skipped.",
+    "done": "Shoe empty."
   }
 }

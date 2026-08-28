@@ -27,13 +27,13 @@
     "perfect": "105"
   },
   "copy": {
-    "playing": "Tap a lane to place the card. STAY a lane you're good with. One skip.",
-    "bust": "Over 21. That lane is locked at zero.",
-    "run": "Two-card 21 — a Run. Lane locked at 21.",
+    "playing": "Place the card. STAY a lane you're good with.",
+    "bust": "Over 21. Lane locked at 0.",
+    "run": "Two-card 21. Lane locked.",
     "complete": "Lane locked at 21.",
     "stay": "Lane locked.",
-    "skip": "Card tossed. Next up.",
-    "done": "All lanes locked. Deal again for a fresh shoe.",
+    "skip": "Skipped.",
+    "done": "All lanes locked.",
     "perfect": "Perfect 105."
   }
 }

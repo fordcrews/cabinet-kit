@@ -24,10 +24,10 @@
     "total": "MUGS"
   },
   "copy": {
-    "playing": "Park the mug. Chug a 21. Spill once if you need a pass.",
+    "playing": "Park the mug. Chug a 21.",
     "clear": "Down the hatch.",
-    "bust": "It sloshed. Well's empty. Penalty.",
-    "skip": "Spilled it. Next mug.",
-    "done": "Bar's last call. Tab is final."
+    "bust": "Slosh. Penalty.",
+    "skip": "Spilled.",
+    "done": "Last call."
   }
 }
