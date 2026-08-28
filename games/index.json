@@ -1,3 +1,7 @@
 {
-  "games": ["run21.json"]
+  "games": [
+    "run21.json",
+    "zip21.json",
+    "chug21.json"
+  ]
 }
