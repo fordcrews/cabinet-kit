@@ -1,7 +1,7 @@
   function renderRunLanes() {
     const snap = E.snapshotRunLanes(session);
-    ui.scoreLabel.textContent = label("score", "SCORE") + " / " + snap.perfect;
-    ui.scoreValue.textContent = String(snap.score);
+    ui.scoreLabel.textContent = label("score", "SCORE");
+    ui.scoreValue.textContent = String(snap.score) + " / " + snap.perfect;
     let roundLine = label("skips", "SKIPS") + " " + snap.skipsLeft;
     if (snap.rounds > 0) {
       roundLine += " · " + label("session", "SESSION") + " " + snap.sessionScore;
@@ -9,12 +9,17 @@
     ui.hudRound.textContent = roundLine;
     ui.hudDeck.textContent = label("deck", "DECK") + " " + snap.deckCount;
     ui.incomingLabel.textContent = label("incoming", "NEXT");
-    ui.skip.textContent = label("skip", "SKIP");
-    ui.skip.disabled = snap.status !== "playing" || snap.skipsLeft <= 0;
+    ui.skip.textContent = label("skip", "SKIP") + " " + snap.skipsLeft;
+    ui.skip.disabled = !snap.canSkip;
+    ui.skip.classList.toggle("is-ready", !!snap.canSkip);
     ui.deal.textContent = label("again", "DEAL AGAIN");
     ui.deal.classList.toggle("hidden", snap.status !== "done");
     ui.back.textContent = label("back", "CABINET");
     ui.incoming.replaceChildren();
+    ui.incoming.classList.toggle("is-live", !!snap.incoming);
+    if (ui.incoming.parentElement) {
+      ui.incoming.parentElement.classList.toggle("is-live", !!snap.incoming);
+    }
     if (snap.incoming) {
       ui.incoming.appendChild(pieceNode(snap.incoming, false));
     }
@@ -34,11 +39,16 @@
       place.className = "column-place";
       place.dataset.col = String(i);
       place.disabled = snap.status !== "playing" || col.locked;
+      place.tabIndex = col.locked ? -1 : 0;
       if (snap.status === "playing" && snap.incoming && !col.locked) {
         const preview = col.cards.concat(snap.incoming);
         if (E.handValue(preview, snap.target) > snap.target) {
           wrap.classList.add("would-bust");
         }
+      }
+      const evLane = snap.lastEvent;
+      if (evLane && evLane.column === i && (evLane.kind === "bust" || evLane.kind === "run" || evLane.kind === "21")) {
+        wrap.classList.add(evLane.kind === "bust" ? "just-bust" : "just-clear");
       }
       const stack = document.createElement("div");
       stack.className = "column-stack";
@@ -48,9 +58,7 @@
       const tot = document.createElement("div");
       tot.className = "column-total";
       if (col.outcome === "bust") {
-        tot.textContent = label("bust", "BUST");
-      } else if (col.outcome === "run") {
-        tot.textContent = label("run", "RUN");
+        tot.textContent = "0";
       } else {
         tot.textContent = col.cards.length ? String(col.total) : "0";
       }
@@ -60,8 +68,18 @@
       stayBtn.type = "button";
       stayBtn.className = "column-stay-btn";
       stayBtn.dataset.stay = String(i);
-      stayBtn.textContent = label("stay", "STAY");
-      stayBtn.disabled = snap.status !== "playing" || col.locked;
+      if (col.locked) {
+        stayBtn.classList.add("is-outcome");
+        if (col.outcome === "bust") stayBtn.textContent = label("bust", "BUST");
+        else if (col.outcome === "run") stayBtn.textContent = label("run", "RUN");
+        else if (col.outcome === "21") stayBtn.textContent = label("complete", "21");
+        else stayBtn.textContent = label("stay", "STAY");
+        stayBtn.disabled = true;
+        stayBtn.tabIndex = -1;
+      } else {
+        stayBtn.textContent = label("stay", "STAY");
+        stayBtn.disabled = snap.status !== "playing";
+      }
       wrap.appendChild(place);
       wrap.appendChild(stayBtn);
       ui.columns.appendChild(wrap);
@@ -102,6 +120,9 @@
   }
   function renderGame() {
     if (!session || !gameDef) return;
+    ui.deal.classList.remove("ghost", "is-reset");
+    ui.skip.classList.remove("is-ready");
+    if (ui.shoot) ui.shoot.classList.remove("is-hot");
     ui.brand.textContent = gameDef.title || "Game";
     ui.sub.textContent = gameDef.tagline || "";
     ui.scoreBlock.hidden = false;
@@ -509,22 +530,41 @@
   if (ui.reversiBoard) {
     ui.reversiBoard.addEventListener("click", function (ev) {
       if (!session || !isReversi() || session.status !== "playing") return;
+      if (session.thinking || session.turn !== 1) return;
       const cell = ev.target.closest("[data-rev]");
       if (!cell) return;
       E.playReversi(session, Number(cell.getAttribute("data-rev")));
-      renderGame();
       function runAi() {
         if (!session || !isReversi() || session.status !== "playing") return;
-        if (session.turn !== 2) return;
-        const pick = E.aiReversiPick(session);
-        if (pick < 0) return;
-        E.playReversi(session, pick);
-        renderGame();
-        if (session.turn === 2 && session.status === "playing") {
-          setTimeout(runAi, 280);
+        if (session.turn !== 2) {
+          session.thinking = false;
+          renderGame();
+          return;
         }
+        const pick = E.aiReversiPick(session);
+        if (pick < 0) {
+          session.thinking = false;
+          renderGame();
+          return;
+        }
+        E.playReversi(session, pick);
+        if (session.turn === 2 && session.status === "playing") {
+          session.thinking = true;
+          renderGame();
+          setTimeout(runAi, 450);
+          return;
+        }
+        session.thinking = false;
+        renderGame();
       }
-      if (session.turn === 2) setTimeout(runAi, 280);
+      if (session.turn === 2 && session.status === "playing") {
+        session.thinking = true;
+        renderGame();
+        setTimeout(runAi, 450);
+      } else {
+        session.thinking = false;
+        renderGame();
+      }
     });
   }
   if (ui.shoot) {
