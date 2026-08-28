@@ -1,5 +1,5 @@
 /* Cabinet Kit service worker — cache-first static player */
-const CACHE = "cabinet-kit-v0.6";
+const CACHE = "cabinet-kit-v0.7";
 const ASSETS = [
   "./",
   "./index.html",
@@ -9,6 +9,7 @@ const ASSETS = [
   "./js/solitaire.js",
   "./js/play-ui.js",
   "./js/yacht.js",
+  "./js/arcade.js",
   "./js/app-a.js",
   "./js/app-b.js",
   "./manifest.webmanifest",
@@ -19,6 +20,10 @@ const ASSETS = [
   "./games/elevenup.json",
   "./games/powersol.json",
   "./games/yacht.json",
+  "./games/sudoku6.json",
+  "./games/reversi.json",
+  "./games/hoops.json",
+  "./games/quiznight.json",
   "./icons/icon.svg",
   "./favicon.svg",
 ];
