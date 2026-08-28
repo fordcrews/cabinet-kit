@@ -1,5 +1,5 @@
 /* Cabinet Kit service worker — cache-first static player */
-const CACHE = "cabinet-kit-v0.3";
+const CACHE = "cabinet-kit-v0.4";
 const ASSETS = [
   "./",
   "./index.html",
