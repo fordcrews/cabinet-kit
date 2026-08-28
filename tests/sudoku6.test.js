@@ -78,3 +78,15 @@ test("2x3 box rejects a duplicate", () => {
   ok[1 * 6 + 3] = 1;
   assert.equal(E.sudokuValid(ok), true);
 });
+
+
+test("dealSudoku advances to the next puzzle", () => {
+  const session = E.createSudokuSession(def, { puzzleIndex: 0 });
+  assert.equal(session.puzzleIndex, 0);
+  E.dealSudoku(session);
+  assert.equal(session.puzzleIndex, 1);
+  assert.equal(session.status, "playing");
+  const snap = E.snapshotSudoku(session);
+  assert.equal(snap.puzzleIndex, 1);
+  assert.ok(snap.given.some(Boolean));
+});

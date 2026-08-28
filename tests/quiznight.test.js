@@ -71,3 +71,26 @@ test("jumble uses jumblePoints", () => {
   assert.equal(snap.lastEvent.kind, "correct");
   assert.equal(snap.lastEvent.points, pts);
 });
+
+
+test("snapshot labels jumble vs trivia and sitting progress", () => {
+  const session = E.createQuizSession(def, function () {
+    return 0;
+  });
+  session.questions = [
+    { q: "2+2?", choices: ["3", "4", "5", "6"], answerIndex: 1, kind: "trivia" },
+    { q: "ELPPA", choices: ["APPLE", "PEAR", "PLUM", "PEACH"], answerIndex: 0, kind: "jumble" },
+  ];
+  session.index = 0;
+  let snap = E.snapshotQuiz(session);
+  assert.equal(snap.kind, "trivia");
+  assert.equal(snap.choices.length, 4);
+  assert.equal(snap.index, 0);
+  assert.equal(snap.total, 2);
+  E.answerQuiz(session, 1);
+  E.quizNext(session);
+  snap = E.snapshotQuiz(session);
+  assert.equal(snap.kind, "jumble");
+  assert.equal(snap.index, 1);
+  assert.equal(snap.total, 2);
+});
