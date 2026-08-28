@@ -1,0 +1,342 @@
+/* Cabinet Kit v0 — felt table, gold bezel, phone-first */
+:root {
+  --felt: #0c2f24;
+  --felt-deep: #071c16;
+  --felt-edge: #145c45;
+  --gold: #e2b84a;
+  --gold-dim: #b8892a;
+  --cream: #f4efe2;
+  --ink: #14110d;
+  --red: #c62828;
+  --panel: #101010;
+  --wood: #1a120c;
+  --ok: #7dffb3;
+  --bust: #ff6b6b;
+  --muted: #c5d5cc;
+  --shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  --font: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--panel);
+  color: var(--cream);
+  font-family: var(--font);
+}
+
+body {
+  min-height: 100dvh;
+  min-height: 100svh;
+}
+
+button {
+  font-family: inherit;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cabinet {
+  min-height: 100dvh;
+  min-height: 100svh;
+  padding:
+    max(12px, env(safe-area-inset-top))
+    max(12px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left));
+  background:
+    radial-gradient(120% 80% at 50% 0%, #2a1d12 0%, var(--wood) 42%, #050505 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.bezel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 3px solid var(--gold-dim);
+  border-radius: 18px;
+  box-shadow: inset 0 0 0 2px #f3d37a, var(--shadow);
+  background: var(--felt-deep);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.marquee {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  background: linear-gradient(#1d140e, #0e0b09);
+  border-bottom: 2px solid var(--gold);
+  min-height: 52px;
+}
+
+.brand,
+.game-title {
+  margin: 0;
+  letter-spacing: 0.16em;
+  font-size: 0.95rem;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.brand-sub,
+.meta {
+  margin: 2px 0 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.score-block {
+  text-align: right;
+}
+
+.score-label {
+  display: block;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: var(--gold-dim);
+}
+
+.score-value {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background:
+    radial-gradient(ellipse at center, var(--felt-edge) 0%, var(--felt) 46%, var(--felt-deep) 100%);
+}
+
+.view {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: 16px 14px 12px;
+}
+
+.view.active {
+  display: flex;
+}
+
+.lede {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.game-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.game-list button {
+  width: 100%;
+  min-height: 72px;
+  padding: 14px 16px;
+  text-align: left;
+  border: 2px solid var(--gold-dim);
+  border-radius: 14px;
+  background: linear-gradient(#16382c, #0d241c);
+  color: var(--cream);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.game-list button:active {
+  transform: translateY(1px);
+}
+
+.game-list .title {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+}
+
+.game-list .tagline {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+.foot {
+  margin-top: auto;
+  padding-top: 18px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.hud {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.table {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 180px;
+}
+
+.hand {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  min-height: 132px;
+}
+
+.card {
+  width: 86px;
+  height: 124px;
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--ink);
+  position: relative;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+  border: 1px solid #d9d0bd;
+  padding: 8px 8px 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-red {
+  color: var(--red);
+}
+
+.card-rank {
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.card-suit {
+  font-size: 0.95rem;
+  line-height: 1.1;
+}
+
+.card-suit-lg {
+  margin-top: auto;
+  text-align: center;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.total {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+  text-shadow: 0 2px 0 #000;
+}
+
+.total-label {
+  display: block;
+  text-align: center;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+
+.banner {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--cream);
+}
+
+.banner.run { color: var(--ok); }
+.banner.bust { color: var(--bust); }
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+.btn {
+  min-height: 64px;
+  border: 0;
+  border-radius: 14px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #111;
+  background: var(--gold);
+  box-shadow: 0 4px 0 var(--gold-dim);
+}
+
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--gold-dim);
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  box-shadow: none;
+  transform: none;
+}
+
+.btn.stay { background: var(--cream); }
+.btn.deal,
+.btn.back { grid-column: 1 / -1; }
+
+.btn.ghost {
+  background: transparent;
+  color: var(--gold);
+  border: 2px solid var(--gold-dim);
+  box-shadow: none;
+  min-height: 48px;
+  font-size: 0.9rem;
+}
+
+.hidden { display: none !important; }
+
+.status-error {
+  color: var(--bust);
+  padding: 12px;
+}
+
+@media (min-width: 520px) {
+  .cabinet { max-width: 430px; margin: 0 auto; }
+  .card { width: 96px; height: 138px; }
+}

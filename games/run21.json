@@ -1,0 +1,32 @@
+{
+  "id": "run21",
+  "type": "run21",
+  "title": "Run 21",
+  "tagline": "Hit close. Don't bust.",
+  "blurb": "Draw toward 21. A two-card 21 is a Run (target + bonus).",
+  "target": 21,
+  "runBonus": 5,
+  "thinDeck": 10,
+  "startingCards": 2,
+  "labels": {
+    "hit": "HIT",
+    "stay": "STAY",
+    "deal": "DEAL",
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "bust": "BUST",
+    "run": "RUN",
+    "stayOk": "STAY",
+    "score": "SCORE",
+    "round": "ROUND",
+    "total": "HAND",
+    "deck": "DECK"
+  },
+  "copy": {
+    "idle": "Deal two cards. Get close to 21 without going over.",
+    "playing": "HIT to draw. STAY to bank this hand.",
+    "bust": "Over 21. Zero points this round.",
+    "run": "Two-card 21 — a Run. Target plus bonus.",
+    "stay": "Hand banked."
+  }
+}

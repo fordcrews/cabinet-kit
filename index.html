@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0c2f24" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="description"
+      content="Phone-browser card cabinet. Short sessions, no accounts, no store."
+    />
+    <title>Cabinet Kit</title>
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="icons/icon.svg" />
+  </head>
+  <body>
+    <div class="cabinet">
+      <div class="bezel">
+        <header class="marquee">
+          <div>
+            <p class="brand" id="marquee-brand">Cabinet</p>
+            <p class="brand-sub" id="marquee-sub">Card kit · offline</p>
+          </div>
+          <div class="score-block" id="score-block" hidden>
+            <span class="score-label" id="score-label">SCORE</span>
+            <span class="score-value" id="score-value">0</span>
+          </div>
+        </header>
+
+        <main class="screen">
+          <section id="view-cabinet" class="view active">
+            <p class="lede">
+              Pick a game. Big buttons, one sitting, no sign-in.
+            </p>
+            <ul class="game-list" id="game-list"></ul>
+            <p class="foot">Add another title by dropping JSON in <code>games/</code>.</p>
+          </section>
+
+          <section id="view-game" class="view">
+            <div class="hud">
+              <span id="hud-round">ROUND 0</span>
+              <span id="hud-deck">DECK 52</span>
+            </div>
+            <div class="table">
+              <div class="hand" id="hand" aria-live="polite"></div>
+              <div>
+                <span class="total-label" id="total-label">HAND</span>
+                <div class="total" id="total">—</div>
+              </div>
+              <div class="banner" id="banner"></div>
+            </div>
+            <div class="controls">
+              <button type="button" class="btn" id="btn-hit">HIT</button>
+              <button type="button" class="btn stay" id="btn-stay">STAY</button>
+              <button type="button" class="btn deal hidden" id="btn-deal">DEAL</button>
+              <button type="button" class="btn ghost back" id="btn-back">CABINET</button>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+    <script src="js/engine.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
