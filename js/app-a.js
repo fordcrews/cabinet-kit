@@ -35,10 +35,14 @@
     take: $("btn-take"),
     playEleven: $("play-eleven"),
     playPower: $("play-power"),
+    playYacht: $("play-yacht"),
     elevenGrid: $("eleven-grid"),
     powerFoundations: $("power-foundations"),
     powerStocks: $("power-stocks"),
     powerTableau: $("power-tableau"),
+    yachtDice: $("yacht-dice"),
+    yachtCard: $("yacht-card"),
+    roll: $("btn-roll"),
     back: $("btn-back"),
   };
   if (window.CabinetPlay) window.CabinetPlay.attachUi(ui);
@@ -71,6 +75,9 @@
   }
   function isPower() {
     return gameType() === "powersol";
+  }
+  function isYacht() {
+    return gameType() === "yacht";
   }
   function usesColumnsPlayfield() {
     const t = gameType();

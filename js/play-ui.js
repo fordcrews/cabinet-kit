@@ -35,26 +35,34 @@
     const columnsPlay = type === "columns21" || type === "runlanes";
     const eleven = type === "elevenup";
     const power = type === "powersol";
-    const hideRun = columnsPlay || eleven || power;
+    const yacht = type === "yacht";
+    const hideRun = columnsPlay || eleven || power || yacht;
     ui.playRun.classList.toggle("hidden", hideRun);
     ui.playColumns.classList.toggle("hidden", !columnsPlay);
     if (ui.playEleven) ui.playEleven.classList.toggle("hidden", !eleven);
     if (ui.playPower) ui.playPower.classList.toggle("hidden", !power);
+    if (ui.playYacht) ui.playYacht.classList.toggle("hidden", !yacht);
     ui.hit.classList.toggle("hidden", hideRun);
     ui.stay.classList.toggle("hidden", hideRun);
     ui.skip.classList.toggle("hidden", !columnsPlay);
     if (ui.next) ui.next.classList.toggle("hidden", !eleven);
     if (ui.take) ui.take.classList.toggle("hidden", !eleven);
+    if (ui.roll) ui.roll.classList.toggle("hidden", !yacht);
     if (type === "columns21") ui.deal.classList.add("hidden");
     else if (type === "runlanes") {
       ui.hit.classList.add("hidden");
       ui.stay.classList.add("hidden");
     } else if (eleven) ui.deal.classList.add("hidden");
     else if (power) ui.deal.classList.remove("hidden");
-    else {
+    else if (yacht) {
+      ui.deal.classList.add("hidden");
+      ui.hit.classList.add("hidden");
+      ui.stay.classList.add("hidden");
+    } else {
       ui.skip.classList.add("hidden");
       if (ui.next) ui.next.classList.add("hidden");
       if (ui.take) ui.take.classList.add("hidden");
+      if (ui.roll) ui.roll.classList.add("hidden");
     }
   }
 
@@ -216,12 +224,16 @@
     attachUi: function (ui) {
       ui.playEleven = $("play-eleven");
       ui.playPower = $("play-power");
+      ui.playYacht = $("play-yacht");
       ui.elevenGrid = $("eleven-grid");
       ui.powerFoundations = $("power-foundations");
       ui.powerStocks = $("power-stocks");
       ui.powerTableau = $("power-tableau");
+      ui.yachtDice = $("yacht-dice");
+      ui.yachtCard = $("yacht-card");
       ui.next = $("btn-next");
       ui.take = $("btn-take");
+      ui.roll = $("btn-roll");
     },
   };
 })();
