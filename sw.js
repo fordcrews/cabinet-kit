@@ -1,10 +1,11 @@
 /* Cabinet Kit service worker — cache-first static player */
-const CACHE = "cabinet-kit-v0.8";
+const CACHE = "cabinet-kit-v0.9";
 const ASSETS = [
   "./",
   "./index.html",
   "./css/app.css",
   "./css/arcade.css",
+  "./css/chrome.css",
   "./js/app.js",
   "./js/engine.js",
   "./js/solitaire.js",
@@ -26,6 +27,8 @@ const ASSETS = [
   "./games/hoops.json",
   "./games/quiznight.json",
   "./icons/icon.svg",
+  "./icons/grain.svg",
+  "./icons/marquee-lamps.svg",
   "./favicon.svg",
 ];
 

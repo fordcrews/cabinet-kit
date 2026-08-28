@@ -1,0 +1,314 @@
+/* Cabinet chrome overlay — wood, bezel, marquee, menu. Load after arcade.css. */
+
+/* Wood surround: grain overlay + warm top / floor wash. */
+body > .cabinet {
+  padding:
+    max(20px, env(safe-area-inset-top))
+    max(18px, env(safe-area-inset-right))
+    max(22px, env(safe-area-inset-bottom))
+    max(18px, env(safe-area-inset-left));
+  background-color: var(--wood);
+  background-image:
+    url(../icons/grain.svg),
+    radial-gradient(120% 70% at 50% -8%, #3a2818 0%, transparent 52%),
+    linear-gradient(180deg, #2c1e14 0%, var(--wood) 38%, #0a0705 76%, #050505 100%);
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-size: 96px 64px, 100% 100%, 100% 100%;
+  border-radius: 8px;
+  box-shadow:
+    inset 0 2px 0 rgba(243, 211, 122, 0.08),
+    inset 0 0 48px rgba(0, 0, 0, 0.5);
+}
+
+/* Brass T-molding + recessed glass. Rivets on ::before. */
+.bezel {
+  position: relative;
+  padding: 8px;
+  border: 0;
+  border-radius: 20px;
+  background: linear-gradient(165deg, #f3d37a 0%, var(--gold) 22%, var(--gold-dim) 58%, #7a4a12 100%);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.5),
+    0 0 0 1px #3a2208,
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 0 0 1px #7a4a12,
+    inset 0 12px 28px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+.bezel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image:
+    radial-gradient(circle 6.5px at 11px 11px, #f3d37a 0 2px, var(--gold) 2.2px 4.2px, var(--gold-dim) 4.5px 5.8px, #7a4a12 6.5px, transparent 7px),
+    radial-gradient(circle 6.5px at calc(100% - 11px) 11px, #f3d37a 0 2px, var(--gold) 2.2px 4.2px, var(--gold-dim) 4.5px 5.8px, #7a4a12 6.5px, transparent 7px),
+    radial-gradient(circle 6.5px at 11px calc(100% - 11px), #f3d37a 0 2px, var(--gold) 2.2px 4.2px, var(--gold-dim) 4.5px 5.8px, #7a4a12 6.5px, transparent 7px),
+    radial-gradient(circle 6.5px at calc(100% - 11px) calc(100% - 11px), #f3d37a 0 2px, var(--gold) 2.2px 4.2px, var(--gold-dim) 4.5px 5.8px, #7a4a12 6.5px, transparent 7px);
+  background-repeat: no-repeat;
+}
+
+/* Light-box marquee: dark housing, gold rail, lamp row. */
+.marquee {
+  position: relative;
+  z-index: 1;
+  min-height: 56px;
+  padding: 18px 16px 10px;
+  align-items: center;
+  background-color: #0e0b09;
+  background-image: linear-gradient(180deg, #2a1c14 0%, #120e0a 40%, #0a0806 100%);
+  border-bottom: 3px solid var(--gold);
+  box-shadow:
+    0 2px 0 #7a4a12,
+    inset 0 1px 0 rgba(243, 211, 122, 0.18);
+  border-radius: 10px 10px 0 0;
+}
+
+.marquee::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 5px;
+  height: 10px;
+  background: url(../icons/marquee-lamps.svg) repeat-x center / auto 10px;
+  pointer-events: none;
+  animation: cabinet-lamp-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes cabinet-lamp-pulse {
+  0%, 100% { opacity: 0.58; }
+  50% { opacity: 1; }
+}
+
+.brand,
+#marquee-brand {
+  margin: 0;
+  color: var(--gold);
+  letter-spacing: 0.22em;
+  font-size: 0.98rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 10px rgba(226, 184, 74, 0.55),
+    0 1px 0 #000;
+}
+
+.brand-sub,
+#marquee-sub {
+  margin: 3px 0 0;
+  color: var(--cream);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  opacity: 0.82;
+}
+
+.score-block {
+  text-align: right;
+}
+
+.score-label,
+#score-label {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+
+.score-value,
+#score-value {
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: 0.08em;
+  text-shadow:
+    0 0 8px rgba(226, 184, 74, 0.45),
+    0 2px 0 #000;
+}
+
+.cabinet:has(#view-game.active) .marquee {
+  min-height: 52px;
+  padding: 16px 14px 8px;
+}
+
+/* Felt playfield — slightly richer radial, glass drop. */
+.screen {
+  position: relative;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 38%, var(--felt-edge) 0%, var(--felt) 44%, var(--felt-deep) 100%);
+  box-shadow: inset 0 10px 18px rgba(0, 0, 0, 0.32);
+  border-radius: 0 0 12px 12px;
+}
+
+.lede {
+  color: var(--cream);
+  letter-spacing: 0.02em;
+  opacity: 0.92;
+}
+
+.game-list {
+  gap: 14px;
+}
+
+/* Brass plaque category headers. Keep landscape row-span. */
+.game-list .cat-head {
+  flex: 1 1 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 16px 0 6px;
+  padding: 7px 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #2a1c12 0%, #14100c 100%);
+  border-top: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gold-dim);
+  box-shadow:
+    inset 0 1px 0 rgba(243, 211, 122, 0.28),
+    0 1px 0 #050505;
+  border-radius: 2px;
+}
+
+.game-list .cat-head:first-child {
+  margin-top: 0;
+}
+
+.game-list .cat-head::before,
+.game-list .cat-head::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 6px rgba(226, 184, 74, 0.45);
+}
+
+/* Arcade menu tiles — felt face, gold trim, 3D press. */
+.game-list button {
+  position: relative;
+  width: 100%;
+  min-height: 72px;
+  padding: 14px 40px 14px 16px;
+  text-align: left;
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  color: var(--cream);
+  background:
+    linear-gradient(180deg, rgba(243, 211, 122, 0.14) 0%, transparent 30%),
+    linear-gradient(180deg, #16382c 0%, #0a221a 100%);
+  box-shadow:
+    0 4px 0 var(--gold-dim),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.game-list button::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--gold);
+  border-top: 2px solid var(--gold);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.game-list button:active {
+  transform: translateY(3px);
+  box-shadow:
+    0 1px 0 var(--gold-dim),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.game-list button:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.game-list .title {
+  display: block;
+  font-size: 1.22rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+}
+
+.game-list .tagline {
+  display: block;
+  margin-top: 4px;
+  color: var(--cream);
+  opacity: 0.82;
+}
+
+.foot {
+  color: var(--muted);
+  border-top: 1px solid rgba(226, 184, 74, 0.22);
+  padding-top: 16px;
+}
+
+@media (orientation: landscape) {
+  body > .cabinet {
+    padding:
+      max(10px, env(safe-area-inset-top))
+      max(14px, env(safe-area-inset-right))
+      max(12px, env(safe-area-inset-bottom))
+      max(14px, env(safe-area-inset-left));
+  }
+
+  .marquee,
+  .cabinet:has(#view-game.active) .marquee {
+    min-height: 44px;
+    padding: 12px 14px 8px;
+  }
+
+  .score-value,
+  #score-value {
+    font-size: 1.35rem;
+  }
+
+  .game-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .game-list .cat-head {
+    flex: 1 1 100%;
+  }
+
+  .game-list button {
+    min-height: 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee::after {
+    animation: none;
+    opacity: 0.9;
+  }
+
+  .brand,
+  #marquee-brand,
+  .score-value,
+  #score-value {
+    text-shadow: 0 1px 0 #000;
+  }
+
+  .game-list .cat-head::before,
+  .game-list .cat-head::after {
+    box-shadow: none;
+  }
+}
