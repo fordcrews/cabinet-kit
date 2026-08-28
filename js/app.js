@@ -5,6 +5,12 @@
 (function () {
   "use strict";
 
+  try {
+    if (screen.orientation && screen.orientation.unlock) {
+      screen.orientation.unlock();
+    }
+  } catch (e) {}
+
   const E = window.CabinetEngine;
   const $ = (id) => document.getElementById(id);
 
