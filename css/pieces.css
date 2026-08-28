@@ -1,0 +1,633 @@
+/* Cabinet Kit table pieces — original bar-top art. Load AFTER css/app.css and css/arcade.css. */
+/* Pip masks use utf8 data-URIs so file:// preview and CSS mask-image both paint. Source drawings remain in svg/pip-*.svg. */
+
+/* -------------------------------------------------------------------------- */
+/* Cards — cream enamel on felt, gold inner panel, original pip masks         */
+/* -------------------------------------------------------------------------- */
+
+.card {
+  border: 1.5px solid var(--gold-dim);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, transparent 32%),
+    linear-gradient(180deg, #fffaf0 0%, var(--cream) 48%, #e6dcc6 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    inset 0 0 0 3px var(--cream),
+    inset 0 0 0 4.5px var(--gold),
+    0 10px 18px rgba(0, 0, 0, 0.42),
+    0 2px 0 rgba(0, 0, 0, 0.22);
+}
+
+.card.card-red {
+  color: var(--red);
+}
+
+.card.card-black {
+  color: var(--ink);
+}
+
+.card-rank {
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 1.22rem;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.card.selected {
+  outline: 3px solid var(--gold);
+  box-shadow:
+    0 0 0 2px var(--gold-dim),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    inset 0 0 0 3px var(--cream),
+    inset 0 0 0 4.5px var(--gold),
+    0 10px 18px rgba(0, 0, 0, 0.42);
+}
+
+/* Hide unicode suits (DOM stays for engine/a11y). Paint original pips. */
+.card-suit,
+.card-suit-lg {
+  position: relative;
+  display: block;
+  overflow: visible;
+  font-size: 0;
+  line-height: 0;
+  color: inherit;
+  text-indent: 0;
+  /* gold pin peeks through the pip's center cut */
+  background: radial-gradient(circle at 50% 52%, var(--gold) 0 18%, transparent 20%);
+}
+
+.card-suit {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.card-suit-lg {
+  width: 38px;
+  height: 38px;
+  margin-top: auto;
+  align-self: center;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.card-suit::before,
+.card-suit-lg::before,
+.card-suit::after,
+.card-suit-lg::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  -webkit-mask: var(--pip) center / contain no-repeat;
+  mask: var(--pip) center / contain no-repeat;
+}
+
+/* Gold wire under the enamel. */
+.card-suit::before,
+.card-suit-lg::before {
+  inset: -7%;
+  background-color: var(--gold);
+}
+
+/* Suit enamel tinted by .card-red / .card-black currentColor. */
+.card-suit::after,
+.card-suit-lg::after {
+  inset: 0;
+  background-color: currentColor;
+}
+
+/* Suit pick — unicode stays in the DOM; aria-label is already emitted by JS. */
+.card[aria-label*="♥"],
+.card[aria-label*="♡"] {
+  --pip: url("data:image/svg+xml;utf8,%3Csvg%20xmlns='http%3A//www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cpath%20fill='black'%20d='M32%2019%20L27%209%20L17%206%20L8%208%20L4%2016%20L4%2028%20L30%2058%20L34%2058%20L60%2028%20L60%2016%20L56%208%20L47%206%20L37%209%20Z'/%3E%3C/svg%3E");
+}
+.card[aria-label*="♦"],
+.card[aria-label*="♢"] {
+  --pip: url("data:image/svg+xml;utf8,%3Csvg%20xmlns='http%3A//www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cpath%20fill='black'%20d='M32%202%20L43%2013%20L62%2032%20L43%2051%20L32%2062%20L21%2051%20L2%2032%20L21%2013%20Z'/%3E%3C/svg%3E");
+}
+.card[aria-label*="♣"],
+.card[aria-label*="♧"] {
+  --pip: url("data:image/svg+xml;utf8,%3Csvg%20xmlns='http%3A//www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20x='21'%20y='2'%20width='22'%20height='22'%20rx='6'%20fill='black'/%3E%3Crect%20x='3'%20y='22'%20width='22'%20height='22'%20rx='6'%20fill='black'/%3E%3Crect%20x='39'%20y='22'%20width='22'%20height='22'%20rx='6'%20fill='black'/%3E%3Cpath%20fill='black'%20d='M26%2039%20L38%2039%20L42%2062%20L22%2062%20Z'/%3E%3C/svg%3E");
+}
+.card[aria-label*="♠"],
+.card[aria-label*="♤"] {
+  --pip: url("data:image/svg+xml;utf8,%3Csvg%20xmlns='http%3A//www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cpath%20fill='black'%20d='M26%203%20L38%203%20L50%2012%20L58%2024%20L58%2030%20L36%2048%20L36%2052%20L48%2052%20L48%2061%20L16%2061%20L16%2052%20L28%2052%20L28%2048%20L6%2030%20L6%2024%20L14%2012%20Z'/%3E%3C/svg%3E");
+}
+
+.card-red:not([aria-label]) {
+  --pip: url("data:image/svg+xml;utf8,%3Csvg%20xmlns='http%3A//www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cpath%20fill='black'%20d='M32%2019%20L27%209%20L17%206%20L8%208%20L4%2016%20L4%2028%20L30%2058%20L34%2058%20L60%2028%20L60%2016%20L56%208%20L47%206%20L37%209%20Z'/%3E%3C/svg%3E");
+}
+.card-black:not([aria-label]) {
+  --pip: url("data:image/svg+xml;utf8,%3Csvg%20xmlns='http%3A//www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cpath%20fill='black'%20d='M26%203%20L38%203%20L50%2012%20L58%2024%20L58%2030%20L36%2048%20L36%2052%20L48%2052%20L48%2061%20L16%2061%20L16%2052%20L28%2052%20L28%2048%20L6%2030%20L6%2024%20L14%2012%20Z'/%3E%3C/svg%3E");
+}
+
+.card.card-mini {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 0 0 1.5px var(--cream),
+    inset 0 0 0 2.5px var(--gold),
+    0 4px 8px rgba(0, 0, 0, 0.35);
+}
+
+.card-mini .card-rank {
+  font-size: 0.92rem;
+}
+
+.card-mini .card-suit {
+  width: 14px;
+  height: 14px;
+  margin-top: 0;
+}
+
+.card.card-mini.selected {
+  box-shadow:
+    0 0 0 2px var(--gold-dim),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 0 0 1.5px var(--cream),
+    inset 0 0 0 2.5px var(--gold),
+    0 4px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Back: gold-on-felt diamond-in-diamond lattice (not Bicycle). */
+.card.card-back {
+  color: var(--gold);
+  border-color: var(--gold);
+  align-items: center;
+  justify-content: center;
+  background-color: var(--felt);
+  background-image: url("../svg/card-back.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow:
+    inset 0 1px 0 rgba(226, 184, 74, 0.28),
+    0 10px 18px rgba(0, 0, 0, 0.45),
+    0 2px 0 rgba(0, 0, 0, 0.22);
+}
+
+.card-back-mark {
+  position: relative;
+  z-index: 1;
+  font-size: 0;
+  line-height: 0;
+  width: 22px;
+  height: 22px;
+  color: var(--gold);
+  background-color: var(--gold);
+  -webkit-mask: url("data:image/svg+xml;utf8,%3Csvg%20xmlns='http%3A//www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cpath%20fill='black'%20d='M32%202%20L43%2013%20L62%2032%20L43%2051%20L32%2062%20L21%2051%20L2%2032%20L21%2013%20Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,%3Csvg%20xmlns='http%3A//www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cpath%20fill='black'%20d='M32%202%20L43%2013%20L62%2032%20L43%2051%20L32%2062%20L21%2051%20L2%2032%20L21%2013%20Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  filter: none;
+  box-shadow: none;
+}
+
+.card-mini .card-back-mark,
+.card.card-mini.card-back .card-back-mark {
+  width: 14px;
+  height: 14px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Chug 21 mugs — ceramic stein, gold lip, foam, D-handle                     */
+/* -------------------------------------------------------------------------- */
+
+.mug {
+  background:
+    linear-gradient(90deg, rgba(20, 17, 13, 0.14) 0 7%, transparent 16%, transparent 84%, rgba(20, 17, 13, 0.14) 93%),
+    linear-gradient(180deg, #fff8e6 0%, var(--cream) 26%, #ead7a2 58%, var(--gold-dim) 100%);
+  border: 2px solid var(--gold);
+  box-shadow:
+    inset 0 9px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -7px 0 rgba(184, 137, 42, 0.22),
+    0 8px 16px rgba(0, 0, 0, 0.4);
+  overflow: visible;
+}
+
+.mug-rank {
+  position: relative;
+  z-index: 1;
+  font-weight: 800;
+  color: var(--ink);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.mug-lg .mug-rank {
+  font-size: 2rem;
+}
+
+.mug-lg::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 6px;
+  height: 13px;
+  border-radius: 40% 40% 35% 35%;
+  background:
+    url("../svg/mug-foam.svg") center / 100% 100% no-repeat,
+    linear-gradient(180deg, #fffef8, var(--cream));
+  box-shadow: 0 1px 0 rgba(226, 184, 74, 0.35);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.mug-lg::after {
+  content: "";
+  position: absolute;
+  right: -17px;
+  top: 30px;
+  width: 20px;
+  height: 36px;
+  border: 5px solid var(--gold);
+  border-left: 0;
+  border-radius: 0 16px 18px 0;
+  background: transparent;
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+
+.mug-mini::before {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 3px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--cream);
+  pointer-events: none;
+}
+
+.mug-mini::after {
+  content: none;
+  display: none;
+}
+
+.mug-mini .mug-rank {
+  font-size: 0.9rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Yacht dice — cream cube, ink pips, held vs free                            */
+/* -------------------------------------------------------------------------- */
+
+.yacht-die {
+  border: 2px solid var(--gold-dim);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, transparent 38%),
+    linear-gradient(145deg, #fffef8 0%, var(--cream) 55%, #e4d9c0 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -3px 0 rgba(20, 17, 13, 0.08),
+    0 7px 12px rgba(0, 0, 0, 0.4);
+  transform-origin: 50% 100%;
+}
+
+.yacht-die:nth-child(odd) {
+  transform: rotate(1deg);
+}
+
+.yacht-die:nth-child(even) {
+  transform: rotate(-1deg);
+}
+
+.yacht-die .pip {
+  width: 9px;
+  height: 9px;
+  min-width: 8px;
+  min-height: 8px;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+}
+
+.yacht-die .pip.on {
+  background:
+    radial-gradient(circle at 35% 30%, #fff8ea 0 32%, transparent 34%),
+    var(--ink);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+
+.yacht-die.is-held {
+  border-color: var(--gold);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, transparent 40%),
+    linear-gradient(145deg, #fffef6 0%, #f7f1e0 55%, var(--cream) 100%);
+  box-shadow:
+    0 0 0 3px var(--gold),
+    inset 0 11px 0 -7px rgba(226, 184, 74, 0.4),
+    0 10px 16px rgba(0, 0, 0, 0.38);
+  z-index: 1;
+}
+
+.yacht-die.is-held:nth-child(odd) {
+  transform: translateY(-3px) rotate(0.4deg);
+}
+
+.yacht-die.is-held:nth-child(even) {
+  transform: translateY(-3px) rotate(-0.4deg);
+}
+
+.yacht-die.is-blank {
+  background:
+    linear-gradient(180deg, var(--felt-edge), var(--felt) 55%, var(--felt-deep));
+  border-color: var(--gold-dim);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 6px 10px rgba(0, 0, 0, 0.4);
+}
+
+.yacht-die.is-blank .die-blank {
+  font-size: 0;
+  line-height: 0;
+  color: transparent;
+  width: 16px;
+  height: 16px;
+  margin: auto;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 3px var(--felt-deep);
+  background: transparent;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Sudoku 6 — wood givens, cream entries, 2×3 box seams                       */
+/* -------------------------------------------------------------------------- */
+
+.sudoku-cell {
+  background:
+    linear-gradient(180deg, #fffaf0, var(--cream) 60%, #e6dcc6);
+  color: var(--ink);
+  border: 1.5px solid var(--gold);
+  border-radius: 8px;
+  font-weight: 800;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 2px 4px rgba(0, 0, 0, 0.28);
+}
+
+.sudoku-cell.is-given {
+  background: linear-gradient(180deg, #2a1c12, var(--wood) 55%, #0e0a07);
+  color: var(--gold);
+  border-color: var(--gold-dim);
+  box-shadow:
+    inset 0 1px 0 rgba(226, 184, 74, 0.22),
+    0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.sudoku-cell.is-selected {
+  box-shadow:
+    0 0 0 3px var(--gold),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.sudoku-cell.is-conflict {
+  border-color: var(--bust);
+  color: var(--bust);
+}
+
+.sudoku-cell.is-given.is-conflict {
+  color: var(--bust);
+  border-color: var(--bust);
+}
+
+/* 6-col grid; boxes 3 wide × 2 high. Thicker gold on box seams. */
+.sudoku-grid .sudoku-cell:nth-child(6n + 3) {
+  border-right-width: 3px;
+  border-right-color: var(--gold);
+}
+
+.sudoku-grid .sudoku-cell:nth-child(6n + 4) {
+  border-left-width: 3px;
+  border-left-color: var(--gold);
+}
+
+.sudoku-grid .sudoku-cell:nth-child(n + 7):nth-child(-n + 12),
+.sudoku-grid .sudoku-cell:nth-child(n + 19):nth-child(-n + 24) {
+  border-bottom-width: 3px;
+  border-bottom-color: var(--gold);
+}
+
+.sudoku-grid .sudoku-cell:nth-child(n + 13):nth-child(-n + 18),
+.sudoku-grid .sudoku-cell:nth-child(n + 25):nth-child(-n + 30) {
+  border-top-width: 3px;
+  border-top-color: var(--gold);
+}
+
+.sudoku-grid .sudoku-cell.is-conflict:nth-child(6n + 3),
+.sudoku-grid .sudoku-cell.is-conflict:nth-child(6n + 4),
+.sudoku-grid .sudoku-cell.is-conflict:nth-child(n + 7):nth-child(-n + 12),
+.sudoku-grid .sudoku-cell.is-conflict:nth-child(n + 19):nth-child(-n + 24),
+.sudoku-grid .sudoku-cell.is-conflict:nth-child(n + 13):nth-child(-n + 18),
+.sudoku-grid .sudoku-cell.is-conflict:nth-child(n + 25):nth-child(-n + 30) {
+  border-color: var(--bust);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Reversi — enamel discs + legal pip on empty squares only                   */
+/* -------------------------------------------------------------------------- */
+
+.reversi-cell {
+  position: relative;
+  background:
+    linear-gradient(180deg, var(--felt-edge), #0f3a2c);
+  border: 1.5px solid var(--felt-deep);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.reversi-cell.is-legal {
+  box-shadow: inset 0 0 0 2px var(--gold);
+}
+
+.reversi-disc {
+  width: 78%;
+  height: 78%;
+  border-radius: 50%;
+  display: block;
+}
+
+.reversi-cell.is-dark .reversi-disc {
+  background:
+    url("../svg/disc-dark.svg") center / contain no-repeat,
+    radial-gradient(circle at 32% 28%, #3a332c 0 18%, var(--ink) 46%, #050403 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.reversi-cell.is-light .reversi-disc {
+  background:
+    url("../svg/disc-light.svg") center / contain no-repeat,
+    radial-gradient(circle at 32% 28%, #fffef8 0 18%, var(--cream) 50%, #d4cbb0 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.reversi-cell.is-legal:not(.is-dark):not(.is-light)::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  background: url("../svg/legal-pip.svg") center / contain no-repeat;
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Hoops — SVG rim/net + original 2-curve ball. Do not touch JS geometry.     */
+/* -------------------------------------------------------------------------- */
+
+.hoops-rim {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.hoops-rim::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -8px;
+  width: 145%;
+  height: 72px;
+  transform: translateX(-50%);
+  background: url("../svg/hoops-rim.svg") no-repeat center top / 100% 100%;
+  pointer-events: none;
+}
+
+.hoops-ball {
+  background-color: transparent;
+  background-image: url("../svg/hoops-ball.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.42);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Quiz Night — enamel trivia paddles                                         */
+/* -------------------------------------------------------------------------- */
+
+.quiz-choice {
+  position: relative;
+  min-height: 52px;
+  padding: 12px 14px 12px 36px;
+  border: 2.5px solid var(--gold);
+  border-radius: 12px 18px 18px 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, transparent 36%),
+    linear-gradient(180deg, #fffaf0 0%, var(--cream) 58%, #e6dcc4 100%);
+  color: var(--ink);
+  font-weight: 800;
+  text-align: left;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 4px 0 var(--wood),
+    0 6px 10px rgba(0, 0, 0, 0.32);
+}
+
+.quiz-choice::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translateY(-50%);
+  border-radius: 2px;
+  background: var(--gold);
+  box-shadow: 0 1px 0 var(--gold-dim);
+  pointer-events: none;
+}
+
+.quiz-choice.is-correct {
+  border-color: var(--ok);
+  color: var(--ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 4px 0 #1a5c3a,
+    0 6px 10px rgba(0, 0, 0, 0.32);
+}
+
+.quiz-choice.is-correct::before {
+  background: var(--ok);
+  box-shadow: 0 1px 0 #1a5c3a;
+}
+
+.quiz-choice.is-wrong {
+  border-color: var(--bust);
+  color: var(--ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 4px 0 #7a2a2a,
+    0 6px 10px rgba(0, 0, 0, 0.32);
+}
+
+.quiz-choice.is-wrong::before {
+  background: var(--bust);
+  box-shadow: 0 1px 0 #7a2a2a;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Landscape — keep existing layout sizes; only retune art that would break.  */
+/* -------------------------------------------------------------------------- */
+
+@media (orientation: landscape) {
+  .card-rank {
+    font-size: 1.05rem;
+  }
+
+  .card-suit {
+    width: 13px;
+    height: 13px;
+  }
+
+  .card-suit-lg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .card:not(.card-mini):not(.card-back) {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.85),
+      inset 0 0 0 2.5px var(--cream),
+      inset 0 0 0 3.5px var(--gold),
+      0 8px 14px rgba(0, 0, 0, 0.42),
+      0 2px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .mug-lg::before {
+    top: 4px;
+    height: 10px;
+  }
+
+  .mug-lg::after {
+    right: -12px;
+    top: 22px;
+    width: 14px;
+    height: 24px;
+    border-width: 4px;
+    border-left: 0;
+  }
+
+  .mug-lg .mug-rank {
+    font-size: 1.55rem;
+  }
+
+  .yacht-die .pip,
+  .yacht-die .pip.on {
+    width: 8px;
+    height: 8px;
+  }
+
+  .quiz-choice {
+    min-height: 52px;
+  }
+}
