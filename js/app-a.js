@@ -42,7 +42,20 @@
     powerTableau: $("power-tableau"),
     yachtDice: $("yacht-dice"),
     yachtCard: $("yacht-card"),
+    playSudoku: $("play-sudoku"),
+    playReversi: $("play-reversi"),
+    playHoops: $("play-hoops"),
+    playQuiz: $("play-quiz"),
+    sudokuGrid: $("sudoku-grid"),
+    sudokuPad: $("sudoku-pad"),
+    reversiBoard: $("reversi-board"),
+    hoopsCourt: $("hoops-court"),
+    hoopsRim: $("hoops-rim"),
+    hoopsBall: $("hoops-ball"),
+    quizQ: $("quiz-q"),
+    quizChoices: $("quiz-choices"),
     roll: $("btn-roll"),
+    shoot: $("btn-shoot"),
     back: $("btn-back"),
   };
   if (window.CabinetPlay) window.CabinetPlay.attachUi(ui);
@@ -78,6 +91,21 @@
   }
   function isYacht() {
     return gameType() === "yacht";
+  }
+  function isSudoku() {
+    return gameType() === "sudoku6";
+  }
+  function isReversi() {
+    return gameType() === "reversi";
+  }
+  function isHoops() {
+    return gameType() === "hoops";
+  }
+  function isQuiz() {
+    return gameType() === "quiznight";
+  }
+  function isArcadePlay() {
+    return isSudoku() || isReversi() || isHoops() || isQuiz();
   }
   function usesColumnsPlayfield() {
     const t = gameType();
