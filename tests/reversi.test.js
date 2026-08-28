@@ -59,3 +59,20 @@ test("AI returns a legal index", () => {
   const also = E.legalMoves(session.board, session.turn);
   assert.ok(also.indexOf(pick) >= 0);
 });
+
+
+test("legal moves, disc counts, and whose turn", () => {
+  const session = E.createReversiSession(def);
+  const snap = E.snapshotReversi(session);
+  assert.ok(snap.legal.length > 0);
+  snap.legal.forEach(function (i) {
+    assert.equal(session.board[i], 0);
+  });
+  assert.equal(snap.dark, 2);
+  assert.equal(snap.light, 2);
+  assert.equal(snap.turn, 1);
+  E.playReversi(session, snap.legal[0]);
+  const after = E.snapshotReversi(session);
+  assert.equal(after.turn, 2);
+  assert.ok(after.dark >= 3);
+});

@@ -54,3 +54,17 @@ test("ten shots ends the sitting", () => {
   assert.equal(session.score, scoreBefore);
   assert.equal(session.shotsTaken, 10);
 });
+
+
+test("linedUp is true inside the window and false outside", () => {
+  const session = E.createHoopsSession(def);
+  session.aimX = 50;
+  session.rimX = 50;
+  session.rimW = 8;
+  let snap = E.snapshotHoops(session);
+  assert.equal(snap.linedUp, true);
+  assert.equal(snap.shotsTaken, 0);
+  session.aimX = 10;
+  snap = E.snapshotHoops(session);
+  assert.equal(snap.linedUp, false);
+});
