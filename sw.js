@@ -7,6 +7,7 @@ const ASSETS = [
   "./js/app.js",
   "./js/engine.js",
   "./js/solitaire.js",
+  "./js/play-ui.js",
   "./manifest.webmanifest",
   "./games/index.json",
   "./games/run21.json",
