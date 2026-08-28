@@ -7,7 +7,7 @@
   }
   Promise.all(
     ["js/app-a.js", "js/app-b.js"].map(function (url) {
-      return fetch(url, { cache: "reload" }).then(function (res) {
+      return fetch(url).then(function (res) {
         if (!res.ok) throw new Error("Missing " + url);
         return res.text();
       });
