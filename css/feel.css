@@ -1,0 +1,145 @@
+/* Play-feel overlay */
+/* Play-feel polish — HUD, lock states, skip, incoming, 44px taps */
+@keyframes banner-flash {
+  0% { background: rgba(255, 107, 107, 0.32); }
+  100% { background: transparent; }
+}
+@keyframes banner-ok {
+  0% { background: rgba(125, 255, 179, 0.22); }
+  100% { background: transparent; }
+}
+
+.banner.bust {
+  animation: banner-flash 0.7s ease-out 1;
+}
+.banner.run {
+  animation: banner-ok 0.55s ease-out 1;
+}
+
+.incoming-wrap.is-live .incoming-label {
+  color: var(--gold);
+  font-weight: 800;
+}
+.incoming-wrap.is-live .incoming {
+  outline: 3px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: 12px;
+  padding: 4px 8px;
+}
+
+.btn.skip-act.is-ready {
+  box-shadow: 0 4px 0 var(--gold-dim), 0 0 0 2px var(--gold);
+}
+.btn.next-act {
+  background: var(--gold);
+}
+.btn.cash-out {
+  background: var(--cream);
+}
+.btn.is-reset,
+.btn.deal.ghost {
+  letter-spacing: 0.1em;
+}
+
+.column-well.is-locked {
+  pointer-events: none;
+}
+.column-well.is-locked .column-place,
+.column-well.is-locked .column-stay-btn {
+  pointer-events: none;
+}
+.column-stay-btn.is-outcome {
+  background: transparent;
+  color: var(--gold);
+  border-style: dashed;
+  opacity: 1;
+}
+.column-well.is-bust .column-stay-btn.is-outcome {
+  color: var(--bust);
+  border-color: var(--bust);
+}
+.column-well.is-21 .column-stay-btn.is-outcome,
+.column-well.is-run .column-stay-btn.is-outcome {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+.column-well.just-bust {
+  animation: banner-flash 0.7s ease-out 1;
+}
+.column-well.just-clear {
+  animation: banner-ok 0.55s ease-out 1;
+}
+
+.eleven-cell.is-selected {
+  outline: 3px solid var(--gold);
+  box-shadow: 0 0 0 2px var(--gold-dim);
+}
+.eleven-cell.is-illegal {
+  outline: 3px solid var(--bust);
+  animation: banner-flash 0.7s ease-out 1;
+}
+
+.power-well.is-selected,
+.power-col.is-selected {
+  outline: 3px solid var(--gold);
+  box-shadow: 0 0 0 3px var(--gold);
+}
+.power-empty-col.is-hint {
+  opacity: 0.9;
+  color: var(--gold);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+}
+
+.yacht-die {
+  position: relative;
+}
+.yacht-die.is-held {
+  border-width: 3px;
+}
+.hold-tag {
+  position: absolute;
+  left: 50%;
+  bottom: -11px;
+  transform: translateX(-50%);
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  color: var(--gold);
+  pointer-events: none;
+}
+.yacht-die.is-blank .hold-tag { display: none; }
+.yacht-row.is-filled {
+  pointer-events: none;
+}
+
+@media (orientation: landscape) {
+  .column-stay-btn { min-height: 44px; }
+  .incoming-wrap.is-live .incoming { outline-offset: 2px; }
+  .hold-tag { bottom: auto; top: -10px; }
+}
+
+.column-stay-btn { min-height: 44px; padding: 8px 6px; }
+.btn { min-height: 44px; }
+.reversi-cell { min-height: 44px; }
+.sudoku-cell, .sudoku-digit { min-height: 44px; }
+.quiz-choice { min-height: 56px; font-size: 1rem; }
+.quiz-q[data-kind]::before { display: block; font-size: 0.7rem; letter-spacing: 0.16em; font-weight: 800; margin-bottom: 6px; color: var(--gold); content: attr(data-kind); }
+.play-quiz.is-jumble .quiz-q[data-kind]::before, .quiz-q[data-kind="JUMBLE"]::before { color: var(--ok, #7dffb3); }
+.reversi-hint { display: block; width: 10px; height: 10px; margin: auto; border-radius: 50%; background: var(--gold); opacity: 0.9; }
+.btn.shoot.is-hot, .btn.is-hot { box-shadow: 0 4px 0 var(--gold-dim), 0 0 0 2px var(--gold); }
+.hoops-court.is-lined-up { outline: 3px solid var(--gold); outline-offset: 2px; }
+.sudoku-cell.is-given { font-weight: 800; }
+.sudoku-cell.is-entry { font-weight: 600; }
+.sudoku-cell.is-selected { outline: 3px solid var(--gold); }
+.sudoku-cell.is-conflict { color: var(--bust); }
+.sudoku-cell.box-left { border-left-width: 3px; }
+.sudoku-cell.box-top { border-top-width: 3px; }
+.sudoku-digit.is-current { box-shadow: 0 0 0 2px var(--gold); }
+@media (orientation: landscape) {
+  #view-game .columns-table, #view-game .eleven-table, #view-game .power-table, #view-game .yacht-table, #view-game .sudoku-table, #view-game .reversi-table, #view-game .hoops-table, #view-game .quiz-table { flex: 1 1 0; min-width: 0; min-height: 0; overflow: auto; }
+  #view-game .controls { align-content: start; overflow: auto; }
+  .btn.ghost { min-height: 44px; }
+  .yacht-row { min-height: 44px; padding: 6px 10px; }
+  .quiz-choice { min-height: 48px; }
+}
