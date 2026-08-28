@@ -161,15 +161,21 @@
     ui.hudRound.textContent = label("skips", "SKIPS") + " " + snap.skipsLeft;
     ui.hudDeck.textContent = label("deck", "DECK") + " " + snap.deckCount;
     ui.incomingLabel.textContent = label("incoming", "NEXT");
-    ui.skip.textContent = label("skip", "SKIP");
-    ui.skip.disabled = snap.status !== "playing" || snap.skipsLeft <= 0;
+    ui.skip.textContent = label("skip", "SKIP") + " " + snap.skipsLeft;
+    ui.skip.disabled = !snap.canSkip;
+    ui.skip.classList.toggle("is-ready", !!snap.canSkip);
     ui.back.textContent = label("back", "CABINET");
     ui.incoming.replaceChildren();
+    ui.incoming.classList.toggle("is-live", !!snap.incoming);
+    if (ui.incoming.parentElement) {
+      ui.incoming.parentElement.classList.toggle("is-live", !!snap.incoming);
+    }
     if (snap.incoming) {
       ui.incoming.appendChild(pieceNode(snap.incoming, false));
     }
     ui.columns.style.setProperty("--cols", String(snap.columns.length));
     ui.columns.replaceChildren();
+    const ev = snap.lastEvent;
     snap.columns.forEach(function (col, i) {
       const btn = document.createElement("button");
       btn.type = "button";
@@ -181,6 +187,12 @@
         if (E.handValue(preview, snap.target) > snap.target) {
           btn.classList.add("would-bust");
         }
+      }
+      if (ev && ev.kind === "bust" && ev.column === i) {
+        btn.classList.add("just-bust");
+      }
+      if (ev && ev.kind === "clear" && ev.column === i) {
+        btn.classList.add("just-clear");
       }
       const stack = document.createElement("div");
       stack.className = "column-stack";
@@ -195,7 +207,6 @@
       ui.columns.appendChild(btn);
     });
     ui.banner.className = "banner";
-    const ev = snap.lastEvent;
     if (snap.status === "done") {
       let line = copy("done", "Shoe empty.");
       if (ev && ev.kind === "clear") {
