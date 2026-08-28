@@ -1,0 +1,24 @@
+{
+  "id": "hoops",
+  "type": "hoops",
+  "title": "Hoops",
+  "tagline": "Time the rim. Ten shots.",
+  "blurb": "The rim slides. Tap SHOOT when your aim sits inside the window. Makes are two, threes when the rim is out. Ten shots a sitting.",
+  "shots": 10,
+  "rimW": 10,
+  "makePoints": 2,
+  "longPoints": 3,
+  "labels": {
+    "shoot": "SHOOT",
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "score": "SCORE",
+    "shots": "SHOTS"
+  },
+  "copy": {
+    "playing": "Tap SHOOT when the rim covers the ball.",
+    "make": "Make.",
+    "miss": "Miss.",
+    "done": "Ten shots. Deal again."
+  }
+}

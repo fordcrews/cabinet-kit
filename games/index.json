@@ -1,10 +1,9 @@
 {
-  "games": [
-    "run21.json",
-    "zip21.json",
-    "chug21.json",
-    "elevenup.json",
-    "powersol.json",
-    "yacht.json"
+  "categories": [
+    { "id": "card", "title": "Card", "games": ["run21.json","zip21.json","chug21.json","elevenup.json","powersol.json","yacht.json"] },
+    { "id": "puzzle", "title": "Puzzle", "games": ["sudoku6.json"] },
+    { "id": "strategy", "title": "Strategy", "games": ["reversi.json"] },
+    { "id": "sports", "title": "Sports", "games": ["hoops.json"] },
+    { "id": "quiz", "title": "Quiz", "games": ["quiznight.json"] }
   ]
 }

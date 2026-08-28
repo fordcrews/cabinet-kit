@@ -1,0 +1,22 @@
+{
+  "id": "reversi",
+  "type": "reversi",
+  "title": "Reversi",
+  "tagline": "Dark first. Flip the row. Greedy light.",
+  "blurb": "Eight by eight. Place a dark disc that sandwiches light, then flip. Light answers with the greediest legal capture. Pass when you cannot move.",
+  "labels": {
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "score": "DARK",
+    "dark": "DARK",
+    "light": "LIGHT",
+    "you": "YOU",
+    "cpu": "CPU"
+  },
+  "copy": {
+    "playing": "Tap a marked square to place and flip.",
+    "illegal": "Not a legal sandwich.",
+    "pass": "No move. Pass.",
+    "done": "Both sides stuck. Count the discs."
+  }
+}
