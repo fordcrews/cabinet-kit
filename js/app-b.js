@@ -132,13 +132,53 @@
       window.CabinetPlay.renderYacht(playCtx());
       return;
     }
+    if (isSudoku()) {
+      setMode("sudoku6");
+      window.CabinetPlay.renderSudoku(playCtx());
+      return;
+    }
+    if (isReversi()) {
+      setMode("reversi");
+      window.CabinetPlay.renderReversi(playCtx());
+      return;
+    }
+    if (isHoops()) {
+      setMode("hoops");
+      window.CabinetPlay.renderHoops(playCtx());
+      startHoopsLoop();
+      return;
+    }
+    if (isQuiz()) {
+      setMode("quiznight");
+      window.CabinetPlay.renderQuiz(playCtx());
+      return;
+    }
     setMode("run21");
     renderRun();
   }
   function playCtx() {
     return { E: E, ui: ui, session: session, gameDef: gameDef, label: label, copy: copy };
   }
+  let hoopsRaf = 0;
+  function stopHoopsLoop() {
+    if (hoopsRaf) cancelAnimationFrame(hoopsRaf);
+    hoopsRaf = 0;
+  }
+  function startHoopsLoop() {
+    stopHoopsLoop();
+    function frame(t) {
+      if (!session || !isHoops() || session.status !== "playing") {
+        hoopsRaf = 0;
+        return;
+      }
+      E.hoopsTick(session, t);
+      if (window.CabinetPlay.paintHoops) window.CabinetPlay.paintHoops(ui, session);
+      hoopsRaf = requestAnimationFrame(frame);
+    }
+    hoopsRaf = requestAnimationFrame(frame);
+  }
   function openCabinet() {
+    stopHoopsLoop();
     session = null;
     gameDef = null;
     show("cabinet");
@@ -147,13 +187,25 @@
     ui.scoreBlock.hidden = true;
   }
   function startGame(def) {
-    const PLAYABLE = { run21: 1, columns21: 1, runlanes: 1, elevenup: 1, powersol: 1, yacht: 1 };
+    const PLAYABLE = {
+      run21: 1,
+      columns21: 1,
+      runlanes: 1,
+      elevenup: 1,
+      powersol: 1,
+      yacht: 1,
+      sudoku6: 1,
+      reversi: 1,
+      hoops: 1,
+      quiznight: 1,
+    };
     if (!def || !PLAYABLE[def.type]) {
       ui.list.innerHTML =
-        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "powersol", "yacht", and "run21". See README.</li>';
+        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "powersol", "yacht", "sudoku6", "reversi", "hoops", "quiznight", and "run21". See README.</li>';
       openCabinet();
       return;
     }
+    stopHoopsLoop();
     gameDef = def;
     if (def.type === "columns21") {
       session = E.createColumnsSession(def);
@@ -165,6 +217,14 @@
       session = E.createPowerSession(def);
     } else if (def.type === "yacht") {
       session = E.createYachtSession(def);
+    } else if (def.type === "sudoku6") {
+      session = E.createSudokuSession(def);
+    } else if (def.type === "reversi") {
+      session = E.createReversiSession(def);
+    } else if (def.type === "hoops") {
+      session = E.createHoopsSession(def);
+    } else if (def.type === "quiznight") {
+      session = E.createQuizSession(def);
     } else {
       session = E.createSession(def);
     }
@@ -186,23 +246,29 @@
     const res = await fetch("games/index.json");
     if (!res.ok) throw new Error("Missing games/index.json");
     const data = await res.json();
-    const files = Array.isArray(data.games) ? data.games : [];
-    const defs = [];
-    for (const file of files) {
+    const groups =
+      Array.isArray(data.categories) && data.categories.length
+        ? data.categories
+        : [{ id: "all", title: "", games: Array.isArray(data.games) ? data.games : [] }];
+    const fileCache = new Map();
+    async function loadFile(file) {
+      if (fileCache.has(file)) return fileCache.get(file);
       const gRes = await fetch("games/" + file);
-      if (!gRes.ok) continue;
+      if (!gRes.ok) {
+        fileCache.set(file, null);
+        return null;
+      }
       const def = await gRes.json();
       def.file = file;
-      defs.push(def);
       gamesById.set(def.id || file.replace(/\.json$/, ""), { file: file, def: def });
+      fileCache.set(file, def);
+      return def;
     }
-    ui.list.replaceChildren();
-    defs.forEach(function (def) {
+    function addGameButton(def) {
       const li = document.createElement("li");
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.innerHTML =
-        '<span class="title"></span><span class="tagline"></span>';
+      btn.innerHTML = '<span class="title"></span><span class="tagline"></span>';
       btn.querySelector(".title").textContent = def.title || def.id;
       btn.querySelector(".tagline").textContent = def.tagline || def.blurb || "";
       btn.addEventListener("click", function () {
@@ -210,8 +276,29 @@
       });
       li.appendChild(btn);
       ui.list.appendChild(li);
-    });
-    if (!defs.length) {
+    }
+    ui.list.replaceChildren();
+    let any = false;
+    for (const cat of groups) {
+      const files = Array.isArray(cat.games) ? cat.games : [];
+      const defs = [];
+      for (const file of files) {
+        const def = await loadFile(file);
+        if (def) defs.push(def);
+      }
+      if (!defs.length) continue;
+      if (cat.title) {
+        const head = document.createElement("li");
+        head.className = "cat-head";
+        head.textContent = cat.title;
+        ui.list.appendChild(head);
+      }
+      defs.forEach(function (def) {
+        any = true;
+        addGameButton(def);
+      });
+    }
+    if (!any) {
       ui.list.innerHTML = '<li class="status-error">No games in games/index.json</li>';
     }
   }
@@ -229,12 +316,12 @@
     openCabinet();
   }
   ui.hit.addEventListener("click", function () {
-    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || session.status !== "playing") return;
+    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || isArcadePlay() || session.status !== "playing") return;
     E.hit(session);
     renderGame();
   });
   ui.stay.addEventListener("click", function () {
-    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || session.status !== "playing") return;
+    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || isArcadePlay() || session.status !== "playing") return;
     E.stay(session);
     renderGame();
   });
@@ -263,17 +350,49 @@
       renderGame();
       return;
     }
+    if (isSudoku()) {
+      E.dealSudoku(session);
+      renderGame();
+      return;
+    }
+    if (isReversi()) {
+      session = E.createReversiSession(gameDef);
+      renderGame();
+      return;
+    }
+    if (isHoops()) {
+      session = E.createHoopsSession(gameDef);
+      renderGame();
+      return;
+    }
+    if (isQuiz()) {
+      session = E.createQuizSession(gameDef);
+      renderGame();
+      return;
+    }
     E.deal(session);
     renderGame();
   });
   ui.next.addEventListener("click", function () {
-    if (!session || !isEleven() || session.status !== "playing") return;
+    if (!session || session.status !== "playing") return;
+    if (isQuiz()) {
+      E.quizNext(session);
+      renderGame();
+      return;
+    }
+    if (!isEleven()) return;
     if (!E.snapshotEleven(session).canNext) return;
     E.nextEleven(session);
     renderGame();
   });
   ui.take.addEventListener("click", function () {
-    if (!session || !isEleven() || session.status !== "playing") return;
+    if (!session) return;
+    if (isQuiz()) {
+      E.takeQuiz(session);
+      renderGame();
+      return;
+    }
+    if (!isEleven() || session.status !== "playing") return;
     E.takeEleven(session);
     renderGame();
   });
@@ -366,6 +485,61 @@
       } catch (err) {
         return;
       }
+      renderGame();
+    });
+  }
+  if (ui.sudokuGrid) {
+    ui.sudokuGrid.addEventListener("click", function (ev) {
+      if (!session || !isSudoku() || session.status !== "playing") return;
+      const cell = ev.target.closest("[data-sudoku]");
+      if (!cell) return;
+      E.tapSudokuCell(session, Number(cell.getAttribute("data-sudoku")));
+      renderGame();
+    });
+  }
+  if (ui.sudokuPad) {
+    ui.sudokuPad.addEventListener("click", function (ev) {
+      if (!session || !isSudoku() || session.status !== "playing") return;
+      const btn = ev.target.closest("[data-digit]");
+      if (!btn) return;
+      E.setSudokuDigit(session, Number(btn.getAttribute("data-digit")));
+      renderGame();
+    });
+  }
+  if (ui.reversiBoard) {
+    ui.reversiBoard.addEventListener("click", function (ev) {
+      if (!session || !isReversi() || session.status !== "playing") return;
+      const cell = ev.target.closest("[data-rev]");
+      if (!cell) return;
+      E.playReversi(session, Number(cell.getAttribute("data-rev")));
+      renderGame();
+      function runAi() {
+        if (!session || !isReversi() || session.status !== "playing") return;
+        if (session.turn !== 2) return;
+        const pick = E.aiReversiPick(session);
+        if (pick < 0) return;
+        E.playReversi(session, pick);
+        renderGame();
+        if (session.turn === 2 && session.status === "playing") {
+          setTimeout(runAi, 280);
+        }
+      }
+      if (session.turn === 2) setTimeout(runAi, 280);
+    });
+  }
+  if (ui.shoot) {
+    ui.shoot.addEventListener("click", function () {
+      if (!session || !isHoops() || session.status !== "playing") return;
+      E.hoopsShoot(session);
+      renderGame();
+    });
+  }
+  if (ui.quizChoices) {
+    ui.quizChoices.addEventListener("click", function (ev) {
+      if (!session || !isQuiz() || session.status !== "playing") return;
+      const btn = ev.target.closest("[data-choice]");
+      if (!btn) return;
+      E.answerQuiz(session, Number(btn.getAttribute("data-choice")));
       renderGame();
     });
   }
