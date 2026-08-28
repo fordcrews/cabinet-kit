@@ -1,4 +1,4 @@
-/* Cabinet Kit v0.2 — felt table, gold bezel, phone-first */
+/* Cabinet Kit v0.4 — felt table, gold bezel, phone-first */
 :root {
   --felt: #0c2f24;
   --felt-deep: #071c16;
@@ -403,6 +403,71 @@ button {
 .column-well.would-bust {
   border-color: var(--bust);
   background: linear-gradient(#2a1414, #140a0a);
+}
+
+.column-well.is-bust {
+  border-color: var(--bust);
+  background: linear-gradient(#2a1414, #140a0a);
+}
+
+.column-well.is-bust .column-total {
+  color: var(--bust);
+}
+
+.column-well.is-21,
+.column-well.is-run {
+  border-color: var(--ok);
+  box-shadow: inset 0 0 0 1px var(--ok), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.column-well.is-run .column-total,
+.column-well.is-21 .column-total {
+  color: var(--ok);
+}
+
+.column-well.is-stay {
+  opacity: 0.88;
+}
+
+.column-well.is-locked .column-place {
+  cursor: default;
+}
+
+.column-place {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+  min-height: 88px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+}
+
+.column-place:disabled {
+  opacity: 1;
+}
+
+.column-stay-btn {
+  min-height: 28px;
+  padding: 4px 6px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 8px;
+  background: var(--cream);
+  color: #111;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  box-shadow: none;
+}
+
+.column-stay-btn:disabled {
+  opacity: 0.35;
 }
 
 .column-stack {
