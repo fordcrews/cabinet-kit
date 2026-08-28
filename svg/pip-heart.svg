@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Heart pip">
+  <title>Heart pip</title>
+  <path fill="#14110d" d="M32 19 L27 9 L17 6 L8 8 L4 16 L4 28 L30 58 L34 58 L60 28 L60 16 L56 8 L47 6 L37 9 Z"/>
+  <path fill="none" stroke="#e2b84a" stroke-width="1.7" stroke-linejoin="miter" d="M32 26 L28 18 L20 15 L14 17 L12 22 L12 28 L32 48 L52 28 L52 22 L50 17 L44 15 L36 18 Z"/>
+  <path fill="#e2b84a" d="M32 32 L36 36 L32 40 L28 36 Z"/>
+
+</svg>

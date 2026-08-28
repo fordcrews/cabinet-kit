@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Club pip">
+  <title>Club pip</title>
+  <rect x="21" y="2" width="22" height="22" rx="6" fill="#14110d"/>
+  <rect x="3" y="22" width="22" height="22" rx="6" fill="#14110d"/>
+  <rect x="39" y="22" width="22" height="22" rx="6" fill="#14110d"/>
+  <path fill="#14110d" d="M26 39 L38 39 L42 62 L22 62 Z"/>
+  <rect x="25.5" y="6.5" width="13" height="13" rx="3.5" fill="none" stroke="#e2b84a" stroke-width="1.6"/>
+  <rect x="7.5" y="26.5" width="13" height="13" rx="3.5" fill="none" stroke="#e2b84a" stroke-width="1.6"/>
+  <rect x="43.5" y="26.5" width="13" height="13" rx="3.5" fill="none" stroke="#e2b84a" stroke-width="1.6"/>
+  <polygon points="32,29 36,31.4 36,36.2 32,38.6 28,36.2 28,31.4" fill="#e2b84a"/>
+
+</svg>

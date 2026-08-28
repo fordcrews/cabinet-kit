@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Diamond pip">
+  <title>Diamond pip</title>
+  <path fill="#14110d" d="M32 2 L43 13 L62 32 L43 51 L32 62 L21 51 L2 32 L21 13 Z"/>
+  <path fill="none" stroke="#e2b84a" stroke-width="1.7" stroke-linejoin="miter" d="M32 12 L40 20 L52 32 L40 44 L32 52 L24 44 L12 32 L24 20 Z"/>
+  <path fill="#e2b84a" d="M32 28 L36 32 L32 36 L28 32 Z"/>
+
+</svg>

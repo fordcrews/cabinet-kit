@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" role="img" aria-label="Hoops rim and net">
+  <title>Hoops rim</title>
+  <!-- backboard top edge -->
+  <rect x="22" y="1" width="116" height="6" rx="1.2" fill="#e2b84a"/>
+  <rect x="24" y="2.2" width="112" height="2" fill="#f4efe2" opacity="0.45"/>
+  <rect x="38" y="7" width="84" height="3" fill="#1a120c"/>
+  <!-- hoop: short wide oval -->
+  <ellipse cx="80" cy="20" rx="54" ry="10" fill="none" stroke="#b8892a" stroke-width="7"/>
+  <ellipse cx="80" cy="20" rx="54" ry="10" fill="none" stroke="#e2b84a" stroke-width="4.2"/>
+  <ellipse cx="80" cy="19" rx="54" ry="10" fill="none" stroke="#f4efe2" stroke-width="1.2" opacity="0.35"/>
+  <!-- net -->
+  <g fill="none" stroke="#f4efe2" stroke-width="1.6" stroke-linecap="round" opacity="0.9">
+    <path d="M28 24 L44 92"/>
+    <path d="M45 26 L54 92"/>
+    <path d="M62 28 L66 92"/>
+    <path d="M80 29 L80 92"/>
+    <path d="M98 28 L94 92"/>
+    <path d="M115 26 L106 92"/>
+    <path d="M132 24 L116 92"/>
+    <path d="M30 40 L130 40"/>
+    <path d="M38 58 L122 58"/>
+    <path d="M46 76 L114 76"/>
+    <path d="M44 92 L116 92"/>
+  </g>
+
+</svg>

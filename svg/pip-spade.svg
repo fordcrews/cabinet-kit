@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Spade pip">
+  <title>Spade pip</title>
+  <path fill="#14110d" d="M26 3 L38 3 L50 12 L58 24 L58 30 L36 48 L36 52 L48 52 L48 61 L16 61 L16 52 L28 52 L28 48 L6 30 L6 24 L14 12 Z"/>
+  <path fill="none" stroke="#e2b84a" stroke-width="1.7" stroke-linejoin="miter" d="M32 10 L44 18 L50 26 L32 42 L14 26 L20 18 Z"/>
+  <path fill="#e2b84a" d="M32 24 L35.6 27.6 L32 31 L28.4 27.6 Z"/>
+
+</svg>

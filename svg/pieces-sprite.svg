@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 96" role="img" aria-label="Cabinet Kit piece sprite">
+  <title>Cabinet Kit piece sprite</title>
+  <defs>
+    <symbol id="pip-heart" viewBox="0 0 64 64">
+      <path fill="#14110d" d="M32 19 L27 9 L17 6 L8 8 L4 16 L4 28 L30 58 L34 58 L60 28 L60 16 L56 8 L47 6 L37 9 Z"/>
+      <path fill="none" stroke="#e2b84a" stroke-width="1.7" d="M32 26 L28 18 L20 15 L14 17 L12 22 L12 28 L32 48 L52 28 L52 22 L50 17 L44 15 L36 18 Z"/>
+      <path fill="#e2b84a" d="M32 32 L36 36 L32 40 L28 36 Z"/>
+    </symbol>
+    <symbol id="pip-diamond" viewBox="0 0 64 64">
+      <path fill="#14110d" d="M32 2 L43 13 L62 32 L43 51 L32 62 L21 51 L2 32 L21 13 Z"/>
+      <path fill="none" stroke="#e2b84a" stroke-width="1.7" d="M32 12 L40 20 L52 32 L40 44 L32 52 L24 44 L12 32 L24 20 Z"/>
+      <path fill="#e2b84a" d="M32 28 L36 32 L32 36 L28 32 Z"/>
+    </symbol>
+    <symbol id="pip-club" viewBox="0 0 64 64">
+      <rect x="21" y="2" width="22" height="22" rx="6" fill="#14110d"/>
+      <rect x="3" y="22" width="22" height="22" rx="6" fill="#14110d"/>
+      <rect x="39" y="22" width="22" height="22" rx="6" fill="#14110d"/>
+      <path fill="#14110d" d="M26 39 L38 39 L42 62 L22 62 Z"/>
+      <polygon points="32,29 36,31.4 36,36.2 32,38.6 28,36.2 28,31.4" fill="#e2b84a"/>
+    </symbol>
+    <symbol id="pip-spade" viewBox="0 0 64 64">
+      <path fill="#14110d" d="M26 3 L38 3 L50 12 L58 24 L58 30 L36 48 L36 52 L48 52 L48 61 L16 61 L16 52 L28 52 L28 48 L6 30 L6 24 L14 12 Z"/>
+      <path fill="none" stroke="#e2b84a" stroke-width="1.7" d="M32 10 L44 18 L50 26 L32 42 L14 26 L20 18 Z"/>
+      <path fill="#e2b84a" d="M32 24 L35.6 27.6 L32 31 L28.4 27.6 Z"/>
+    </symbol>
+    <symbol id="disc-dark" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="30" fill="#14110d" stroke="#f4efe2" stroke-width="3"/>
+      <circle cx="32" cy="32" r="5.5" fill="#e2b84a"/>
+    </symbol>
+    <symbol id="disc-light" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="30" fill="#f4efe2" stroke="#e2b84a" stroke-width="3"/>
+      <circle cx="32" cy="32" r="5.5" fill="#14110d"/>
+    </symbol>
+    <symbol id="legal-pip" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="10" fill="#e2b84a"/>
+      <circle cx="16" cy="16" r="4.5" fill="#0c2f24"/>
+    </symbol>
+    <symbol id="hoops-ball" viewBox="0 0 28 28">
+      <circle cx="14" cy="14" r="13.4" fill="#e2b84a"/>
+      <path d="M7.2 5.2 Q3.2 14 7.2 22.8" fill="none" stroke="#1a120c" stroke-width="1.55"/>
+      <path d="M15.2 5.4 Q22.6 8.2 19.4 14 Q22.6 19.8 15.2 22.6" fill="none" stroke="#1a120c" stroke-width="1.55"/>
+    </symbol>
+  </defs>
+  <rect width="512" height="96" fill="#071c16"/>
+  <use href="#pip-heart" x="8" y="16" width="64" height="64"/>
+  <use href="#pip-diamond" x="80" y="16" width="64" height="64"/>
+  <use href="#pip-club" x="152" y="16" width="64" height="64"/>
+  <use href="#pip-spade" x="224" y="16" width="64" height="64"/>
+  <use href="#disc-dark" x="300" y="20" width="56" height="56"/>
+  <use href="#disc-light" x="364" y="20" width="56" height="56"/>
+  <use href="#legal-pip" x="432" y="32" width="32" height="32"/>
+  <use href="#hoops-ball" x="472" y="34" width="28" height="28"/>
+</svg>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" role="img" aria-label="Arcade basketball">
+  <title>Arcade ball</title>
+  <defs>
+    <radialGradient id="bb" cx="35%" cy="30%" r="72%">
+      <stop offset="0%" stop-color="#f4efe2"/>
+      <stop offset="48%" stop-color="#e2b84a"/>
+      <stop offset="100%" stop-color="#b8892a"/>
+    </radialGradient>
+  </defs>
+  <circle cx="14" cy="14" r="13.4" fill="url(#bb)"/>
+  <g fill="none" stroke="#1a120c" stroke-width="1.55" stroke-linecap="round">
+    <path d="M7.2 5.2 Q3.2 14 7.2 22.8"/>
+    <path d="M15.2 5.4 Q22.6 8.2 19.4 14 Q22.6 19.8 15.2 22.6"/>
+  </g>
+  <ellipse cx="10" cy="8.5" rx="4.2" ry="2.6" fill="#fff" opacity="0.28"/>
+
+</svg>

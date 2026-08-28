@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 56" role="img" aria-label="Trivia answer plate">
+  <title>Quiz plate</title>
+  <rect x="2" y="2" width="196" height="52" rx="12" fill="#1a120c"/>
+  <rect x="1" y="0" width="196" height="50" rx="12" fill="#f4efe2" stroke="#e2b84a" stroke-width="3"/>
+  <rect x="10" y="18" width="10" height="10" rx="2" fill="#e2b84a"/>
+  <path fill="none" stroke="#b8892a" stroke-width="1" d="M28 10 L28 42"/>
+
+</svg>
