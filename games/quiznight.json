@@ -47,12 +47,14 @@
     "again": "DEAL AGAIN",
     "back": "CABINET",
     "score": "SCORE",
-    "q": "Q"
+    "q": "Q",
+    "jumble": "JUMBLE",
+    "trivia": "TRIVIA"
   },
   "copy": {
     "playing": "Pick one of the four.",
     "correct": "Correct.",
     "wrong": "Not that one.",
-    "done": "Sitting over. Deal again for a fresh twelve."
+    "done": "Sitting over."
   }
 }
