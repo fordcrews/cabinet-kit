@@ -4,6 +4,7 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const E = require("../js/arcade.js");
 const def = require("../games/hoops.json");
+require("../js/feel-engine.js");
 
 test("Hoops JSON id type title", () => {
   assert.equal(def.id, "hoops");

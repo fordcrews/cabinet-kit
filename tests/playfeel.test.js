@@ -8,6 +8,7 @@ const Yacht = require("../js/yacht.js");
 const runDef = require("../games/run21.json");
 const elevenDef = require("../games/elevenup.json");
 const yachtDef = require("../games/yacht.json");
+require("../js/feel-engine.js");
 
 function card(rank, suit) {
   return { rank, suit: suit || "♠" };
