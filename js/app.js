@@ -1,5 +1,6 @@
 /**
  * Cabinet Kit player: menu from games/index.json, hash routes, JSON-driven copy.
+ * v0.2 plays run21 (HIT/STAY) and columns21 (Zip / Chug).
  */
 (function () {
   "use strict";
@@ -18,13 +19,19 @@
     scoreValue: $("score-value"),
     hudRound: $("hud-round"),
     hudDeck: $("hud-deck"),
+    playRun: $("play-run21"),
+    playColumns: $("play-columns"),
     hand: $("hand"),
     total: $("total"),
     totalLabel: $("total-label"),
     banner: $("banner"),
+    incoming: $("incoming"),
+    incomingLabel: $("incoming-label"),
+    columns: $("columns"),
     hit: $("btn-hit"),
     stay: $("btn-stay"),
     deal: $("btn-deal"),
+    skip: $("btn-skip"),
     back: $("btn-back"),
   };
 
@@ -47,10 +54,14 @@
     ui.game.classList.toggle("active", view === "game");
   }
 
-  function cardNode(card) {
+  function isColumns() {
+    return !!(gameDef && gameDef.type === "columns21");
+  }
+
+  function cardNode(card, mini) {
     const el = document.createElement("article");
     const red = card.suit === "♥" || card.suit === "♦";
-    el.className = "card" + (red ? " card-red" : " card-black");
+    el.className = "card" + (red ? " card-red" : " card-black") + (mini ? " card-mini" : "");
     el.setAttribute("aria-label", card.rank + " " + card.suit);
     el.innerHTML =
       '<span class="card-rank">' +
@@ -63,10 +74,24 @@
     return el;
   }
 
+  function mugNode(card, mini) {
+    const el = document.createElement("article");
+    el.className = "mug" + (mini ? " mug-mini" : " mug-lg");
+    el.setAttribute("aria-label", "Mug " + card.rank);
+    el.innerHTML = '<span class="mug-rank">' + card.rank + "</span>";
+    return el;
+  }
+
+  function pieceNode(card, mini) {
+    const piece = (session && session.config && session.config.piece) || (gameDef && gameDef.piece) || "card";
+    if (piece === "mug") return mugNode(card, mini);
+    return cardNode(card, mini);
+  }
+
   function renderHand(snap) {
     ui.hand.replaceChildren();
     snap.hand.forEach(function (c) {
-      ui.hand.appendChild(cardNode(c));
+      ui.hand.appendChild(cardNode(c, false));
     });
     ui.total.textContent = snap.hand.length ? String(snap.total) : "—";
   }
@@ -79,13 +104,91 @@
     ui.stay.disabled = !playing;
   }
 
-  function renderGame() {
-    if (!session || !gameDef) return;
+  function setMode(type) {
+    const columns = type === "columns21";
+    ui.playRun.classList.toggle("hidden", columns);
+    ui.playColumns.classList.toggle("hidden", !columns);
+    ui.skip.classList.toggle("hidden", !columns);
+    if (columns) {
+      ui.hit.classList.add("hidden");
+      ui.stay.classList.add("hidden");
+      ui.deal.classList.add("hidden");
+    } else {
+      ui.skip.classList.add("hidden");
+    }
+  }
+
+  function renderColumns() {
+    const snap = E.snapshotColumns(session);
+    ui.scoreValue.textContent = String(snap.score);
+    ui.hudRound.textContent = label("skips", "SKIPS") + " " + snap.skipsLeft;
+    ui.hudDeck.textContent = label("deck", "DECK") + " " + snap.deckCount;
+    ui.incomingLabel.textContent = label("incoming", "NEXT");
+    ui.skip.textContent = label("skip", "SKIP");
+    ui.skip.disabled = snap.status !== "playing" || snap.skipsLeft <= 0;
+    ui.back.textContent = label("back", "CABINET");
+
+    ui.incoming.replaceChildren();
+    if (snap.incoming) {
+      ui.incoming.appendChild(pieceNode(snap.incoming, false));
+    }
+
+    ui.columns.style.setProperty("--cols", String(snap.columns.length));
+    ui.columns.replaceChildren();
+    snap.columns.forEach(function (col, i) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "column-well";
+      btn.dataset.col = String(i);
+      btn.disabled = snap.status !== "playing";
+      if (snap.status === "playing" && snap.incoming) {
+        const preview = col.cards.concat(snap.incoming);
+        if (E.handValue(preview, snap.target) > snap.target) {
+          btn.classList.add("would-bust");
+        }
+      }
+      const stack = document.createElement("div");
+      stack.className = "column-stack";
+      col.cards.forEach(function (c) {
+        stack.appendChild(pieceNode(c, true));
+      });
+      const tot = document.createElement("div");
+      tot.className = "column-total";
+      tot.textContent = col.cards.length ? String(col.total) : "0";
+      btn.appendChild(stack);
+      btn.appendChild(tot);
+      ui.columns.appendChild(btn);
+    });
+
+    ui.banner.className = "banner";
+    const ev = snap.lastEvent;
+    if (snap.status === "done") {
+      let line = copy("done", "Shoe empty.");
+      if (ev && ev.kind === "clear") {
+        ui.banner.classList.add("run");
+        line = label("clear", "CLEAR") + " +" + ev.points + " · " + line;
+      } else if (ev && ev.kind === "bust") {
+        ui.banner.classList.add("bust");
+        line = label("bust", "BUST") + " " + ev.points + " · " + line;
+      }
+      ui.banner.textContent = line + " · " + snap.score;
+    } else if (ev && ev.kind === "clear") {
+      ui.banner.classList.add("run");
+      ui.banner.textContent =
+        label("clear", "CLEAR") + " +" + ev.points + " · " + copy("clear", "Lane cleared.");
+    } else if (ev && ev.kind === "bust") {
+      ui.banner.classList.add("bust");
+      ui.banner.textContent =
+        label("bust", "BUST") + " " + ev.points + " · " + copy("bust", "Over the target.");
+    } else if (ev && ev.kind === "skip") {
+      ui.banner.textContent = copy("skip", "Skipped.");
+    } else {
+      ui.banner.textContent = copy("playing", "Place the incoming piece.");
+    }
+  }
+
+  function renderRun() {
     const snap = E.snapshot(session);
-    ui.brand.textContent = gameDef.title || "Game";
-    ui.sub.textContent = gameDef.tagline || "";
-    ui.scoreBlock.hidden = false;
-    ui.scoreLabel.textContent = label("score", "SCORE");
     ui.scoreValue.textContent = String(snap.score);
     ui.hudRound.textContent = label("round", "ROUND") + " " + snap.rounds;
     ui.hudDeck.textContent = label("deck", "DECK") + " " + snap.deckCount;
@@ -128,6 +231,22 @@
     }
   }
 
+  function renderGame() {
+    if (!session || !gameDef) return;
+    ui.brand.textContent = gameDef.title || "Game";
+    ui.sub.textContent = gameDef.tagline || "";
+    ui.scoreBlock.hidden = false;
+    ui.scoreLabel.textContent = label("score", "SCORE");
+    ui.back.textContent = label("back", "CABINET");
+    if (isColumns()) {
+      setMode("columns21");
+      renderColumns();
+      return;
+    }
+    setMode("run21");
+    renderRun();
+  }
+
   function openCabinet() {
     session = null;
     gameDef = null;
@@ -138,14 +257,18 @@
   }
 
   function startGame(def) {
-    if (!def || def.type !== "run21") {
+    if (!def || (def.type !== "run21" && def.type !== "columns21")) {
       ui.list.innerHTML =
-        '<li class="status-error">This kit only plays type "run21" in v0. See README.</li>';
+        '<li class="status-error">This kit plays type "run21" and "columns21". See README.</li>';
       openCabinet();
       return;
     }
     gameDef = def;
-    session = E.createSession(def);
+    if (def.type === "columns21") {
+      session = E.createColumnsSession(def);
+    } else {
+      session = E.createSession(def);
+    }
     show("game");
     renderGame();
   }
@@ -211,18 +334,31 @@
   }
 
   ui.hit.addEventListener("click", function () {
-    if (!session || session.status !== "playing") return;
+    if (!session || isColumns() || session.status !== "playing") return;
     E.hit(session);
     renderGame();
   });
   ui.stay.addEventListener("click", function () {
-    if (!session || session.status !== "playing") return;
+    if (!session || isColumns() || session.status !== "playing") return;
     E.stay(session);
     renderGame();
   });
   ui.deal.addEventListener("click", function () {
-    if (!session) return;
+    if (!session || isColumns()) return;
     E.deal(session);
+    renderGame();
+  });
+  ui.skip.addEventListener("click", function () {
+    if (!session || !isColumns() || session.status !== "playing") return;
+    if (session.skipsLeft <= 0) return;
+    E.skipColumn(session);
+    renderGame();
+  });
+  ui.columns.addEventListener("click", function (ev) {
+    const well = ev.target.closest("[data-col]");
+    if (!well || !session || !isColumns() || session.status !== "playing") return;
+    const i = Number(well.getAttribute("data-col"));
+    E.placeColumn(session, i);
     renderGame();
   });
   ui.back.addEventListener("click", function () {
