@@ -1,0 +1,33 @@
+{
+  "id": "zip21",
+  "type": "columns21",
+  "title": "Zip 21",
+  "tagline": "Four lanes. Land 21. Zip it.",
+  "blurb": "One incoming card. Tap a column to drop it. Zip a 21. Five under still scores. Three skips.",
+  "columns": 4,
+  "skips": 3,
+  "maxCards": 5,
+  "target": 21,
+  "bustPenalty": 10,
+  "clearBonus": 0,
+  "thinDeck": 0,
+  "piece": "card",
+  "labels": {
+    "skip": "SKIP",
+    "back": "CABINET",
+    "bust": "BUST",
+    "clear": "ZIP",
+    "score": "SCORE",
+    "skips": "SKIPS",
+    "deck": "DECK",
+    "incoming": "NEXT",
+    "total": "LANE"
+  },
+  "copy": {
+    "playing": "Drop the card on a lane. Hit 21 to Zip. Five under still pays.",
+    "clear": "Lane zipped.",
+    "bust": "Over 21. Lane dumps. Penalty.",
+    "skip": "Card tossed. Next up.",
+    "done": "Shoe is empty. That's the sitting."
+  }
+}

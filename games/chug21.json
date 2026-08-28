@@ -1,0 +1,33 @@
+{
+  "id": "chug21",
+  "type": "columns21",
+  "title": "Chug 21",
+  "tagline": "Five mugs. One spill. Chug 21.",
+  "blurb": "Numbered mugs slide into five wells. Chug a 21. Five under still counts. Spill once.",
+  "columns": 5,
+  "skips": 1,
+  "maxCards": 5,
+  "target": 21,
+  "bustPenalty": 10,
+  "clearBonus": 0,
+  "thinDeck": 0,
+  "piece": "mug",
+  "labels": {
+    "skip": "SPILL",
+    "back": "CABINET",
+    "bust": "SLOSH",
+    "clear": "CHUG",
+    "score": "TAB",
+    "skips": "SPILLS",
+    "deck": "BAR",
+    "incoming": "UP NEXT",
+    "total": "MUGS"
+  },
+  "copy": {
+    "playing": "Park the mug. Chug a 21. Spill once if you need a pass.",
+    "clear": "Down the hatch.",
+    "bust": "It sloshed. Well's empty. Penalty.",
+    "skip": "Spilled it. Next mug.",
+    "done": "Bar's last call. Tab is final."
+  }
+}
