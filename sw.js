@@ -1,4 +1,3 @@
-/* Cabinet Kit service worker — cache-first static player */
 const CACHE = "cabinet-kit-v0.5";
 const ASSETS = [
   "./",
@@ -8,6 +7,8 @@ const ASSETS = [
   "./js/engine.js",
   "./js/solitaire.js",
   "./js/play-ui.js",
+  "./js/app-a.js",
+  "./js/app-b.js",
   "./manifest.webmanifest",
   "./games/index.json",
   "./games/run21.json",
@@ -16,15 +17,13 @@ const ASSETS = [
   "./games/elevenup.json",
   "./games/powersol.json",
   "./icons/icon.svg",
-  "./favicon.svg",
+  "./favicon.svg"
 ];
-
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
   );
 });
-
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -32,7 +31,6 @@ self.addEventListener("activate", (event) => {
     ).then(() => self.clients.claim())
   );
 });
-
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
