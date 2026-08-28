@@ -13,12 +13,13 @@
     "again": "DEAL AGAIN",
     "back": "CABINET",
     "score": "SCORE",
-    "shots": "SHOTS"
+    "shots": "SHOTS",
+    "now": "NOW"
   },
   "copy": {
-    "playing": "Tap SHOOT when the rim covers the ball.",
+    "playing": "SHOOT when the rim covers the ball.",
     "make": "Make.",
     "miss": "Miss.",
-    "done": "Ten shots. Deal again."
+    "done": "Ten shots."
   }
 }

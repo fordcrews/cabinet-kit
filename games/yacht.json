@@ -18,7 +18,7 @@
     "back": "CABINET",
     "score": "SCORE",
     "turn": "TURN",
-    "rolls": "ROLLS LEFT",
+    "rolls": "ROLLS",
     "aces": "ACES",
     "twos": "TWOS",
     "threes": "THREES",
@@ -39,9 +39,9 @@
     "total": "TOTAL"
   },
   "copy": {
-    "idle": "ROLL to throw five dice.",
-    "playing": "Tap dice to HOLD, ROLL again, or tap a category.",
-    "mustScore": "Pick a category. Zero is allowed.",
+    "idle": "ROLL five dice.",
+    "playing": "HOLD dice, ROLL, or tap a box.",
+    "mustScore": "Pick a box. Zero is allowed.",
     "done": "Card complete."
   }
 }

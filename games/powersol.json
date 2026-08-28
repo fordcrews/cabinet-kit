@@ -13,14 +13,15 @@
     "back": "CABINET",
     "score": "SCORE",
     "stock": "STOCK",
-    "home": "HOME"
+    "home": "HOME",
+    "jack": "JACK"
   },
   "copy": {
-    "playing": "Tap a stock top or tableau card, then a destination. Jacks on empty columns. Build down, alternate color.",
-    "move": "Card placed.",
+    "playing": "Tap a card, then a destination. JACK on empty.",
+    "move": "Placed.",
     "foundation": "Home.",
-    "illegal": "That pile won't take it.",
-    "won": "All 132 home. Power complete.",
+    "illegal": "Won't take it.",
+    "won": "All 132 home.",
     "single": "v0 moves one card at a time — no tableau runs."
   }
 }

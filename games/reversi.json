@@ -11,12 +11,15 @@
     "dark": "DARK",
     "light": "LIGHT",
     "you": "YOU",
-    "cpu": "CPU"
+    "cpu": "CPU",
+    "yourTurn": "YOUR TURN",
+    "cpuTurn": "CPU …"
   },
   "copy": {
-    "playing": "Tap a marked square to place and flip.",
+    "playing": "Tap a marked square.",
     "illegal": "Not a legal sandwich.",
     "pass": "No move. Pass.",
-    "done": "Both sides stuck. Count the discs."
+    "done": "Count the discs.",
+    "cpu": "CPU …"
   }
 }

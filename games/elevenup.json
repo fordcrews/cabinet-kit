@@ -19,13 +19,13 @@
     "pair": "11"
   },
   "copy": {
-    "playing": "Tap two open cards that make 11 — or two of the same face.",
-    "pair": "Pair off. Keep going.",
+    "playing": "Tap two cards that make 11.",
+    "pair": "Pair off.",
     "illegal": "Those two don't make 11.",
-    "next": "New card on the table. Pass penalty.",
+    "next": "Pass. New card.",
     "take": "Score banked.",
-    "clear": "Table clear. Bonus banked.",
-    "done": "Sitting over. Deal again for a fresh grid.",
-    "full": "No empty cell. Take score or peel a pair."
+    "clear": "Table clear.",
+    "done": "Sitting over.",
+    "full": "No empty cell. Pair or take score."
   }
 }

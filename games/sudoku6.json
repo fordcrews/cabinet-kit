@@ -6,24 +6,40 @@
   "blurb": "Tap a cell, then a digit. Givens stay locked. Clear the grid for a point, then deal the next puzzle.",
   "clearScore": 1,
   "puzzles": [
-    { "puzzle": "150000203561621000000106504302000605", "solution": "156234243561621453435126564312312645" },
-    { "puzzle": "200164400000040356005001504003360025", "solution": "253164416532142356635241524613361425" },
-    { "puzzle": "421030500000010306635142006200000560", "solution": "421635563421214356635142356214142563" },
-    { "puzzle": "130040540320403050610400301060260000", "solution": "132645546321423156615432351264264513" },
-    { "puzzle": "260400000362506030034200300021012500", "solution": "263415451362526134134256345621612543" }
+    {
+      "puzzle": "150000203561621000000106504302000605",
+      "solution": "156234243561621453435126564312312645"
+    },
+    {
+      "puzzle": "200164400000040356005001504003360025",
+      "solution": "253164416532142356635241524613361425"
+    },
+    {
+      "puzzle": "421030500000010306635142006200000560",
+      "solution": "421635563421214356635142356214142563"
+    },
+    {
+      "puzzle": "130040540320403050610400301060260000",
+      "solution": "132645546321423156615432351264264513"
+    },
+    {
+      "puzzle": "260400000362506030034200300021012500",
+      "solution": "263415451362526134134256345621612543"
+    }
   ],
   "labels": {
-    "again": "DEAL AGAIN",
+    "again": "NEXT PUZZLE",
     "back": "CABINET",
     "score": "SCORE",
     "clear": "CLEAR",
-    "puzzle": "PUZZLE"
+    "puzzle": "PUZZLE",
+    "nextPuzzle": "NEXT PUZZLE"
   },
   "copy": {
-    "playing": "Tap a cell, then 1–6. Givens stay put.",
+    "playing": "Tap a cell, then 1–6.",
     "locked": "That cell is given.",
     "conflict": "Duplicate in a row, column, or box.",
     "won": "Grid clear.",
-    "done": "Puzzle complete. Deal again for the next."
+    "done": "Puzzle complete."
   }
 }
