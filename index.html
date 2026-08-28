@@ -48,18 +48,30 @@
               <span id="hud-round">ROUND 0</span>
               <span id="hud-deck">DECK 52</span>
             </div>
-            <div class="table">
+
+            <div id="play-run21" class="table">
               <div class="hand" id="hand" aria-live="polite"></div>
               <div>
                 <span class="total-label" id="total-label">HAND</span>
                 <div class="total" id="total">—</div>
               </div>
-              <div class="banner" id="banner"></div>
             </div>
+
+            <div id="play-columns" class="columns-table hidden">
+              <div class="incoming-wrap">
+                <span class="incoming-label" id="incoming-label">NEXT</span>
+                <div class="incoming" id="incoming" aria-live="polite"></div>
+              </div>
+              <div class="columns" id="columns"></div>
+            </div>
+
+            <div class="banner" id="banner"></div>
+
             <div class="controls">
               <button type="button" class="btn" id="btn-hit">HIT</button>
               <button type="button" class="btn stay" id="btn-stay">STAY</button>
               <button type="button" class="btn deal hidden" id="btn-deal">DEAL</button>
+              <button type="button" class="btn skip-act hidden" id="btn-skip">SKIP</button>
               <button type="button" class="btn ghost back" id="btn-back">CABINET</button>
             </div>
           </section>
