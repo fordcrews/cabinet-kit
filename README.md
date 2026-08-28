@@ -2,7 +2,7 @@
 
 Phone-browser card cabinet. Short sessions, big buttons, no App Store, no accounts, no ads, no IAP. Remix by duplicating JSON.
 
-v0.2 ships three playable samples — **Run 21**, **Zip 21**, and **Chug 21** — plus an author format so another title is a file drop, not a rewrite.
+v0.4 ships three playable samples — **Run 21**, **Zip 21**, and **Chug 21** — plus an author format so another title is a file drop, not a rewrite.
 
 ## Play on a phone
 
@@ -24,26 +24,26 @@ From this directory:
 
 Then visit http://localhost:8080 on the computer or http://<lan-ip>:8080 on a phone.
 
-    node --test tests/engine.test.js tests/columns.test.js
+    node --test tests/engine.test.js tests/columns.test.js tests/runlanes.test.js
 
 GitHub Pages: enable Pages on main (root). .nojekyll is included so static files are served as-is. Relative URLs work at / or /cabinet-kit/.
 
 ## Run 21 (sample)
 
-Original rules, not a licensed cabinet clone.
+Original-style five-lane play, not a licensed cabinet clone.
 
-- Standard 52-card deck, shuffled. Unicode suits.
-- Face cards = 10. Aces = 11 unless that busts the target, then 1.
-- Deal two cards face up.
-- HIT draws. STAY banks the hand total.
-- Goal: as close as possible to 21 without going over.
-- Bust (>21) scores 0 for that round.
-- A two-card 21 is a Run: target + runBonus (default 21+5=26). Hitting to 21 later is just 21, not a Run.
-- After STAY, bust, or a Run: result is shown, points add to the session, DEAL AGAIN.
-- When the shoe has fewer than thinDeck cards (default 10), leftover + discard are shuffled back in. If both piles are empty, a fresh 52 is built.
-- Player vs target 21. No dealer in v0.
+- Standard 52-card shoe per round, shuffled. Unicode suits. Face cards = 10. Soft aces (11 unless that busts, then 1).
+- Sort face-up incoming cards into **5 columns** without exceeding 21 in any column.
+- Tap a lane to place the incoming card. One **SKIP** discards it and draws the next.
+- Under 21: cards stay, lane stays open.
+- Exact 21: lane **locks** (complete). Cards stay visible. Two-card 21 can show as a **RUN** (still worth 21 toward 105 unless JSON `runBonus` > 0; default 0).
+- Over 21: that lane **locks as bust**, scores 0, incoming is consumed. Busted cards stay visible (the lane is not emptied like Zip).
+- **STAY** on an open lane locks it at the current total. Cannot place onto a locked lane.
+- Score = sum of the 5 column totals. Bust columns count 0. Perfect is **105** (5×21).
+- Round ends when all 5 lanes are locked (21, stay, or bust) **or** the shoe is empty (remaining open lanes lock at current totals).
+- **DEAL AGAIN** starts a fresh 5 empty lanes and a new shuffled shoe. Session score can accumulate round totals.
 
-Session score and round count stay on the marquee until you leave for the cabinet.
+The HIT/STAY single-hand helpers remain in the engine for tests; the cabinet plays Run 21 as five lanes (`type` `runlanes`).
 
 ## Zip 21
 
@@ -71,7 +71,7 @@ Same engine as Zip (`columns21`) with different JSON knobs: five wells, one spil
 3. Add the filename to `games/index.json` games array.
 4. Reload. The cabinet lists every file in that index.
 
-Engine keys: `run21` (HIT/STAY) and `columns21` (place/skip). Copy and scoring knobs stay in JSON.
+Engine keys: `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
 
 ## JSON fields
 
@@ -79,13 +79,15 @@ Unknown extra fields are ignored.
 
 Shared:
 - id (string): Hash route id. Unique. Played at `#/play/:id`.
-- type (string): `run21` or `columns21`.
+- type (string): `runlanes`, `columns21`, or `run21`.
 - title, tagline, blurb: Cabinet row + in-game marquee.
 - target (number): Bust line (21).
 - thinDeck (number): Run 21 reshuffles under this. Columns games default 0 (one shoe, then done).
 - labels / copy: Button and banner strings.
 
-Run 21 extras: runBonus, startingCards, labels.hit stay deal again, copy.idle playing bust run stay.
+Run 21 (`runlanes`) extras: columns (5), skips (1), perfect (105), runBonus (0), piece (`card`), labels.stay skip again, copy.playing bust run stay skip done complete perfect.
+
+Run 21 HIT/STAY extras (engine `type` `run21`, not the cabinet sample): runBonus, startingCards, labels.hit stay deal again, copy.idle playing bust run stay.
 
 Columns 21 extras:
 - columns (number): Lane count. Zip 4, Chug 5.
@@ -104,8 +106,10 @@ games/index.json:
 
 Engine is pure JS. Browser: window.CabinetEngine. Node: module.exports.
 
-    node --test tests/engine.test.js tests/columns.test.js
+    node --test tests/engine.test.js tests/columns.test.js tests/runlanes.test.js
 
-Run 21: bust, 21, ace 1-vs-11, face cards, Run bonus, stay scoring, thin/empty deck reshuffle.
+Run 21 HIT/STAY engine: bust, 21, ace 1-vs-11, face cards, Run bonus, stay scoring, thin/empty deck reshuffle.
+
+Run lanes: 5 columns from JSON, one skip then skip at 0 throws, place under 21 stays open, 21 locks with cards still showing, bust locks and scores 0, stay locks at current total, cannot place on locked, all five locked ends the round, deal again resets lanes.
 
 Columns: exact 21 clear, five-under clear, bust penalty empties the lane, skip decrements, cannot skip at 0, soft ace in a column, Zip/Chug column counts from JSON.
