@@ -2,7 +2,7 @@
 
 Phone-browser card cabinet. Short sessions, big buttons, no App Store, no accounts, no ads, no IAP. Remix by duplicating JSON.
 
-v0.5 ships five playable samples — **Run 21**, **Zip 21**, **Chug 21**, **11 Up**, and **Power Solitaire** — plus an author format so another title is a file drop, not a rewrite.
+v0.6 ships six playable samples — **Run 21**, **Zip 21**, **Chug 21**, **11 Up**, **Power Solitaire**, and **Yacht** — plus an author format so another title is a file drop, not a rewrite.
 
 ## Play on a phone
 
@@ -91,14 +91,25 @@ Klondike with a boost. Original rules, not a branded clone.
 - Score **+foundationScore** (default 10) per card to a foundation.
 - **DEAL AGAIN** reshuffles. **CABINET** returns to the menu.
 
+## Yacht
+
+Public-domain five-dice scorecard (not a licensed clone). Original felt/gold cabinet UI.
+
+- Five dice, **3 rolls** per turn. First **ROLL** throws all five. Tap a die to **HOLD** / unhold; later rolls reroll only unheld dice.
+- Thirteen turns. Each category is used once. Scratching (score 0) is allowed.
+- **Upper:** Aces through Sixes = sum of that face. If the upper subtotal is **≥ 63**, add **+35** bonus.
+- **Lower:** 3 of a kind = sum of all dice if at least three match; 4 of a kind = sum if at least four match; Full house **25** (three + two); Small straight **30** (four consecutive); Large straight **40** (five consecutive); **YACHT** (five of a kind) **50**; Chance = sum of all dice.
+- After you tap a category, a new turn starts (rolls reset, holds clear) until all 13 boxes are filled. Then **DEAL AGAIN** starts a fresh card.
+- HUD shows **TURN n/13** and **ROLLS LEFT**. Buttons: **ROLL**, **CABINET**, and **DEAL AGAIN** when the card is done.
+
 ## How to add a game
 
-1. Duplicate a JSON file under `games/` (run21, zip21, chug21, elevenup, or powersol).
+1. Duplicate a JSON file under `games/` (run21, zip21, chug21, elevenup, powersol, or yacht).
 2. Change id, title, labels, copy, and the knobs for that type.
 3. Add the filename to `games/index.json` games array.
 4. Reload. The cabinet lists every file in that index.
 
-Engine keys: `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), `elevenup` (11 Up pairs), `powersol` (Power Solitaire), and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
+Engine keys: `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), `elevenup` (11 Up pairs), `powersol` (Power Solitaire), `yacht` (Yacht five-dice scorecard), and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
 
 ## JSON fields
 
@@ -106,7 +117,7 @@ Unknown extra fields are ignored.
 
 Shared:
 - id (string): Hash route id. Unique. Played at `#/play/:id`.
-- type (string): `runlanes`, `columns21`, `elevenup`, `powersol`, or `run21`.
+- type (string): `runlanes`, `columns21`, `elevenup`, `powersol`, `yacht`, or `run21`.
 - title, tagline, blurb: Cabinet row + in-game marquee.
 - target (number): Bust line (21).
 - thinDeck (number): Run 21 reshuffles under this. Columns games default 0 (one shoe, then done).
@@ -131,6 +142,8 @@ Columns 21 extras:
 
 Power Solitaire (`powersol`) extras: foundationScore (10), columns (7), decks (3), moves (`single`), labels.home stock again, copy.playing move foundation illegal won.
 
+Yacht (`yacht`) extras: upperBonus (35), upperThreshold (63), fullHouse (25), smallStraight (30), largeStraight (40), yacht (50), rolls (3), labels.roll hold aces…sixes threekind fourkind fullhouse smallstraight largestraight yacht chance, copy.idle playing mustScore done.
+
 games/index.json:
 - games (string array): Filenames under games/. Order is menu order.
 
@@ -149,3 +162,5 @@ Columns: exact 21 clear, five-under clear, bust penalty empties the lane, skip d
 11 Up: 5+6 and A+10 legal, 2+8 illegal, two Jacks legal, J+Q illegal, next fills empty and penalizes, take on a clear adds bonus, cannot next if the grid is full.
 
 Power Solitaire: no K/Q in the 132-card shoe, Jack only on empty column, alt-color descending, foundation A then 2 of the same suit, stock tap moves to a legal tableau.
+
+Yacht: roll yields five dice 1–6, hold keeps a face on the next roll, a fourth roll throws, aces sum ones, full house 25 / junk 0, small straight 30 / large 40, yacht 50, a category cannot be scored twice, upper bonus at 63, thirteen scores then done.
