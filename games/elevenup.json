@@ -1,0 +1,31 @@
+{
+  "id": "elevenup",
+  "type": "elevenup",
+  "title": "11 Up",
+  "tagline": "Pairs that make 11. Clear the table.",
+  "blurb": "Open cards on a 4×4 grid. Pull two that sum to 11, or two of a face. Next card costs. Clear the table for a bonus.",
+  "pairScore": 11,
+  "passPenalty": 5,
+  "clearBonus": 50,
+  "cells": 16,
+  "dealCount": 12,
+  "labels": {
+    "next": "NEXT CARD",
+    "take": "TAKE SCORE",
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "score": "SCORE",
+    "stock": "STOCK",
+    "pair": "11"
+  },
+  "copy": {
+    "playing": "Tap two open cards that make 11 — or two of the same face.",
+    "pair": "Pair off. Keep going.",
+    "illegal": "Those two don't make 11.",
+    "next": "New card on the table. Pass penalty.",
+    "take": "Score banked.",
+    "clear": "Table clear. Bonus banked.",
+    "done": "Sitting over. Deal again for a fresh grid.",
+    "full": "No empty cell. Take score or peel a pair."
+  }
+}
