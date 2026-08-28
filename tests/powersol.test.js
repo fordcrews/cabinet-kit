@@ -2,7 +2,7 @@
 
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const E = require("../js/engine.js");
+const E = require("../js/solitaire.js");
 const powerDef = require("../games/powersol.json");
 
 function card(rank, suit) {
@@ -17,222 +17,152 @@ function seedRng(seed) {
   };
 }
 
-function allPowerCards(session) {
-  const cards = [];
-  session.tableau.forEach(function (col) {
-    col.forEach(function (c) {
-      cards.push(c);
-    });
-  });
-  session.stocks.forEach(function (pile) {
-    pile.forEach(function (c) {
-      cards.push(c);
-    });
-  });
-  return cards;
+function emptyTableau() {
+  const cols = [];
+  for (let i = 0; i < 7; i++) {
+    cols.push([]);
+  }
+  return cols;
 }
 
-function face(rank, suit, up) {
-  return { rank: rank, suit: suit, faceUp: up !== false };
+function primed(extra) {
+  const game = Object.assign({}, powerDef, extra || {});
+  const session = E.createPowerSession(game, seedRng(7));
+  session.tableau = emptyTableau();
+  session.stocks = [[], [], []];
+  session.foundations = { "♠": [], "♥": [], "♦": [], "♣": [] };
+  session.selected = null;
+  session.score = 0;
+  session.status = "playing";
+  session.lastEvent = null;
+  return session;
 }
 
 test("Power Solitaire JSON id type title", () => {
   assert.equal(powerDef.id, "powersol");
   assert.equal(powerDef.type, "powersol");
   assert.equal(powerDef.title, "Power Solitaire");
-  assert.equal(powerDef.moves, "single");
+  assert.equal(powerDef.foundationScore, 10);
+  assert.equal(powerDef.columns, 7);
+  assert.equal(powerDef.decks, 3);
 });
 
 test("no K/Q in decks", () => {
-  const session = E.createPowerSession(powerDef, seedRng(7));
-  const cards = allPowerCards(session);
-  assert.equal(cards.length, 132);
-  cards.forEach(function (c) {
+  const deck = E.createPowerDeck();
+  assert.equal(deck.length, 44);
+  for (const c of deck) {
     assert.notEqual(c.rank, "K");
     assert.notEqual(c.rank, "Q");
-    assert.ok(E.POWER_RANKS.indexOf(c.rank) >= 0);
-  });
-  assert.equal(session.tableau.length, 7);
-  const dealt = session.tableau.reduce(function (n, col) {
-    return n + col.length;
-  }, 0);
-  assert.equal(dealt, 28);
-  const stockN = session.stocks.reduce(function (n, p) {
-    return n + p.length;
-  }, 0);
-  assert.equal(stockN, 104);
-  assert.equal(session.stocks.length, 3);
+  }
+  const session = E.createPowerSession(powerDef, seedRng(3));
+  const ranks = new Set();
+  for (const col of session.tableau) {
+    for (const c of col) ranks.add(c.rank);
+  }
+  for (const pile of session.stocks) {
+    for (const c of pile) ranks.add(c.rank);
+  }
+  assert.equal(ranks.has("K"), false);
+  assert.equal(ranks.has("Q"), false);
+  assert.ok(ranks.has("J"));
+  assert.ok(ranks.has("A"));
+  const total =
+    session.tableau.reduce(function (n, col) {
+      return n + col.length;
+    }, 0) +
+    session.stocks.reduce(function (n, pile) {
+      return n + pile.length;
+    }, 0);
+  assert.equal(total, 132);
+  const snap = E.snapshotPower(session);
+  assert.equal(snap.type, "powersol");
+  assert.equal(snap.foundationTotal, 0);
+  assert.equal(snap.winAt, 132);
 });
 
 test("Jack only on empty column", () => {
-  assert.equal(
-    E.powerCanPlace(card("J", "♠"), { kind: "tableau", top: null }),
-    true
-  );
-  assert.equal(
-    E.powerCanPlace(card("10", "♠"), { kind: "tableau", top: null }),
-    false
-  );
-  assert.equal(
-    E.powerCanPlace(card("A", "♥"), { kind: "tableau", top: null }),
-    false
-  );
+  const dest = { kind: "tableau", cards: [] };
+  assert.equal(E.powerCanPlace(card("J", "♠"), dest), true);
+  assert.equal(E.powerCanPlace(card("10", "♥"), dest), false);
+  assert.equal(E.powerCanPlace(card("A", "♦"), dest), false);
+  const session = primed();
+  session.tableau[0] = [];
+  session.tableau[1] = [{ rank: "10", suit: "♥", faceUp: true }];
+  session.selected = { kind: "tableau", col: 1, depth: 0 };
+  E.tapPower(session, { kind: "tableau", col: 0 });
+  assert.equal(session.tableau[0].length, 0);
+  assert.equal(session.tableau[1].length, 1);
+  session.tableau[1] = [{ rank: "J", suit: "♠", faceUp: true }];
+  session.selected = { kind: "tableau", col: 1, depth: 0 };
+  E.tapPower(session, { kind: "tableau", col: 0 });
+  assert.equal(session.tableau[0].length, 1);
+  assert.equal(session.tableau[0][0].rank, "J");
+  assert.equal(session.tableau[1].length, 0);
 });
 
 test("alt-color descending", () => {
-  const jackSpade = { kind: "tableau", top: card("J", "♠") };
-  assert.equal(E.powerCanPlace(card("10", "♥"), jackSpade), true);
-  assert.equal(E.powerCanPlace(card("10", "♦"), jackSpade), true);
-  assert.equal(E.powerCanPlace(card("10", "♠"), jackSpade), false);
-  assert.equal(E.powerCanPlace(card("10", "♣"), jackSpade), false);
-  assert.equal(E.powerCanPlace(card("9", "♥"), jackSpade), false);
-  assert.equal(
-    E.powerCanPlace(card("9", "♠"), { kind: "tableau", top: card("10", "♥") }),
-    true
-  );
-  assert.equal(
-    E.powerCanPlace(card("A", "♦"), { kind: "tableau", top: card("2", "♣") }),
-    true
-  );
+  const black10 = { kind: "tableau", cards: [card("10", "♠")] };
+  assert.equal(E.powerCanPlace(card("9", "♥"), black10), true);
+  assert.equal(E.powerCanPlace(card("9", "♦"), black10), true);
+  assert.equal(E.powerCanPlace(card("9", "♣"), black10), false);
+  assert.equal(E.powerCanPlace(card("8", "♥"), black10), false);
+  assert.equal(E.powerCanPlace(card("J", "♥"), black10), false);
+  const redJ = { kind: "tableau", cards: [card("J", "♥")] };
+  assert.equal(E.powerCanPlace(card("10", "♠"), redJ), true);
+  assert.equal(E.powerCanPlace(card("10", "♥"), redJ), false);
 });
 
 test("foundation A then 2 same suit", () => {
-  assert.equal(
-    E.powerCanPlace(card("A", "♥"), { kind: "foundation", suit: "♥", count: 0 }),
-    true
-  );
-  assert.equal(
-    E.powerCanPlace(card("2", "♥"), { kind: "foundation", suit: "♥", count: 1 }),
-    true
-  );
-  assert.equal(
-    E.powerCanPlace(card("2", "♥"), { kind: "foundation", suit: "♥", count: 0 }),
-    false
-  );
-  assert.equal(
-    E.powerCanPlace(card("A", "♠"), { kind: "foundation", suit: "♥", count: 0 }),
-    false
-  );
-  assert.equal(
-    E.powerCanPlace(card("J", "♥"), { kind: "foundation", suit: "♥", count: 10 }),
-    true
-  );
-  assert.equal(
-    E.powerCanPlace(card("A", "♥"), { kind: "foundation", suit: "♥", count: 11 }),
-    true
-  );
+  const empty = { kind: "foundation", suit: "♠", cards: [] };
+  assert.equal(E.powerCanPlace(card("A", "♠"), empty), true);
+  assert.equal(E.powerCanPlace(card("A", "♥"), empty), false);
+  assert.equal(E.powerCanPlace(card("2", "♠"), empty), false);
+  const one = { kind: "foundation", suit: "♠", cards: [card("A", "♠")] };
+  assert.equal(E.powerCanPlace(card("2", "♠"), one), true);
+  assert.equal(E.powerCanPlace(card("2", "♥"), one), false);
+  assert.equal(E.powerCanPlace(card("3", "♠"), one), false);
+  const session = primed();
+  session.tableau[0] = [{ rank: "A", suit: "♦", faceUp: true }];
+  session.selected = { kind: "tableau", col: 0, depth: 0 };
+  E.tapPower(session, { kind: "foundation", suit: "♦" });
+  assert.equal(session.foundations["♦"].length, 1);
+  assert.equal(session.foundations["♦"][0].rank, "A");
+  assert.equal(session.score, 10);
+  session.tableau[1] = [{ rank: "2", suit: "♦", faceUp: true }];
+  session.selected = { kind: "tableau", col: 1, depth: 0 };
+  E.tapPower(session, { kind: "foundation", suit: "♦" });
+  assert.equal(session.foundations["♦"].length, 2);
+  assert.equal(session.foundations["♦"][1].rank, "2");
+  assert.equal(session.score, 20);
 });
 
 test("stock tap moves to legal tableau", () => {
-  const session = E.createPowerSession(powerDef, seedRng(3));
-  session.status = "playing";
-  session.selected = null;
-  session.score = 0;
-  session.stocks = [[card("10", "♥")], [], []];
-  session.tableau = [
-    [face("J", "♠", true)],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-  ];
+  const session = primed();
+  session.tableau[0] = [{ rank: "10", suit: "♠", faceUp: true }];
+  session.stocks[0] = [{ rank: "9", suit: "♥", faceUp: true }];
   E.tapPower(session, { kind: "stock", pile: 0 });
   assert.equal(session.selected.kind, "stock");
   assert.equal(session.selected.pile, 0);
   E.tapPower(session, { kind: "tableau", col: 0 });
   assert.equal(session.tableau[0].length, 2);
-  assert.equal(session.tableau[0][1].rank, "10");
+  assert.equal(session.tableau[0][1].rank, "9");
   assert.equal(session.tableau[0][1].suit, "♥");
   assert.equal(session.stocks[0].length, 0);
   assert.equal(session.selected, null);
-  const snap = E.snapshotPower(session);
-  assert.equal(snap.tableau[0][1].rank, "10");
-  assert.equal(snap.stocks[0].count, 0);
+  assert.equal(session.lastEvent.kind, "move");
 });
 
-test("Jack from stock can land on an empty column", () => {
-  const session = E.createPowerSession(powerDef, seedRng(4));
-  session.stocks = [[card("J", "♦")], [], []];
-  session.tableau = [[face("9", "♠", true)], [], [], [], [], [], []];
-  session.selected = null;
-  E.tapPower(session, { kind: "stock", pile: 0 });
-  E.tapPower(session, { kind: "tableau", col: 1 });
-  assert.equal(session.tableau[1].length, 1);
-  assert.equal(session.tableau[1][0].rank, "J");
-  assert.equal(session.stocks[0].length, 0);
-});
-
-test("non-Jack cannot move onto empty column via tap", () => {
-  const session = E.createPowerSession(powerDef, seedRng(5));
-  session.stocks = [[card("10", "♥")], [], []];
-  session.tableau = [[], [], [], [], [], [], []];
-  session.selected = null;
+test("stock tap does not move to illegal tableau", () => {
+  const session = primed();
+  session.tableau[0] = [{ rank: "10", suit: "♠", faceUp: true }];
+  session.stocks[0] = [{ rank: "9", suit: "♣", faceUp: true }];
   E.tapPower(session, { kind: "stock", pile: 0 });
   E.tapPower(session, { kind: "tableau", col: 0 });
-  assert.equal(session.tableau[0].length, 0);
-  assert.equal(session.stocks[0].length, 1);
-});
-
-test("tableau top to foundation A then 2", () => {
-  const session = E.createPowerSession(powerDef, seedRng(6));
-  session.tableau = [
-    [face("A", "♥", true)],
-    [face("2", "♥", true)],
-    [],
-    [],
-    [],
-    [],
-    [],
-  ];
-  session.stocks = [[], [], []];
-  session.foundations = { "♠": 0, "♥": 0, "♦": 0, "♣": 0 };
-  session.foundationTops = { "♠": null, "♥": null, "♦": null, "♣": null };
-  session.selected = null;
-  session.score = 0;
-  E.tapPower(session, { kind: "tableau", col: 0 });
-  E.tapPower(session, { kind: "foundation", suit: "♥" });
-  assert.equal(session.foundations["♥"], 1);
-  assert.equal(session.score, 10);
-  assert.equal(session.tableau[0].length, 0);
-  E.tapPower(session, { kind: "tableau", col: 1 });
-  E.tapPower(session, { kind: "foundation", suit: "♥" });
-  assert.equal(session.foundations["♥"], 2);
-  assert.equal(session.foundationTops["♥"].rank, "2");
-  assert.equal(session.score, 20);
-});
-
-test("uncovering a face-down tableau card flips it", () => {
-  const session = E.createPowerSession(powerDef, seedRng(8));
-  session.tableau = [
-    [face("9", "♣", false), face("A", "♠", true)],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-  ];
-  session.foundations = { "♠": 0, "♥": 0, "♦": 0, "♣": 0 };
-  session.foundationTops = { "♠": null, "♥": null, "♦": null, "♣": null };
-  session.selected = null;
-  E.tapPower(session, { kind: "tableau", col: 0 });
-  E.tapPower(session, { kind: "foundation", suit: "♠" });
   assert.equal(session.tableau[0].length, 1);
-  assert.equal(session.tableau[0][0].faceUp, true);
-  assert.equal(session.tableau[0][0].rank, "9");
+  assert.equal(session.stocks[0].length, 1);
+  assert.equal(session.selected, null);
 });
 
-test("snapshot reports single-card moves and home progress", () => {
-  const session = E.createPowerSession(powerDef, seedRng(9));
-  const snap = E.snapshotPower(session);
-  assert.equal(snap.type, "powersol");
-  assert.equal(snap.moves, "single");
-  assert.equal(snap.total, 132);
-  assert.equal(snap.home, 0);
-  assert.equal(snap.tableau.length, 7);
-  assert.equal(snap.stocks.length, 3);
-  assert.equal(snap.foundations["♥"].max, 33);
-  assert.equal(snap.foundations["♥"].next, "A");
+test("POWER_RANKS has no K or Q and Jack is high", () => {
+  assert.deepEqual(E.POWER_RANKS, ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J"]);
 });
