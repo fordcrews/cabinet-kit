@@ -50,16 +50,28 @@
   });
 
   const POWER_RANKS = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J"];
-  const POWER_FOUNDATION_MAX = 33;
-  const POWER_TOTAL = 132;
+  const POWER_RANK_COUNT = POWER_RANKS.length;
+  const POWER_CARDS_PER_DECK = POWER_RANK_COUNT * 4;
 
   const DEFAULT_POWERSOL = Object.freeze({
     type: "powersol",
     foundationScore: 10,
     columns: 7,
-    decks: 3,
+    decks: 1,
     moves: "single",
   });
+
+  function powerDecksOf(config) {
+    return Math.max(1, Math.floor(num(config && config.decks, DEFAULT_POWERSOL.decks)));
+  }
+
+  function powerTotalOf(decks) {
+    return POWER_CARDS_PER_DECK * powerDecksOf({ decks: decks });
+  }
+
+  function powerFoundationMaxOf(decks) {
+    return POWER_RANK_COUNT * powerDecksOf({ decks: decks });
+  }
 
   function configFromElevenGame(game) {
     const src = game && typeof game === "object" ? game : {};
@@ -287,9 +299,10 @@
     return suit === "♥" || suit === "♦";
   }
 
-  function nextPowerRank(count) {
+  function nextPowerRank(count, max) {
     const n = Number(count) || 0;
-    if (n < 0 || n >= POWER_FOUNDATION_MAX) return null;
+    const cap = max == null ? powerFoundationMaxOf(DEFAULT_POWERSOL.decks) : max;
+    if (n < 0 || n >= cap) return null;
     return POWER_RANKS[n % POWER_RANKS.length];
   }
 
@@ -303,7 +316,8 @@
     }
     if (dest.kind === "foundation") {
       if (card.suit !== dest.suit) return false;
-      const need = nextPowerRank(dest.count);
+      const max = dest.max == null ? powerFoundationMaxOf(DEFAULT_POWERSOL.decks) : dest.max;
+      const need = nextPowerRank(dest.count, max);
       return need != null && card.rank === need;
     }
     return false;
@@ -432,6 +446,7 @@
         kind: "foundation",
         suit: to.suit,
         count: session.foundations[to.suit] || 0,
+        max: powerFoundationMaxOf(session.config.decks),
       };
     }
     return null;
@@ -459,7 +474,8 @@
   }
 
   function maybeWinPower(session) {
-    if (foundationsHome(session) >= POWER_TOTAL) {
+    const total = powerTotalOf(session.config.decks);
+    if (foundationsHome(session) >= total) {
       session.status = "won";
       session.lastEvent = { kind: "win", points: 0 };
     }
@@ -543,13 +559,16 @@
         top: top ? copyCard(top) : null,
       };
     });
+    const decks = powerDecksOf(session.config);
+    const fmax = powerFoundationMaxOf(decks);
+    const total = powerTotalOf(decks);
     const foundations = {};
     for (const suit of SUITS) {
       const count = session.foundations[suit] || 0;
       foundations[suit] = {
         count: count,
-        max: POWER_FOUNDATION_MAX,
-        next: nextPowerRank(count),
+        max: fmax,
+        next: nextPowerRank(count, fmax),
         top: session.foundationTops[suit]
           ? copyCard(session.foundationTops[suit])
           : null,
@@ -569,7 +588,7 @@
       foundationScore: session.config.foundationScore,
       moves: session.config.moves,
       home: home,
-      total: POWER_TOTAL,
+      total: total,
       stockCount: stocks.reduce(function (s, p) {
         return s + p.count;
       }, 0),
