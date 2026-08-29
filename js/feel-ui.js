@@ -33,14 +33,20 @@
 
   wrap("renderPower", function (ctx) {
     var ui = ctx.ui;
-    var snap = ctx.E.snapshotPower(ctx.session);
+    var snap = ctx.E.snapshotPatience(ctx.session);
     var playing = snap.status === "playing";
     ui.deal.classList.toggle("ghost", playing);
     ui.deal.classList.toggle("is-reset", playing);
+    var hint = snap.type === "klondike" ? ctx.label("empty", "KING") : ctx.label("empty", "ANY");
     ui.powerTableau.querySelectorAll(".power-empty-col").forEach(function (el) {
       el.classList.add("is-hint");
-      el.textContent = ctx.label("jack", "JACK");
+      el.textContent = hint;
     });
+    if (snap.lastEvent && snap.lastEvent.kind === "illegal") {
+      ui.playPower.classList.add("is-illegal");
+    } else if (ui.playPower) {
+      ui.playPower.classList.remove("is-illegal");
+    }
   });
 
   wrap("renderSudoku", function (ctx) {
