@@ -16,6 +16,7 @@
     scoreBlock: $("score-block"),
     scoreLabel: $("score-label"),
     scoreValue: $("score-value"),
+    scoreBest: $("score-best"),
     hudRound: $("hud-round"),
     hudDeck: $("hud-deck"),
     playRun: $("play-run21"),
@@ -154,6 +155,53 @@
   }
   function setMode(type) {
     window.CabinetPlay.applyMode(ui, type);
+  }
+  function paintBest(id) {
+    const el = ui.scoreBest || $("score-best");
+    if (!el) return;
+    const high = window.CabinetScores ? window.CabinetScores.get(id) : 0;
+    el.textContent = high > 0 ? "BEST " + high : "";
+  }
+  function sittingScore() {
+    const type = gameType();
+    if (type === "yacht") return E.snapshotYacht(session).total;
+    if (type === "reversi") return E.snapshotReversi(session).dark;
+    if (type === "runlanes") return E.snapshotRunLanes(session).score;
+    if (type === "columns21") return E.snapshotColumns(session).score;
+    if (type === "elevenup") return E.snapshotEleven(session).score;
+    if (type === "powersol") return E.snapshotPower(session).score;
+    if (type === "sudoku6") return E.snapshotSudoku(session).score;
+    if (type === "hoops") return E.snapshotHoops(session).score;
+    if (type === "quiznight") return E.snapshotQuiz(session).score;
+    return Number(session && session.score) || 0;
+  }
+  function shouldRecordHigh() {
+    const type = gameType();
+    const status = session && session.status;
+    if (type === "reversi") return status === "done";
+    if (type === "runlanes" || type === "columns21" || type === "elevenup") {
+      return status === "done";
+    }
+    if (type === "run21") {
+      return status === "bust" || status === "run" || status === "stay";
+    }
+    return true;
+  }
+  function applyNewHighBanner(isNew) {
+    if (!isNew || !ui.banner) return;
+    const t = ui.banner.textContent || "";
+    if (t.indexOf("NEW HIGH") >= 0) return;
+    ui.banner.textContent = t ? t + " · NEW HIGH" : "NEW HIGH";
+  }
+  function noteHigh(playCtxObj) {
+    if (!session || !gameDef) return;
+    if (window.CabinetScores) paintBest(gameDef.id);
+    let result = playCtxObj && playCtxObj.highResult;
+    if (!result && window.CabinetScores && shouldRecordHigh()) {
+      result = window.CabinetScores.record(gameDef.id, sittingScore());
+    }
+    if (window.CabinetScores) paintBest(gameDef.id);
+    applyNewHighBanner(result && result.isNew);
   }
   function renderColumns() {
     const snap = E.snapshotColumns(session);

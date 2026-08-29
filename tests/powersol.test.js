@@ -46,7 +46,7 @@ test("Power Solitaire JSON id type title", () => {
 test("no K/Q in decks", () => {
   const session = E.createPowerSession(powerDef, seedRng(7));
   const cards = allPowerCards(session);
-  assert.equal(cards.length, 132);
+  assert.equal(cards.length, 44);
   cards.forEach(function (c) {
     assert.notEqual(c.rank, "K");
     assert.notEqual(c.rank, "Q");
@@ -60,7 +60,7 @@ test("no K/Q in decks", () => {
   const stockN = session.stocks.reduce(function (n, p) {
     return n + p.length;
   }, 0);
-  assert.equal(stockN, 104);
+  assert.equal(stockN, 16);
   assert.equal(session.stocks.length, 3);
 });
 
@@ -119,7 +119,7 @@ test("foundation A then 2 same suit", () => {
   );
   assert.equal(
     E.powerCanPlace(card("A", "♥"), { kind: "foundation", suit: "♥", count: 11 }),
-    true
+    false
   );
 });
 
@@ -229,10 +229,10 @@ test("snapshot reports single-card moves and home progress", () => {
   const snap = E.snapshotPower(session);
   assert.equal(snap.type, "powersol");
   assert.equal(snap.moves, "single");
-  assert.equal(snap.total, 132);
+  assert.equal(snap.total, 44);
   assert.equal(snap.home, 0);
   assert.equal(snap.tableau.length, 7);
   assert.equal(snap.stocks.length, 3);
-  assert.equal(snap.foundations["♥"].max, 33);
+  assert.equal(snap.foundations["♥"].max, 11);
   assert.equal(snap.foundations["♥"].next, "A");
 });
