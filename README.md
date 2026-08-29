@@ -2,7 +2,7 @@
 
 Phone-browser card cabinet. Short sessions, big buttons, no App Store, no accounts, no ads, no IAP. Remix by duplicating JSON.
 
-v0.8 ships ten playable samples — **Run 21**, **Zip 21**, **Chug 21**, **11 Up**, **Power Solitaire**, **Yacht**, **Sudoku 6**, **Reversi**, **Hoops**, and **Quiz Night** — plus an author format so another title is a file drop, not a rewrite. The cabinet list is grouped by category (Card, Puzzle, Strategy, Sports, Quiz).
+v0.13 ships twelve playable samples — **Run 21**, **Zip 21**, **Chug 21**, **11 Up**, **Solitaire**, **FreeCell**, **Spider**, **Yacht**, **Sudoku 6**, **Reversi**, **Hoops**, and **Quiz Night** — plus an author format so another title is a file drop, not a rewrite. The cabinet list is grouped by category (Card, Puzzle, Strategy, Sports, Quiz).
 
 ## Play on a phone
 
@@ -79,17 +79,40 @@ Original pair-off table. Not a licensed cabinet clone.
 - **TAKE SCORE** banks the round. If the grid is fully empty, add **clearBonus** (default 50).
 - **DEAL AGAIN** after a take deals a fresh 12-card grid.
 
-## Power Solitaire
+## Solitaire (Klondike)
 
-Klondike with a boost. Original rules, not a branded clone.
+Standard Klondike. Original cabinet rules, not a branded clone.
 
-- Ranks **A, 2–10, J** only. No Kings or Queens. Jacks are high.
-- **1 deck** (44 cards). Tableau is a 7-column Klondike deal from a mixed shoe (28 cards: 1…7, top face-up, rest face-down and flip when uncovered). Remainder splits into **3 stock piles** (16 leftover cards). Each stock top is face-up. Empty stocks stay empty (no recycle in v0).
-- Tableau builds **descending rank, alternating color**. Empty column: **only a Jack**.
-- Four suit foundations. Each well climbs A→J once (max 11 per suit). Win when all **44** cards are home.
-- v0 moves **single cards** only (JSON `moves: "single"`). Tap a stock top or tableau top, then a destination (tableau column or foundation).
+- Standard **52-card** deck. Kings high.
+- **7 tableau columns**, Klondike deal (1…7, only the top face-up; uncovering flips).
+- One **stock** + **waste**. Tap stock to flip **1** card to waste. When the stock is empty, tap it to recycle the waste (unlimited passes in v0).
+- Tableau builds **descending rank, alternating color**. Empty column: **King only** (or a face-up run that starts with a King).
+- Move **whole face-up stacks**. Tap a face-up card in a packed run to select from that card to the top, then drop on a legal tableau column or (single legal card) a foundation.
+- Four suit foundations climb **A→K**. Win when all **52** are home.
 - Score **+foundationScore** (default 10) per card to a foundation.
 - **DEAL AGAIN** reshuffles. **CABINET** returns to the menu.
+
+## FreeCell
+
+Public-domain FreeCell. Original cabinet UI, not a branded clone.
+
+- **52 cards**, all face-up. **8 cascades**, **4 free cells**, **4 foundations** A→K by suit.
+- Cascades build down alternating color. Empty cascade: any card or legal stack.
+- Each free cell holds **one** card.
+- **Supermove**: a stack move is legal only if there are enough free cells + empty cascades. Max movable = (empty free cells + 1) × 2^(empty cascades, excluding the destination if it is empty). Too big is illegal.
+- Tap a cell, a cascade card in a packed run, or a cascade top, then a destination.
+- Score **+foundationScore** (default 10) per foundation card. Win when all **52** are home. **DEAL AGAIN** reshuffles.
+
+## Spider
+
+Quick **1-suit** Spider. Original cabinet rules, not a branded clone.
+
+- **104 cards** (two 52-card ranks, all one suit). **10 columns**. Classic deal: 6 cards in columns 0–3, 5 in 4–9; only tops face-up.
+- Remaining **50** sit in the stock. Tap stock to deal **10** (one onto each column). Cannot deal while any column is empty.
+- Build down in rank (one suit anyway). Empty column: any card or run.
+- Move packed descending runs of any length. Tap the start of the run.
+- A complete **K→A** run of 13 is removed and scores **+runScore** (default 100). Win when **8** runs are off.
+- **DEAL AGAIN** reshuffles.
 
 ## Yacht
 
@@ -134,12 +157,12 @@ Mixed trivia and jumble rounds from JSON. Four big answer buttons.
 
 ## How to add a game
 
-1. Duplicate a JSON file under `games/` (run21, zip21, chug21, elevenup, powersol, yacht, sudoku6, reversi, hoops, or quiznight).
+1. Duplicate a JSON file under `games/` (run21, zip21, chug21, elevenup, solitaire, freecell, spider, yacht, sudoku6, reversi, hoops, or quiznight).
 2. Change id, title, labels, copy, and the knobs for that type.
 3. Add the filename to a category `games` array in `games/index.json` (or the flat `games` array if you are not using categories).
 4. Reload. The cabinet groups rows under category headings.
 
-Engine keys: `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), `elevenup` (11 Up pairs), `powersol` (Power Solitaire), `yacht` (Yacht five-dice scorecard), `sudoku6`, `reversi`, `hoops`, `quiznight`, and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
+Engine keys: `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), `elevenup` (11 Up pairs), `klondike` (Solitaire stacks), `freecell`, `spider`, `yacht` (Yacht five-dice scorecard), `sudoku6`, `reversi`, `hoops`, `quiznight`, and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
 
 ## JSON fields
 
@@ -147,7 +170,7 @@ Unknown extra fields are ignored.
 
 Shared:
 - id (string): Hash route id. Unique. Played at `#/play/:id`.
-- type (string): `runlanes`, `columns21`, `elevenup`, `powersol`, `yacht`, `sudoku6`, `reversi`, `hoops`, `quiznight`, or `run21`.
+- type (string): `runlanes`, `columns21`, `elevenup`, `klondike`, `freecell`, `spider`, `yacht`, `sudoku6`, `reversi`, `hoops`, `quiznight`, or `run21`.
 - title, tagline, blurb: Cabinet row + in-game marquee.
 - target (number): Bust line (21).
 - thinDeck (number): Run 21 reshuffles under this. Columns games default 0 (one shoe, then done).
@@ -170,7 +193,11 @@ Columns 21 extras:
 
 11 Up (`elevenup`) extras: pairScore (11), passPenalty (5), clearBonus (50), cells (16), dealCount (12), labels.next take stock, copy.playing pair illegal next take clear done full.
 
-Power Solitaire (`powersol`) extras: foundationScore (10), columns (7), decks (1), moves (`single`), labels.home stock again, copy.playing move foundation illegal won.
+Solitaire (`klondike`) extras: foundationScore (10), columns (7), moves (`run`), labels.home stock waste empty again, copy.playing move foundation illegal won draw recycle.
+
+FreeCell (`freecell`) extras: foundationScore (10), columns (8), cells (4), moves (`run`), labels.home cell empty again.
+
+Spider (`spider`) extras: columns (10), runScore (100), suits (1), suit (`♠`), runs (8), moves (`run`), labels.runs stock empty again, copy.playing move complete illegal won deal.
 
 Yacht (`yacht`) extras: upperBonus (35), upperThreshold (63), fullHouse (25), smallStraight (30), largeStraight (40), yacht (50), rolls (3), labels.roll hold aces…sixes threekind fourkind fullhouse smallstraight largestraight yacht chance, copy.idle playing mustScore done.
 
@@ -200,7 +227,11 @@ Columns: exact 21 clear, five-under clear, bust penalty empties the lane, skip d
 
 11 Up: 5+6 and A+10 legal, 2+8 illegal, two Jacks legal, J+Q illegal, next fills empty and penalizes, take on a clear adds bonus, cannot next if the grid is full.
 
-Power Solitaire: no K/Q in the 44-card shoe, Jack only on empty column, alt-color descending, foundation A then 2 of the same suit, stock tap moves to a legal tableau.
+Solitaire (Klondike): 52-card shoe including K/Q, King only on empty column, alt-color descending, stack move of a packed run, foundation A then 2 of the same suit.
+
+FreeCell: deal 52 face-up, a free cell holds one, illegal double-fill, supermove blocked with no helpers, foundation A then 2.
+
+Spider: 104 cards, deal-row blocked if a column is empty, completing K–A removes 13, stack move of a descending run.
 
 Yacht: roll yields five dice 1–6, hold keeps a face on the next roll, a fourth roll throws, aces sum ones, full house 25 / junk 0, small straight 30 / large 40, yacht 50, a category cannot be scored twice, upper bonus at 63, thirteen scores then done.
 
