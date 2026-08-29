@@ -128,54 +128,40 @@
     ui.scoreBlock.hidden = false;
     ui.scoreLabel.textContent = label("score", "SCORE");
     ui.back.textContent = label("back", "CABINET");
+    const ctx = playCtx();
     if (isColumns()) {
       setMode("columns21");
       renderColumns();
-      return;
-    }
-    if (isRunLanes()) {
+    } else if (isRunLanes()) {
       setMode("runlanes");
       renderRunLanes();
-      return;
-    }
-    if (isEleven()) {
+    } else if (isEleven()) {
       setMode("elevenup");
-      window.CabinetPlay.renderEleven(playCtx());
-      return;
-    }
-    if (isPower()) {
+      window.CabinetPlay.renderEleven(ctx);
+    } else if (isPower()) {
       setMode("powersol");
-      window.CabinetPlay.renderPower(playCtx());
-      return;
-    }
-    if (isYacht()) {
+      window.CabinetPlay.renderPower(ctx);
+    } else if (isYacht()) {
       setMode("yacht");
-      window.CabinetPlay.renderYacht(playCtx());
-      return;
-    }
-    if (isSudoku()) {
+      window.CabinetPlay.renderYacht(ctx);
+    } else if (isSudoku()) {
       setMode("sudoku6");
-      window.CabinetPlay.renderSudoku(playCtx());
-      return;
-    }
-    if (isReversi()) {
+      window.CabinetPlay.renderSudoku(ctx);
+    } else if (isReversi()) {
       setMode("reversi");
-      window.CabinetPlay.renderReversi(playCtx());
-      return;
-    }
-    if (isHoops()) {
+      window.CabinetPlay.renderReversi(ctx);
+    } else if (isHoops()) {
       setMode("hoops");
-      window.CabinetPlay.renderHoops(playCtx());
+      window.CabinetPlay.renderHoops(ctx);
       startHoopsLoop();
-      return;
-    }
-    if (isQuiz()) {
+    } else if (isQuiz()) {
       setMode("quiznight");
-      window.CabinetPlay.renderQuiz(playCtx());
-      return;
+      window.CabinetPlay.renderQuiz(ctx);
+    } else {
+      setMode("run21");
+      renderRun();
     }
-    setMode("run21");
-    renderRun();
+    noteHigh(ctx);
   }
   function playCtx() {
     return { E: E, ui: ui, session: session, gameDef: gameDef, label: label, copy: copy };
@@ -292,6 +278,13 @@
       btn.innerHTML = '<span class="title"></span><span class="tagline"></span>';
       btn.querySelector(".title").textContent = def.title || def.id;
       btn.querySelector(".tagline").textContent = def.tagline || def.blurb || "";
+      const high = window.CabinetScores ? window.CabinetScores.get(def.id) : 0;
+      if (high > 0) {
+        const best = document.createElement("span");
+        best.className = "best";
+        best.textContent = "BEST " + high;
+        btn.appendChild(best);
+      }
       btn.addEventListener("click", function () {
         location.hash = "#/play/" + encodeURIComponent(def.id);
       });
