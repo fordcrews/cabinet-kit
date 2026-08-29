@@ -1,5 +1,5 @@
 /**
- * 11 Up + Power Solitaire player views. Loaded after engine/solitaire, before or with app.
+ * 11 Up + Klondike / FreeCell / Spider player views. Loaded after engine/solitaire, before or with app.
  */
 (function () {
   "use strict";
@@ -45,7 +45,7 @@
   function applyMode(ui, type) {
     const columnsPlay = type === "columns21" || type === "runlanes";
     const eleven = type === "elevenup";
-    const power = type === "powersol";
+    const power = type === "klondike" || type === "freecell" || type === "spider" || type === "powersol";
     const yacht = type === "yacht";
     const sudoku = type === "sudoku6";
     const reversi = type === "reversi";
@@ -149,94 +149,222 @@
     return sel && sel.kind === kind && sel[key] === value;
   }
 
+  function runSelected(sel, col, index) {
+    if (!sel || sel.kind !== "tableau" || sel.col !== col) return false;
+    const start = sel.index == null ? index : sel.index;
+    return index >= start;
+  }
+
   function renderPower(ctx) {
     const E = ctx.E, ui = ctx.ui, session = ctx.session;
-    const snap = E.snapshotPower(session);
+    const snap = E.snapshotPatience(session);
     const label = ctx.label, copy = ctx.copy;
+    const type = snap.type;
     ui.scoreLabel.textContent = label("score", "SCORE");
     ui.scoreValue.textContent = String(snap.score);
-    ui.hudRound.textContent = label("home", "HOME") + " " + snap.home + "/" + snap.total;
-    ui.hudDeck.textContent = label("stock", "STOCK") + " " + snap.stockCount;
+    if (type === "spider") {
+      ui.hudRound.textContent = label("runs", "RUNS") + " " + snap.completed + "/" + snap.runs;
+      ui.hudDeck.textContent = label("stock", "STOCK") + " " + snap.stockCount;
+    } else {
+      ui.hudRound.textContent = label("home", "HOME") + " " + snap.home + "/" + snap.total;
+      ui.hudDeck.textContent = type === "klondike"
+        ? label("stock", "STOCK") + " " + snap.stockCount
+        : "";
+    }
     ui.deal.textContent = label("again", "DEAL AGAIN");
     ui.deal.classList.remove("hidden");
     ui.back.textContent = label("back", "CABINET");
     const sel = snap.selected;
     const playing = snap.status === "playing";
-    ui.powerFoundations.replaceChildren();
-    E.SUITS.forEach(function (suit) {
-      const well = snap.foundations[suit];
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "power-well foundation-well";
-      btn.dataset.foundation = suit;
-      btn.disabled = !playing;
-      const mark = document.createElement("span");
-      mark.className = "power-suit" + (suit === "♥" || suit === "♦" ? " card-red" : "");
-      mark.textContent = suit;
-      btn.appendChild(mark);
-      if (well.top) btn.appendChild(cardNode(well.top, true, false));
-      const meta = document.createElement("span");
-      meta.className = "power-meta";
-      meta.textContent = well.count + "/" + well.max;
-      btn.appendChild(meta);
-      ui.powerFoundations.appendChild(btn);
-    });
-    ui.powerStocks.replaceChildren();
-    snap.stocks.forEach(function (pile, i) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "power-well stock-well" + (selMatch(sel, "stock", "pile", i) ? " is-selected" : "");
-      btn.dataset.stock = String(i);
-      btn.disabled = !playing || pile.count === 0;
-      if (pile.top) {
-        btn.appendChild(cardNode(pile.top, false, selMatch(sel, "stock", "pile", i)));
+    if (ui.playPower) {
+      ui.playPower.classList.toggle("is-klondike", type === "klondike");
+      ui.playPower.classList.toggle("is-freecell", type === "freecell");
+      ui.playPower.classList.toggle("is-spider", type === "spider");
+    }
+    const showFound = type === "klondike" || type === "freecell";
+    const showCells = type === "freecell";
+    const showStocks = type === "klondike" || type === "spider";
+    const showDone = type === "spider";
+    if (ui.powerFoundations) ui.powerFoundations.classList.toggle("hidden", !showFound);
+    if (ui.powerCells) ui.powerCells.classList.toggle("hidden", !showCells);
+    if (ui.powerStocks) ui.powerStocks.classList.toggle("hidden", !showStocks);
+    if (ui.powerCompleted) ui.powerCompleted.classList.toggle("hidden", !showDone);
+
+    if (showFound && ui.powerFoundations) {
+      ui.powerFoundations.replaceChildren();
+      E.SUITS.forEach(function (suit) {
+        const well = snap.foundations[suit];
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "power-well foundation-well";
+        btn.dataset.foundation = suit;
+        btn.disabled = !playing;
+        const mark = document.createElement("span");
+        mark.className = "power-suit" + (suit === "♥" || suit === "♦" ? " card-red" : "");
+        mark.textContent = suit;
+        btn.appendChild(mark);
+        if (well.top) btn.appendChild(cardNode(well.top, true, false));
+        const meta = document.createElement("span");
+        meta.className = "power-meta";
+        meta.textContent = well.count + "/" + well.max;
+        btn.appendChild(meta);
+        ui.powerFoundations.appendChild(btn);
+      });
+    }
+
+    if (showCells && ui.powerCells) {
+      ui.powerCells.replaceChildren();
+      (snap.cells || []).forEach(function (c, i) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "power-well cell-well" + (selMatch(sel, "cell", "i", i) ? " is-selected" : "");
+        btn.dataset.pcell = String(i);
+        btn.disabled = !playing;
+        if (c) {
+          btn.appendChild(cardNode(c, false, selMatch(sel, "cell", "i", i)));
+        } else {
+          const empty = document.createElement("span");
+          empty.className = "power-empty";
+          empty.textContent = label("cell", "CELL");
+          btn.appendChild(empty);
+        }
+        ui.powerCells.appendChild(btn);
+      });
+    }
+
+    if (showStocks && ui.powerStocks) {
+      ui.powerStocks.replaceChildren();
+      if (type === "klondike") {
+        const stockBtn = document.createElement("button");
+        stockBtn.type = "button";
+        stockBtn.className = "power-well stock-well";
+        stockBtn.dataset.stock = "stock";
+        stockBtn.disabled = !playing;
+        if (snap.stockCount) {
+          const back = cardNode({ rank: "", suit: "", faceUp: false }, false, false);
+          stockBtn.appendChild(back);
+        } else {
+          const empty = document.createElement("span");
+          empty.className = "power-empty";
+          empty.textContent = snap.wasteCount ? "↺" : "—";
+          stockBtn.appendChild(empty);
+        }
+        const sm = document.createElement("span");
+        sm.className = "power-meta";
+        sm.textContent = String(snap.stockCount);
+        stockBtn.appendChild(sm);
+        ui.powerStocks.appendChild(stockBtn);
+
+        const wasteBtn = document.createElement("button");
+        wasteBtn.type = "button";
+        wasteBtn.className = "power-well stock-well" + (sel && sel.kind === "waste" ? " is-selected" : "");
+        wasteBtn.dataset.stock = "waste";
+        wasteBtn.disabled = !playing || !snap.wasteCount;
+        if (snap.waste && snap.waste.top) {
+          wasteBtn.appendChild(cardNode(snap.waste.top, false, sel && sel.kind === "waste"));
+        } else {
+          const empty = document.createElement("span");
+          empty.className = "power-empty";
+          empty.textContent = label("waste", "WASTE");
+          wasteBtn.appendChild(empty);
+        }
+        ui.powerStocks.appendChild(wasteBtn);
       } else {
-        const empty = document.createElement("span");
-        empty.className = "power-empty";
-        empty.textContent = "—";
-        btn.appendChild(empty);
+        const stockBtn = document.createElement("button");
+        stockBtn.type = "button";
+        stockBtn.className = "power-well stock-well";
+        stockBtn.dataset.stock = "stock";
+        stockBtn.disabled = !playing;
+        if (snap.stockCount) {
+          stockBtn.appendChild(cardNode({ rank: "", suit: "", faceUp: false }, false, false));
+        } else {
+          const empty = document.createElement("span");
+          empty.className = "power-empty";
+          empty.textContent = "—";
+          stockBtn.appendChild(empty);
+        }
+        const sm = document.createElement("span");
+        sm.className = "power-meta";
+        sm.textContent = String(snap.stockCount);
+        stockBtn.appendChild(sm);
+        ui.powerStocks.appendChild(stockBtn);
       }
-      const meta = document.createElement("span");
-      meta.className = "power-meta";
-      meta.textContent = String(pile.count);
-      btn.appendChild(meta);
-      ui.powerStocks.appendChild(btn);
-    });
+    }
+
+    if (showDone && ui.powerCompleted) {
+      ui.powerCompleted.replaceChildren();
+      for (let i = 0; i < (snap.runs || 8); i++) {
+        const slot = document.createElement("div");
+        slot.className = "power-well completed-well" + (i < snap.completed ? " is-filled" : "");
+        slot.dataset.completed = String(i);
+        if (i < snap.completed) {
+          slot.appendChild(cardNode({ rank: "K", suit: "♠", faceUp: true }, true, false));
+        } else {
+          const empty = document.createElement("span");
+          empty.className = "power-empty";
+          empty.textContent = "K–A";
+          slot.appendChild(empty);
+        }
+        ui.powerCompleted.appendChild(slot);
+      }
+    }
+
     ui.powerTableau.replaceChildren();
+    ui.powerTableau.style.setProperty("--cols", String(snap.tableau.length));
     snap.tableau.forEach(function (col, i) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "power-col" + (selMatch(sel, "tableau", "col", i) ? " is-selected" : "");
-      btn.dataset.pcol = String(i);
-      btn.disabled = !playing;
+      const wrap = document.createElement("div");
+      wrap.className = "power-col" + (selMatch(sel, "tableau", "col", i) ? " is-selected" : "");
+      wrap.dataset.pcol = String(i);
       if (!col.length) {
-        const empty = document.createElement("span");
-        empty.className = "power-empty-col";
-        empty.textContent = "J";
-        btn.appendChild(empty);
+        const emptyBtn = document.createElement("button");
+        emptyBtn.type = "button";
+        emptyBtn.className = "power-empty-col";
+        emptyBtn.dataset.pcol = String(i);
+        emptyBtn.disabled = !playing;
+        emptyBtn.textContent = type === "klondike" ? "K" : "—";
+        wrap.appendChild(emptyBtn);
       } else {
         col.forEach(function (c, n) {
           const isTop = n === col.length - 1;
-          const node = cardNode(c, !isTop, isTop && selMatch(sel, "tableau", "col", i));
-          if (!isTop) node.classList.add("stacked");
+          const picked = runSelected(sel, i, n) && c.faceUp !== false;
+          const node = cardNode(c, !isTop, picked);
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "power-card-btn" + (isTop ? "" : " stacked") + (picked ? " is-selected" : "");
+          btn.dataset.pcol = String(i);
+          btn.dataset.idx = String(n);
+          btn.disabled = !playing || c.faceUp === false;
+          if (!isTop) btn.classList.add("is-stacked");
           btn.appendChild(node);
+          if (!isTop) node.classList.add("stacked");
+          wrap.appendChild(btn);
         });
       }
-      ui.powerTableau.appendChild(btn);
+      ui.powerTableau.appendChild(wrap);
     });
+
     ui.banner.className = "banner";
     const ev = snap.lastEvent;
     if (snap.status === "won") {
       ui.banner.classList.add("run");
-      ui.banner.textContent = copy("won", "All 44 home. Power complete.") + " · " + snap.score;
+      ui.banner.textContent = copy("won", "Cleared.") + " · " + snap.score;
     } else if (ev && ev.kind === "foundation") {
       ui.banner.classList.add("run");
       ui.banner.textContent = "+" + ev.points + " · " + copy("foundation", "Home.");
+    } else if (ev && ev.kind === "complete") {
+      ui.banner.classList.add("run");
+      ui.banner.textContent = "+" + ev.points + " · " + copy("complete", "Run off.");
     } else if (ev && ev.kind === "illegal") {
       ui.banner.classList.add("bust");
       ui.banner.textContent = copy("illegal", "That pile won't take it.");
     } else if (ev && ev.kind === "move") {
       ui.banner.textContent = copy("move", "Card placed.");
+    } else if (ev && ev.kind === "draw") {
+      ui.banner.textContent = copy("draw", "Flipped to waste.");
+    } else if (ev && ev.kind === "recycle") {
+      ui.banner.textContent = copy("recycle", "Waste back to stock.");
+    } else if (ev && ev.kind === "deal") {
+      ui.banner.textContent = copy("deal", "Row dealt.");
     } else {
       ui.banner.textContent = copy("playing", "Tap a card, then a destination.");
     }
@@ -459,6 +587,7 @@
     applyMode: applyMode,
     renderEleven: renderEleven,
     renderPower: renderPower,
+    renderPatience: renderPower,
     renderSudoku: renderSudoku,
     renderReversi: renderReversi,
     renderHoops: renderHoops,
@@ -476,6 +605,8 @@
       ui.powerFoundations = $("power-foundations");
       ui.powerStocks = $("power-stocks");
       ui.powerTableau = $("power-tableau");
+      ui.powerCells = $("power-cells");
+      ui.powerCompleted = $("power-completed");
       ui.yachtDice = $("yacht-dice");
       ui.yachtCard = $("yacht-card");
       ui.sudokuGrid = $("sudoku-grid");
