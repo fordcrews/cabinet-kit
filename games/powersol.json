@@ -2,11 +2,11 @@
   "id": "powersol",
   "type": "powersol",
   "title": "Power Solitaire",
-  "tagline": "Three decks. Jacks high. No kings.",
-  "blurb": "Klondike with a boost: A–J only, three 44-card decks, four suit wells that each climb A–J three times. Single cards in v0.",
+  "tagline": "One deck. Jacks high. No kings.",
+  "blurb": "Klondike with a boost: A–J only, one 44-card deck, four suit wells that each climb A–J once. Single cards in v0.",
   "foundationScore": 10,
   "columns": 7,
-  "decks": 3,
+  "decks": 1,
   "moves": "single",
   "labels": {
     "again": "DEAL AGAIN",
@@ -21,7 +21,7 @@
     "move": "Placed.",
     "foundation": "Home.",
     "illegal": "Won't take it.",
-    "won": "All 132 home.",
+    "won": "All 44 home.",
     "single": "v0 moves one card at a time — no tableau runs."
   }
 }
