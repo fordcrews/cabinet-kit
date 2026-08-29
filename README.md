@@ -84,9 +84,9 @@ Original pair-off table. Not a licensed cabinet clone.
 Klondike with a boost. Original rules, not a branded clone.
 
 - Ranks **A, 2–10, J** only. No Kings or Queens. Jacks are high.
-- **3 decks** at once (132 cards). Tableau is a 7-column Klondike deal from a mixed shoe (28 cards: 1…7, top face-up, rest face-down and flip when uncovered). Remainder splits into **3 stock piles**. Each stock top is face-up. Empty stocks stay empty (no recycle in v0).
+- **1 deck** (44 cards). Tableau is a 7-column Klondike deal from a mixed shoe (28 cards: 1…7, top face-up, rest face-down and flip when uncovered). Remainder splits into **3 stock piles** (16 leftover cards). Each stock top is face-up. Empty stocks stay empty (no recycle in v0).
 - Tableau builds **descending rank, alternating color**. Empty column: **only a Jack**.
-- Four suit foundations. Each well climbs A→J three times in sequence (max 33 per suit; next rank is count % 11). Win when all **132** cards are home.
+- Four suit foundations. Each well climbs A→J once (max 11 per suit). Win when all **44** cards are home.
 - v0 moves **single cards** only (JSON `moves: "single"`). Tap a stock top or tableau top, then a destination (tableau column or foundation).
 - Score **+foundationScore** (default 10) per card to a foundation.
 - **DEAL AGAIN** reshuffles. **CABINET** returns to the menu.
@@ -170,7 +170,7 @@ Columns 21 extras:
 
 11 Up (`elevenup`) extras: pairScore (11), passPenalty (5), clearBonus (50), cells (16), dealCount (12), labels.next take stock, copy.playing pair illegal next take clear done full.
 
-Power Solitaire (`powersol`) extras: foundationScore (10), columns (7), decks (3), moves (`single`), labels.home stock again, copy.playing move foundation illegal won.
+Power Solitaire (`powersol`) extras: foundationScore (10), columns (7), decks (1), moves (`single`), labels.home stock again, copy.playing move foundation illegal won.
 
 Yacht (`yacht`) extras: upperBonus (35), upperThreshold (63), fullHouse (25), smallStraight (30), largeStraight (40), yacht (50), rolls (3), labels.roll hold aces…sixes threekind fourkind fullhouse smallstraight largestraight yacht chance, copy.idle playing mustScore done.
 
@@ -200,7 +200,7 @@ Columns: exact 21 clear, five-under clear, bust penalty empties the lane, skip d
 
 11 Up: 5+6 and A+10 legal, 2+8 illegal, two Jacks legal, J+Q illegal, next fills empty and penalizes, take on a clear adds bonus, cannot next if the grid is full.
 
-Power Solitaire: no K/Q in the 132-card shoe, Jack only on empty column, alt-color descending, foundation A then 2 of the same suit, stock tap moves to a legal tableau.
+Power Solitaire: no K/Q in the 44-card shoe, Jack only on empty column, alt-color descending, foundation A then 2 of the same suit, stock tap moves to a legal tableau.
 
 Yacht: roll yields five dice 1–6, hold keeps a face on the next roll, a fourth roll throws, aces sum ones, full house 25 / junk 0, small straight 30 / large 40, yacht 50, a category cannot be scored twice, upper bonus at 63, thirteen scores then done.
 
