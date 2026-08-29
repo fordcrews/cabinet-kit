@@ -139,7 +139,7 @@
       setMode("elevenup");
       window.CabinetPlay.renderEleven(ctx);
     } else if (isPower()) {
-      setMode("powersol");
+      setMode(gameType());
       window.CabinetPlay.renderPower(ctx);
     } else if (isYacht()) {
       setMode("yacht");
@@ -190,7 +190,7 @@
     gameDef = null;
     show("cabinet");
     ui.brand.textContent = "Cabinet";
-    ui.sub.textContent = "Card kit \u00b7 offline";
+    ui.sub.textContent = "Card kit · offline";
     ui.scoreBlock.hidden = true;
   }
   function startGame(def) {
@@ -199,7 +199,9 @@
       columns21: 1,
       runlanes: 1,
       elevenup: 1,
-      powersol: 1,
+      klondike: 1,
+      freecell: 1,
+      spider: 1,
       yacht: 1,
       sudoku6: 1,
       reversi: 1,
@@ -208,7 +210,7 @@
     };
     if (!def || !PLAYABLE[def.type]) {
       ui.list.innerHTML =
-        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "powersol", "yacht", "sudoku6", "reversi", "hoops", "quiznight", and "run21". See README.</li>';
+        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "klondike", "freecell", "spider", "yacht", "sudoku6", "reversi", "hoops", "quiznight", and "run21". See README.</li>';
       openCabinet();
       return;
     }
@@ -220,8 +222,8 @@
       session = E.createRunLanesSession(def);
     } else if (def.type === "elevenup") {
       session = E.createElevenSession(def);
-    } else if (def.type === "powersol") {
-      session = E.createPowerSession(def);
+    } else if (def.type === "klondike" || def.type === "freecell" || def.type === "spider") {
+      session = E.createPatienceSession(def);
     } else if (def.type === "yacht") {
       session = E.createYachtSession(def);
     } else if (def.type === "sudoku6") {
@@ -354,7 +356,7 @@
       return;
     }
     if (isPower()) {
-      session = E.createPowerSession(gameDef);
+      session = E.createPatienceSession(gameDef);
       renderGame();
       return;
     }
@@ -417,27 +419,38 @@
     E.tapEleven(session, Number(cell.getAttribute("data-cell")));
     renderGame();
   });
-  ui.powerFoundations.addEventListener("click", function (ev) {
-    if (!session || !isPower() || session.status !== "playing") return;
-    const well = ev.target.closest("[data-foundation]");
-    if (!well) return;
-    E.tapPower(session, { kind: "foundation", suit: well.getAttribute("data-foundation") });
-    renderGame();
-  });
-  ui.powerStocks.addEventListener("click", function (ev) {
-    if (!session || !isPower() || session.status !== "playing") return;
-    const well = ev.target.closest("[data-stock]");
-    if (!well) return;
-    E.tapPower(session, { kind: "stock", pile: Number(well.getAttribute("data-stock")) });
-    renderGame();
-  });
-  ui.powerTableau.addEventListener("click", function (ev) {
-    if (!session || !isPower() || session.status !== "playing") return;
+  function patienceTargetFromEvent(ev) {
+    const foundation = ev.target.closest("[data-foundation]");
+    if (foundation) return { kind: "foundation", suit: foundation.getAttribute("data-foundation") };
+    const cell = ev.target.closest("[data-pcell]");
+    if (cell) return { kind: "cell", i: Number(cell.getAttribute("data-pcell")) };
+    const stock = ev.target.closest("[data-stock]");
+    if (stock) {
+      const kind = stock.getAttribute("data-stock");
+      if (kind === "waste") return { kind: "waste" };
+      return { kind: "stock" };
+    }
+    const card = ev.target.closest("[data-idx]");
+    if (card) {
+      const out = {
+        kind: "tableau",
+        col: Number(card.getAttribute("data-pcol")),
+        index: Number(card.getAttribute("data-idx")),
+      };
+      return out;
+    }
     const col = ev.target.closest("[data-pcol]");
-    if (!col) return;
-    E.tapPower(session, { kind: "tableau", col: Number(col.getAttribute("data-pcol")) });
+    if (col) return { kind: "tableau", col: Number(col.getAttribute("data-pcol")) };
+    return null;
+  }
+  function onPatienceClick(ev) {
+    if (!session || !isPower() || session.status !== "playing") return;
+    const target = patienceTargetFromEvent(ev);
+    if (!target) return;
+    E.tapPatience(session, target);
     renderGame();
-  });
+  }
+  if (ui.playPower) ui.playPower.addEventListener("click", onPatienceClick);
   ui.skip.addEventListener("click", function () {
     if (!session || !usesColumnsPlayfield() || session.status !== "playing") return;
     if (session.skipsLeft <= 0) return;
