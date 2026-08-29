@@ -1,0 +1,174 @@
+/* Klondike / FreeCell / Spider layouts. Enamel overlay stays in pieces.css. */
+
+.patience-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.patience-top .power-foundations,
+.patience-top .power-stocks,
+.patience-top .power-cells,
+.patience-top .power-completed {
+  flex: 1 1 auto;
+}
+
+.power-cells {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(44px, 1fr));
+  gap: 6px;
+}
+
+.power-completed {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(28px, 1fr));
+  gap: 4px;
+}
+
+.power-table.is-klondike .power-stocks {
+  grid-template-columns: repeat(2, minmax(44px, 1fr));
+}
+
+.power-table.is-spider .power-stocks {
+  grid-template-columns: minmax(44px, 120px);
+  max-width: 140px;
+}
+
+.power-tableau {
+  grid-template-columns: repeat(var(--cols, 7), minmax(36px, 1fr));
+}
+
+.power-table.is-freecell .power-tableau {
+  grid-template-columns: repeat(8, minmax(36px, 1fr));
+}
+
+.power-table.is-spider .power-tableau {
+  grid-template-columns: repeat(10, minmax(28px, 1fr));
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.power-card-btn {
+  display: block;
+  width: 100%;
+  max-width: 64px;
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+  min-height: 0;
+  border-radius: 0;
+}
+
+.power-card-btn:disabled {
+  opacity: 1;
+}
+
+.power-card-btn.is-stacked {
+  margin-bottom: -58%;
+  position: relative;
+  z-index: 1;
+}
+
+.power-card-btn.is-stacked .card {
+  min-height: 28px;
+  margin-bottom: 0;
+}
+
+.power-col .power-card-btn .card {
+  width: 100%;
+  max-width: 64px;
+  height: auto;
+  min-height: 44px;
+  aspect-ratio: 2 / 2.6;
+  pointer-events: none;
+}
+
+.power-col .power-card-btn.is-stacked .card {
+  min-height: 24px;
+  aspect-ratio: auto;
+}
+
+.power-card-btn.is-selected .card,
+.power-card-btn.is-selected {
+  outline: 3px solid var(--gold);
+  box-shadow: 0 0 0 2px var(--gold-dim);
+}
+
+.power-empty-col {
+  min-height: 44px;
+  min-width: 44px;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+}
+
+.power-table.is-spider .power-col .card,
+.power-table.is-spider .power-card-btn .card {
+  min-height: 36px;
+  max-width: none;
+}
+
+.power-table.is-spider .power-card-btn.is-stacked {
+  margin-bottom: -70%;
+}
+
+.power-table.is-illegal .power-col.is-selected,
+.power-table.is-illegal .power-well.is-selected {
+  outline-color: var(--bust);
+}
+
+.completed-well {
+  min-height: 44px;
+  pointer-events: none;
+}
+
+.completed-well.is-filled {
+  border-color: var(--ok);
+}
+
+.cell-well {
+  min-height: 72px;
+}
+
+@media (orientation: landscape) {
+  #view-game .power-table {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .power-table.is-spider .power-tableau {
+    min-width: 520px;
+  }
+
+  .power-table.is-spider .power-col .card,
+  .power-table.is-spider .power-card-btn .card {
+    min-height: 32px;
+  }
+
+  .patience-top {
+    gap: 6px;
+  }
+
+  .power-well {
+    min-height: 52px;
+  }
+}
+
+@media (max-width: 420px) {
+  .power-table.is-spider .power-tableau {
+    min-width: 360px;
+  }
+
+  .power-col .power-card-btn .card {
+    min-height: 36px;
+  }
+}
