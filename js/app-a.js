@@ -87,8 +87,12 @@
   function isEleven() {
     return gameType() === "elevenup";
   }
+  function isPatience() {
+    const t = gameType();
+    return t === "klondike" || t === "freecell" || t === "spider";
+  }
   function isPower() {
-    return gameType() === "powersol";
+    return isPatience();
   }
   function isYacht() {
     return gameType() === "yacht";
@@ -169,7 +173,7 @@
     if (type === "runlanes") return E.snapshotRunLanes(session).score;
     if (type === "columns21") return E.snapshotColumns(session).score;
     if (type === "elevenup") return E.snapshotEleven(session).score;
-    if (type === "powersol") return E.snapshotPower(session).score;
+    if (type === "klondike" || type === "freecell" || type === "spider") return E.snapshotPatience(session).score;
     if (type === "sudoku6") return E.snapshotSudoku(session).score;
     if (type === "hoops") return E.snapshotHoops(session).score;
     if (type === "quiznight") return E.snapshotQuiz(session).score;
