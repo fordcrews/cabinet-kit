@@ -593,6 +593,9 @@
     } else {
       ui.banner.textContent = copy("mustScore", "Pick a category. Zero is allowed.");
     }
+    if (window.CabinetPlay && typeof window.CabinetPlay.notePlayHigh === "function") {
+      window.CabinetPlay.notePlayHigh(ctx, snap.total, snap);
+    }
   }
 
   if (typeof window !== "undefined" && window.CabinetPlay) {
