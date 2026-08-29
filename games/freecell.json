@@ -1,0 +1,26 @@
+{
+  "id": "freecell",
+  "type": "freecell",
+  "title": "FreeCell",
+  "tagline": "Eight cascades. Four free cells.",
+  "blurb": "All 52 face-up. Cascades build down alternating color. Empty cascade takes any card or legal stack. Free cells hold one. Supermove uses free cells and empty cascades.",
+  "foundationScore": 10,
+  "columns": 8,
+  "cells": 4,
+  "moves": "run",
+  "labels": {
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "score": "SCORE",
+    "home": "HOME",
+    "empty": "ANY",
+    "cell": "CELL"
+  },
+  "copy": {
+    "playing": "Tap a card or packed run, then a cascade, cell, or foundation.",
+    "move": "Placed.",
+    "foundation": "Home.",
+    "illegal": "Won't take it.",
+    "won": "All 52 home."
+  }
+}

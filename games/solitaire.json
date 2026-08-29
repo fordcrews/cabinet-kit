@@ -1,0 +1,28 @@
+{
+  "id": "solitaire",
+  "type": "klondike",
+  "title": "Solitaire",
+  "tagline": "Klondike. Draw one. Move stacks.",
+  "blurb": "Standard 52. Kings high. Foundations A–K by suit. Tableau down alternating color. Empty column: King. Draw-1 stock, unlimited recycle. Move whole face-up runs.",
+  "foundationScore": 10,
+  "columns": 7,
+  "moves": "run",
+  "labels": {
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "score": "SCORE",
+    "stock": "STOCK",
+    "waste": "WASTE",
+    "home": "HOME",
+    "empty": "KING"
+  },
+  "copy": {
+    "playing": "Tap a run, then a destination. KING on empty.",
+    "move": "Placed.",
+    "foundation": "Home.",
+    "illegal": "Won't take it.",
+    "won": "All 52 home.",
+    "draw": "Flipped to waste.",
+    "recycle": "Waste back to stock."
+  }
+}

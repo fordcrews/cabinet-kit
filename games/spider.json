@@ -1,0 +1,29 @@
+{
+  "id": "spider",
+  "type": "spider",
+  "title": "Spider",
+  "tagline": "One suit. Eight kings to ace.",
+  "blurb": "104 cards, all one suit. Ten columns. Build down in rank. A complete K–A run peels off. Deal a row only when no column is empty.",
+  "columns": 10,
+  "runScore": 100,
+  "suits": 1,
+  "suit": "♠",
+  "runs": 8,
+  "moves": "run",
+  "labels": {
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "score": "SCORE",
+    "stock": "STOCK",
+    "runs": "RUNS",
+    "empty": "ANY"
+  },
+  "copy": {
+    "playing": "Tap a descending run, then a column. Stock deals a row.",
+    "move": "Placed.",
+    "complete": "Run off.",
+    "illegal": "Won't take it.",
+    "won": "Eight runs off.",
+    "deal": "Row dealt."
+  }
+}
