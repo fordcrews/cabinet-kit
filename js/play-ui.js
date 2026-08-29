@@ -31,6 +31,17 @@
     return el;
   }
 
+  function notePlayHigh(ctx, score, snap) {
+    if (!ctx || !ctx.gameDef || !window.CabinetScores) return;
+    const type = ctx.gameDef.type;
+    const status = snap && snap.status;
+    if (type === "reversi" && status !== "done") return;
+    if (type === "elevenup" && status !== "done") return;
+    const n = Number(score);
+    const val = Number.isFinite(n) ? n : 0;
+    ctx.highResult = window.CabinetScores.record(ctx.gameDef.id, val);
+  }
+
   function applyMode(ui, type) {
     const columnsPlay = type === "columns21" || type === "runlanes";
     const eleven = type === "elevenup";
@@ -131,6 +142,7 @@
     } else {
       ui.banner.textContent = copy("playing", "Tap two open cards that make 11.");
     }
+    notePlayHigh(ctx, snap.score, snap);
   }
 
   function selMatch(sel, kind, key, value) {
@@ -216,7 +228,7 @@
     const ev = snap.lastEvent;
     if (snap.status === "won") {
       ui.banner.classList.add("run");
-      ui.banner.textContent = copy("won", "All 132 home. Power complete.") + " · " + snap.score;
+      ui.banner.textContent = copy("won", "All 44 home. Power complete.") + " · " + snap.score;
     } else if (ev && ev.kind === "foundation") {
       ui.banner.classList.add("run");
       ui.banner.textContent = "+" + ev.points + " · " + copy("foundation", "Home.");
@@ -228,6 +240,7 @@
     } else {
       ui.banner.textContent = copy("playing", "Tap a card, then a destination.");
     }
+    notePlayHigh(ctx, snap.score, snap);
   }
 
   function renderSudoku(ctx) {
@@ -289,6 +302,7 @@
     } else {
       ui.banner.textContent = copy("playing", "Tap a cell, then 1–6. Givens stay put.");
     }
+    notePlayHigh(ctx, snap.score, snap);
   }
 
   function renderReversi(ctx) {
@@ -343,6 +357,7 @@
     } else {
       ui.banner.textContent = copy("playing", "Tap a marked square to place and flip.");
     }
+    notePlayHigh(ctx, snap.dark, snap);
   }
 
   function paintHoops(ui, session) {
@@ -385,6 +400,7 @@
     } else {
       ui.banner.textContent = copy("playing", "Tap SHOOT when the rim covers the ball.");
     }
+    notePlayHigh(ctx, snap.score, snap);
   }
 
   function renderQuiz(ctx) {
@@ -434,10 +450,12 @@
     } else {
       ui.banner.textContent = copy("playing", "Pick one of the four.");
     }
+    notePlayHigh(ctx, snap.score, snap);
   }
 
   window.CabinetPlay = {
     cardNode: cardNode,
+    notePlayHigh: notePlayHigh,
     applyMode: applyMode,
     renderEleven: renderEleven,
     renderPower: renderPower,
