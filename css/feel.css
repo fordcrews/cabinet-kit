@@ -137,7 +137,7 @@
 .sudoku-cell.box-top { border-top-width: 3px; }
 .sudoku-digit.is-current { box-shadow: 0 0 0 2px var(--gold); }
 @media (orientation: landscape) {
-  #view-game .columns-table, #view-game .eleven-table, #view-game .power-table, #view-game .yacht-table, #view-game .sudoku-table, #view-game .reversi-table, #view-game .hoops-table, #view-game .quiz-table { flex: 1 1 0; min-width: 0; min-height: 0; overflow: auto; }
+  #view-game .columns-table, #view-game .eleven-table, #view-game .power-table, #view-game .yacht-table, #view-game .sudoku-table, #view-game .reversi-table, #view-game .hoops-table, #view-game .quiz-table, #view-game .match-table { flex: 1 1 0; min-width: 0; min-height: 0; overflow: auto; }
   #view-game .controls { align-content: start; overflow: auto; }
   .btn.ghost { min-height: 44px; }
   .yacht-row { min-height: 44px; padding: 6px 10px; }
@@ -165,4 +165,18 @@
 }
 @media (orientation: landscape) {
   .game-list .best { font-size: 0.62rem; }
+}
+
+.match-cell.is-selected {
+  outline: 3px solid var(--gold);
+}
+.match-cell.is-illegal {
+  outline: 3px solid var(--bust);
+  animation: banner-flash 0.45s ease-out 1;
+}
+.match-cell.just-pop {
+  animation: match-pop 0.35s ease-out 1;
+}
+@media (orientation: landscape) {
+  .match-cell { min-height: 44px; min-width: 44px; }
 }
