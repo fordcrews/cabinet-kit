@@ -157,6 +157,9 @@
     } else if (isQuiz()) {
       setMode("quiznight");
       window.CabinetPlay.renderQuiz(ctx);
+    } else if (isMatch()) {
+      setMode(gameType());
+      window.CabinetPlay.renderMatch(ctx);
     } else {
       setMode("run21");
       renderRun();
@@ -207,10 +210,13 @@
       reversi: 1,
       hoops: 1,
       quiznight: 1,
+      blast: 1,
+      triple: 1,
+      chime: 1,
     };
     if (!def || !PLAYABLE[def.type]) {
       ui.list.innerHTML =
-        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "klondike", "freecell", "spider", "yacht", "sudoku6", "reversi", "hoops", "quiznight", and "run21". See README.</li>';
+        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "klondike", "freecell", "spider", "yacht", "sudoku6", "reversi", "hoops", "quiznight", "blast", "triple", "chime", and "run21". See README.</li>';
       openCabinet();
       return;
     }
@@ -234,6 +240,12 @@
       session = E.createHoopsSession(def);
     } else if (def.type === "quiznight") {
       session = E.createQuizSession(def);
+    } else if (def.type === "blast") {
+      session = E.createBlastSession(def);
+    } else if (def.type === "triple") {
+      session = E.createTripleSession(def);
+    } else if (def.type === "chime") {
+      session = E.createChimeSession(def);
     } else {
       session = E.createSession(def);
     }
@@ -332,12 +344,12 @@
     openCabinet();
   }
   ui.hit.addEventListener("click", function () {
-    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || isArcadePlay() || session.status !== "playing") return;
+    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || isArcadePlay() || isMatch() || session.status !== "playing") return;
     E.hit(session);
     renderGame();
   });
   ui.stay.addEventListener("click", function () {
-    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || isArcadePlay() || session.status !== "playing") return;
+    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || isArcadePlay() || isMatch() || session.status !== "playing") return;
     E.stay(session);
     renderGame();
   });
@@ -383,6 +395,14 @@
     }
     if (isQuiz()) {
       session = E.createQuizSession(gameDef);
+      renderGame();
+      return;
+    }
+    if (isMatch()) {
+      if (session.status !== "done") return;
+      if (gameType() === "blast") session = E.createBlastSession(gameDef);
+      else if (gameType() === "triple") session = E.createTripleSession(gameDef);
+      else session = E.createChimeSession(gameDef);
       renderGame();
       return;
     }
@@ -586,6 +606,19 @@
       const btn = ev.target.closest("[data-choice]");
       if (!btn) return;
       E.answerQuiz(session, Number(btn.getAttribute("data-choice")));
+      renderGame();
+    });
+  }
+  if (ui.matchGrid) {
+    ui.matchGrid.addEventListener("click", function (ev) {
+      if (!session || !isMatch() || session.status !== "playing") return;
+      const cell = ev.target.closest("[data-cell]");
+      if (!cell) return;
+      const i = Number(cell.getAttribute("data-cell"));
+      const t = gameType();
+      if (t === "blast") E.tapBlast(session, i);
+      else if (t === "triple") E.tapTriple(session, i);
+      else E.tapChime(session, i);
       renderGame();
     });
   }
