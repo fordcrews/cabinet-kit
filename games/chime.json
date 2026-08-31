@@ -1,0 +1,25 @@
+{
+  "id": "chime",
+  "type": "chime",
+  "title": "Chime",
+  "tagline": "Slide a row. Three-in-a-group pops.",
+  "blurb": "Tap a marble, then another cell in the same row or column. That line slides with wraparound. Orthogonally connected groups of three or more pop. Gaps in the slid line close without wrap, then empties refill. Twenty-five slides a sitting.",
+  "cols": 6,
+  "rows": 6,
+  "colors": 6,
+  "moves": 25,
+  "minGroup": 3,
+  "marbleScore": 10,
+  "labels": {
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "score": "SCORE",
+    "moves": "MOVES"
+  },
+  "copy": {
+    "playing": "Tap a marble, then a cell in its row or column.",
+    "slide": "Line slides.",
+    "pop": "Group popped.",
+    "done": "Sitting over."
+  }
+}

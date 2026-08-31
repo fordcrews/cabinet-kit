@@ -1,0 +1,25 @@
+{
+  "id": "triple",
+  "type": "triple",
+  "title": "Triple",
+  "tagline": "Swap neighbors to make three.",
+  "blurb": "Tap a gem, then an edge neighbor to swap. A line of three or more in a row or column clears, cubes fall, and cascades score extra. Twenty successful swaps a sitting.",
+  "cols": 8,
+  "rows": 8,
+  "colors": 6,
+  "moves": 20,
+  "minLine": 3,
+  "gemScore": 10,
+  "labels": {
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "score": "SCORE",
+    "moves": "MOVES"
+  },
+  "copy": {
+    "playing": "Tap a gem, then an adjacent neighbor.",
+    "swap": "Clear.",
+    "illegal": "That swap makes no three.",
+    "done": "Sitting over."
+  }
+}

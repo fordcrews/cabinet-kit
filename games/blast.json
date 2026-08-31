@@ -1,0 +1,28 @@
+{
+  "id": "blast",
+  "type": "blast",
+  "title": "Blast",
+  "tagline": "Tap a cluster. Cubes fall.",
+  "blurb": "Tap two or more same-color enamel cubes that share an edge. They pop, the rest drop, and new cubes fill from the top. Twenty pops a sitting.",
+  "cols": 8,
+  "rows": 8,
+  "colors": 5,
+  "moves": 20,
+  "minGroup": 2,
+  "groupScore": "n*(n-1)",
+  "bigGroup": 5,
+  "bigBonus": 20,
+  "labels": {
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "score": "SCORE",
+    "moves": "MOVES"
+  },
+  "copy": {
+    "playing": "Tap a cluster of two or more.",
+    "pop": "Pop.",
+    "small": "Need two or more.",
+    "shuffle": "Board restacked.",
+    "done": "Sitting over."
+  }
+}
