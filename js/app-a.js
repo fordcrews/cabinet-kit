@@ -55,6 +55,8 @@
     hoopsBall: $("hoops-ball"),
     quizQ: $("quiz-q"),
     quizChoices: $("quiz-choices"),
+    playMatch: $("play-match"),
+    matchGrid: $("match-grid"),
     roll: $("btn-roll"),
     shoot: $("btn-shoot"),
     back: $("btn-back"),
@@ -108,6 +110,10 @@
   }
   function isQuiz() {
     return gameType() === "quiznight";
+  }
+  function isMatch() {
+    const t = gameType();
+    return t === "blast" || t === "triple" || t === "chime";
   }
   function isArcadePlay() {
     return isSudoku() || isReversi() || isHoops() || isQuiz();
@@ -177,6 +183,9 @@
     if (type === "sudoku6") return E.snapshotSudoku(session).score;
     if (type === "hoops") return E.snapshotHoops(session).score;
     if (type === "quiznight") return E.snapshotQuiz(session).score;
+    if (type === "blast") return E.snapshotBlast(session).score;
+    if (type === "triple") return E.snapshotTriple(session).score;
+    if (type === "chime") return E.snapshotChime(session).score;
     return Number(session && session.score) || 0;
   }
   function shouldRecordHigh() {
