@@ -2,7 +2,7 @@
 
 Phone-browser card cabinet. Short sessions, big buttons, no App Store, no accounts, no ads, no IAP. Remix by duplicating JSON.
 
-v0.13 ships twelve playable samples — **Run 21**, **Zip 21**, **Chug 21**, **11 Up**, **Solitaire**, **FreeCell**, **Spider**, **Yacht**, **Sudoku 6**, **Reversi**, **Hoops**, and **Quiz Night** — plus an author format so another title is a file drop, not a rewrite. The cabinet list is grouped by category (Card, Puzzle, Strategy, Sports, Quiz).
+v0.14 ships fifteen playable samples — **Run 21**, **Zip 21**, **Chug 21**, **11 Up**, **Solitaire**, **FreeCell**, **Spider**, **Yacht**, **Sudoku 6**, **Blast**, **Triple**, **Chime**, **Reversi**, **Hoops**, and **Quiz Night** — plus an author format so another title is a file drop, not a rewrite. The cabinet list is grouped by category (Card, Puzzle, Match, Strategy, Sports, Quiz).
 
 ## Play on a phone
 
@@ -133,6 +133,34 @@ Public-domain five-dice scorecard (not a licensed clone). Original felt/gold cab
 - A duplicate in a row, column, or 2×3 box is marked. Win when the grid matches the solution (or is a valid complete fill).
 - Score +1 per puzzle cleared. **DEAL AGAIN** loads the next puzzle in the JSON bank (five shipped).
 
+## Blast
+
+Original tap-to-pop cabinet. Enamel cubes, not a licensed clone.
+
+- 8×8 grid, five colors. Tap a group of **2+** orthogonally connected cubes of the same color. They pop. Score is **n×(n−1)** (`groupScore`), plus `bigBonus` when the group is at least `bigGroup` (default 5).
+- Remaining cubes fall **down** in their column. Empty cells refill from the top with random colors so a sitting lasts.
+- Twenty pops a sitting (`moves`). Each pop spends a move. A lone cube does nothing and does not spend a move.
+- If no group of 2+ remains, the board is reshuffled so play cannot softlock.
+- HUD: **MOVES** left and **SCORE**. **DEAL AGAIN** when the sitting is over.
+
+## Triple
+
+Original swap match-3. Not a licensed clone.
+
+- 8×8 grid, six colors. Tap a gem, then an **adjacent** (4-dir) neighbor to swap.
+- If the swap makes no line of 3+ in a row or column, it snaps back (illegal flash) and does not spend a move.
+- If it does, every 3 / 4 / 5 in a row or column clears (both axes, so L and T shapes go). Gravity drops gems down, empties refill from the top, and further matches cascade with a combo multiplier (`gemScore` × combo).
+- A successful swap spends a move. Twenty swaps a sitting. **DEAL AGAIN** when moves hit 0. If no legal swap remains, the board is reshuffled.
+
+## Chime
+
+Original marble-row slider. Not a licensed clone.
+
+- 6×6 colored marbles. Tap a marble (gold outline), then another cell in the **same row or column**. That line **slides with wraparound** so the selection moves into the second cell.
+- After a slide, every orthogonally connected **blob of 3+** same color pops (a clump counts, not only a straight line). Groups of 2 stay.
+- Gravity is not used. After pops, remaining marbles in the slid line shift to close gaps **without wrap** (toward index 0), then empty cells refill at random.
+- Twenty-five slides a sitting (`moves`). Score is `marbleScore` per marble popped. **DEAL AGAIN** when the sitting is over.
+
 ## Reversi
 
 8×8 disc flip. Dark (you) moves first; light is a greedy max-flips AI. Title is **Reversi**, not a trademarked name.
@@ -157,12 +185,12 @@ Mixed trivia and jumble rounds from JSON. Four big answer buttons.
 
 ## How to add a game
 
-1. Duplicate a JSON file under `games/` (run21, zip21, chug21, elevenup, solitaire, freecell, spider, yacht, sudoku6, reversi, hoops, or quiznight).
+1. Duplicate a JSON file under `games/` (run21, zip21, chug21, elevenup, solitaire, freecell, spider, yacht, sudoku6, blast, triple, chime, reversi, hoops, or quiznight).
 2. Change id, title, labels, copy, and the knobs for that type.
 3. Add the filename to a category `games` array in `games/index.json` (or the flat `games` array if you are not using categories).
 4. Reload. The cabinet groups rows under category headings.
 
-Engine keys: `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), `elevenup` (11 Up pairs), `klondike` (Solitaire stacks), `freecell`, `spider`, `yacht` (Yacht five-dice scorecard), `sudoku6`, `reversi`, `hoops`, `quiznight`, and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
+Engine keys: `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), `elevenup` (11 Up pairs), `klondike` (Solitaire stacks), `freecell`, `spider`, `yacht` (Yacht five-dice scorecard), `sudoku6`, `blast` (tap-to-pop clusters), `triple` (swap match-3), `chime` (row/column wrap slide), `reversi`, `hoops`, `quiznight`, and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
 
 ## JSON fields
 
@@ -170,7 +198,7 @@ Unknown extra fields are ignored.
 
 Shared:
 - id (string): Hash route id. Unique. Played at `#/play/:id`.
-- type (string): `runlanes`, `columns21`, `elevenup`, `klondike`, `freecell`, `spider`, `yacht`, `sudoku6`, `reversi`, `hoops`, `quiznight`, or `run21`.
+- type (string): `runlanes`, `columns21`, `elevenup`, `klondike`, `freecell`, `spider`, `yacht`, `sudoku6`, `blast`, `triple`, `chime`, `reversi`, `hoops`, `quiznight`, or `run21`.
 - title, tagline, blurb: Cabinet row + in-game marquee.
 - target (number): Bust line (21).
 - thinDeck (number): Run 21 reshuffles under this. Columns games default 0 (one shoe, then done).
@@ -202,6 +230,12 @@ Spider (`spider`) extras: columns (10), runScore (100), suits (1), suit (`♠`),
 Yacht (`yacht`) extras: upperBonus (35), upperThreshold (63), fullHouse (25), smallStraight (30), largeStraight (40), yacht (50), rolls (3), labels.roll hold aces…sixes threekind fourkind fullhouse smallstraight largestraight yacht chance, copy.idle playing mustScore done.
 
 Sudoku 6 (`sudoku6`) extras: puzzles (array of `{ puzzle, solution }` 36-char strings, 0 = empty), clearScore (1).
+
+Blast (`blast`) extras: cols (8), rows (8), colors (5), moves (20), minGroup (2), groupScore (`n*(n-1)` or `n*10`), bigGroup (5), bigBonus (20).
+
+Triple (`triple`) extras: cols (8), rows (8), colors (6), moves (20), minLine (3), gemScore (10). Combo multiplies gemScore on each cascade wave.
+
+Chime (`chime`) extras: cols (6), rows (6), colors (6), moves (25), minGroup (3), marbleScore (10). Slide wrap; blobs of 3+ pop; slid line packs toward index 0, then empties refill.
 
 Reversi (`reversi`): 8×8, no extra knobs required.
 
@@ -236,6 +270,12 @@ Spider: 104 cards, deal-row blocked if a column is empty, completing K–A remov
 Yacht: roll yields five dice 1–6, hold keeps a face on the next roll, a fourth roll throws, aces sum ones, full house 25 / junk 0, small straight 30 / large 40, yacht 50, a category cannot be scored twice, upper bonus at 63, thirteen scores then done.
 
 Sudoku 6: given cells are locked, a duplicate in a row is invalid, a completed correct grid wins, 2×3 boxes reject duplicates.
+
+Blast: a group of 1 does not pop; a group of 2+ pops; remaining cubes fall down; moves decrement; sitting is done at 0 moves.
+
+Triple: an adjacent swap that makes three clears; a non-match swap reverts and does not spend a move; cascades add combo score; moves decrement on success.
+
+Chime: a row/column slide wraps; a group of 2 stays; a group of 3 pops.
 
 Reversi: opening four center discs, a known flip, occupied squares reject, AI returns a legal index.
 
