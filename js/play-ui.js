@@ -51,7 +51,8 @@
     const reversi = type === "reversi";
     const hoops = type === "hoops";
     const quiz = type === "quiznight";
-    const hideRun = columnsPlay || eleven || power || yacht || sudoku || reversi || hoops || quiz;
+    const match = type === "blast" || type === "triple" || type === "chime";
+    const hideRun = columnsPlay || eleven || power || yacht || sudoku || reversi || hoops || quiz || match;
     ui.playRun.classList.toggle("hidden", hideRun);
     ui.playColumns.classList.toggle("hidden", !columnsPlay);
     if (ui.playEleven) ui.playEleven.classList.toggle("hidden", !eleven);
@@ -61,6 +62,7 @@
     if (ui.playReversi) ui.playReversi.classList.toggle("hidden", !reversi);
     if (ui.playHoops) ui.playHoops.classList.toggle("hidden", !hoops);
     if (ui.playQuiz) ui.playQuiz.classList.toggle("hidden", !quiz);
+    if (ui.playMatch) ui.playMatch.classList.toggle("hidden", !match);
     ui.hit.classList.toggle("hidden", hideRun);
     ui.stay.classList.toggle("hidden", hideRun);
     ui.skip.classList.toggle("hidden", !columnsPlay);
@@ -78,7 +80,7 @@
       ui.deal.classList.add("hidden");
       ui.hit.classList.add("hidden");
       ui.stay.classList.add("hidden");
-    } else if (sudoku || reversi || hoops || quiz) {
+    } else if (sudoku || reversi || hoops || quiz || match) {
       ui.deal.classList.add("hidden");
       ui.hit.classList.add("hidden");
       ui.stay.classList.add("hidden");
@@ -581,6 +583,81 @@
     notePlayHigh(ctx, snap.score, snap);
   }
 
+
+  function renderMatch(ctx) {
+    const E = ctx.E, ui = ctx.ui, session = ctx.session;
+    const snap = E.snapshotMatch(session);
+    const label = ctx.label, copy = ctx.copy;
+    ui.scoreLabel.textContent = label("score", "SCORE");
+    ui.scoreValue.textContent = String(snap.score);
+    ui.hudRound.textContent = label("moves", "MOVES") + " " + snap.movesLeft;
+    ui.hudDeck.textContent = "";
+    ui.deal.textContent = label("again", "DEAL AGAIN");
+    ui.deal.classList.toggle("hidden", snap.status !== "done");
+    ui.back.textContent = label("back", "CABINET");
+    const playing = snap.status === "playing";
+    const popped = {};
+    const ev = snap.lastEvent || {};
+    (ev.popped || []).forEach(function (i) {
+      popped[i] = true;
+    });
+    const illegal = {};
+    if (ev.kind === "illegal") {
+      if (ev.a != null) illegal[ev.a] = true;
+      if (ev.b != null) illegal[ev.b] = true;
+      if (ev.index != null) illegal[ev.index] = true;
+    }
+    if (ev.kind === "small" && ev.index != null) illegal[ev.index] = true;
+    ui.matchGrid.replaceChildren();
+    ui.matchGrid.style.setProperty("--cols", String(snap.cols));
+    ui.matchGrid.className = "match-grid match-" + snap.type;
+    snap.grid.forEach(function (color, i) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className =
+        "match-cell" +
+        (color ? " match-c" + color : " is-empty") +
+        (snap.selected === i ? " is-selected" : "") +
+        (illegal[i] ? " is-illegal" : "") +
+        (popped[i] ? " just-pop" : "");
+      btn.dataset.cell = String(i);
+      btn.disabled = !playing;
+      btn.setAttribute("aria-label", color ? "color " + color : "empty");
+      ui.matchGrid.appendChild(btn);
+    });
+    ui.banner.className = "banner";
+    if (snap.status === "done") {
+      ui.banner.classList.add("run");
+      ui.banner.textContent = copy("done", "Sitting over.") + " · " + snap.score;
+    } else if (ev.kind === "pop") {
+      ui.banner.classList.add("run");
+      const size = ev.size != null ? ev.size : (ev.popped ? ev.popped.length : 0);
+      ui.banner.textContent =
+        copy("pop", "Pop.") +
+        " " +
+        size +
+        (ev.points ? " · +" + ev.points : "") +
+        (ev.shuffle ? " · " + copy("shuffle", "Board restacked.") : "");
+    } else if (ev.kind === "swap") {
+      ui.banner.classList.add("run");
+      ui.banner.textContent =
+        copy("swap", "Clear.") +
+        (ev.combo > 1 ? " ×" + ev.combo : "") +
+        (ev.points ? " · +" + ev.points : "");
+    } else if (ev.kind === "slide") {
+      ui.banner.textContent = copy("slide", "Line slides.");
+    } else if (ev.kind === "illegal") {
+      ui.banner.classList.add("bust");
+      ui.banner.textContent = copy("illegal", "That swap makes no three.");
+    } else if (ev.kind === "small") {
+      ui.banner.classList.add("bust");
+      ui.banner.textContent = copy("small", "Need two or more.");
+    } else {
+      ui.banner.textContent = copy("playing", "Tap the grid.");
+    }
+    notePlayHigh(ctx, snap.score, snap);
+  }
+
   window.CabinetPlay = {
     cardNode: cardNode,
     notePlayHigh: notePlayHigh,
@@ -593,6 +670,7 @@
     renderHoops: renderHoops,
     paintHoops: paintHoops,
     renderQuiz: renderQuiz,
+    renderMatch: renderMatch,
     attachUi: function (ui) {
       ui.playEleven = $("play-eleven");
       ui.playPower = $("play-power");
@@ -617,6 +695,8 @@
       ui.hoopsBall = $("hoops-ball");
       ui.quizQ = $("quiz-q");
       ui.quizChoices = $("quiz-choices");
+      ui.playMatch = $("play-match");
+      ui.matchGrid = $("match-grid");
       ui.next = $("btn-next");
       ui.take = $("btn-take");
       ui.roll = $("btn-roll");
