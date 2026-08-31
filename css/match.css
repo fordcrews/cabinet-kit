@@ -1,0 +1,115 @@
+/* Match cabinets: Blast cubes, Triple gems, Chime marbles — enamel, not cartoon IP */
+.match-table {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  gap: 10px;
+  width: 100%;
+  overflow: auto;
+}
+
+.match-grid {
+  --cols: 8;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(44px, 1fr));
+  gap: 4px;
+  width: 100%;
+  max-width: min(100%, 28rem);
+  margin: 0 auto;
+  aspect-ratio: auto;
+}
+
+.match-cell {
+  min-width: 44px;
+  min-height: 44px;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 2px solid var(--gold-dim);
+  border-radius: 10px;
+  background: #123328;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 2px 4px rgba(0, 0, 0, 0.35);
+  position: relative;
+}
+
+.match-cell::after {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.28), transparent 55%);
+  pointer-events: none;
+}
+
+.match-grid.match-blast .match-cell {
+  border-radius: 8px;
+}
+
+.match-grid.match-triple .match-cell {
+  border-radius: 12px;
+}
+
+.match-grid.match-chime .match-cell {
+  border-radius: 50%;
+}
+
+.match-cell.match-c1 { background: linear-gradient(160deg, #a84848, #6e2428); }
+.match-cell.match-c2 { background: linear-gradient(160deg, #3a6ea5, #1c3f68); }
+.match-cell.match-c3 { background: linear-gradient(160deg, #3d8a5c, #1e4f36); }
+.match-cell.match-c4 { background: linear-gradient(160deg, #d4b05c, #8a6a28); }
+.match-cell.match-c5 { background: linear-gradient(160deg, #efe6d2, #c4b496); }
+.match-cell.match-c6 { background: linear-gradient(160deg, #7a4e8c, #432a52); }
+
+.match-cell.is-empty {
+  background: #0a1f18;
+  box-shadow: inset 0 0 0 1px var(--felt-edge);
+}
+
+.match-cell.is-empty::after { display: none; }
+
+.match-cell.is-selected {
+  outline: 3px solid var(--gold);
+  outline-offset: 1px;
+  box-shadow: 0 0 0 2px var(--gold-dim), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  z-index: 1;
+}
+
+.match-cell.is-illegal {
+  outline: 3px solid var(--bust);
+  animation: match-flash 0.45s ease-out 1;
+}
+
+.match-cell.just-pop {
+  animation: match-pop 0.35s ease-out 1;
+}
+
+@keyframes match-flash {
+  0% { box-shadow: 0 0 0 3px var(--bust); }
+  100% { box-shadow: none; }
+}
+
+@keyframes match-pop {
+  0% { transform: scale(1); opacity: 1; }
+  55% { transform: scale(0.2); opacity: 0.35; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@media (orientation: landscape) {
+  #view-game .match-table {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .match-grid {
+    max-width: min(70vh, 100%);
+    gap: 3px;
+  }
+
+  .match-cell {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

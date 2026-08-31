@@ -1,11 +1,12 @@
 /* Cabinet Kit service worker — cache-first static player */
-const CACHE = "cabinet-kit-v0.13";
+const CACHE = "cabinet-kit-v0.14";
 const ASSETS = [
   "./",
   "./index.html",
   "./css/app.css",
   "./css/arcade.css",
   "./css/patience.css",
+  "./css/match.css",
   "./css/chrome.css",
   "./css/feel.css",
   "./css/pieces.css",
@@ -28,6 +29,7 @@ const ASSETS = [
   "./js/play-ui.js",
   "./js/yacht.js",
   "./js/arcade.js",
+  "./js/match.js",
   "./js/feel-engine.js",
   "./js/feel-ui.js",
   "./js/highscore.js",
@@ -47,6 +49,9 @@ const ASSETS = [
   "./games/reversi.json",
   "./games/hoops.json",
   "./games/quiznight.json",
+  "./games/blast.json",
+  "./games/triple.json",
+  "./games/chime.json",
   "./icons/grain.svg",
   "./icons/marquee-lamps.svg",
   "./icons/icon.svg",
