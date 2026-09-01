@@ -60,6 +60,7 @@
     roll: $("btn-roll"),
     shoot: $("btn-shoot"),
     back: $("btn-back"),
+    sfx: $("btn-sfx"),
   };
   if (window.CabinetPlay) window.CabinetPlay.attachUi(ui);
   const gamesById = new Map();
@@ -215,6 +216,7 @@
     }
     if (window.CabinetScores) paintBest(gameDef.id);
     applyNewHighBanner(result && result.isNew);
+    return result;
   }
   function renderColumns() {
     const snap = E.snapshotColumns(session);
