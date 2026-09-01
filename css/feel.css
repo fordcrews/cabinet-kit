@@ -180,3 +180,53 @@
 @media (orientation: landscape) {
   .match-cell { min-height: 44px; min-width: 44px; }
 }
+
+
+/* Procedural SFX mute — gold ghost, 44px tap, compact on landscape */
+.sfx-toggle {
+  flex: 0 0 auto;
+  align-self: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 10px;
+  margin: 0;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--gold);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow: none;
+  line-height: 1.1;
+}
+.sfx-toggle::before {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 0 5px 8px;
+  border-color: transparent transparent transparent currentColor;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.sfx-toggle.is-muted,
+.sfx-toggle[aria-pressed="true"] {
+  opacity: 0.62;
+  color: var(--gold-dim);
+  border-color: var(--gold-dim);
+}
+.sfx-toggle:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+@media (orientation: landscape) {
+  .sfx-toggle {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 4px 8px;
+    font-size: 0.52rem;
+  }
+}
