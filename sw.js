@@ -1,5 +1,5 @@
 /* Cabinet Kit service worker — cache-first static player */
-const CACHE = "cabinet-kit-v0.14";
+const CACHE = "cabinet-kit-v0.15";
 const ASSETS = [
   "./",
   "./index.html",
@@ -33,6 +33,7 @@ const ASSETS = [
   "./js/feel-engine.js",
   "./js/feel-ui.js",
   "./js/highscore.js",
+  "./js/sfx.js",
   "./js/app-a.js",
   "./js/app-b.js",
   "./manifest.webmanifest",
