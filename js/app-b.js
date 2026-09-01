@@ -164,7 +164,15 @@
       setMode("run21");
       renderRun();
     }
-    noteHigh(ctx);
+    const high = noteHigh(ctx);
+    if (window.CabinetSfx) {
+      window.CabinetSfx.fromEvent(session.lastEvent, {
+        status: session.status,
+        session: session,
+        isNew: !!(high && high.isNew),
+        outcome: session.lastOutcome,
+      });
+    }
   }
   function playCtx() {
     return { E: E, ui: ui, session: session, gameDef: gameDef, label: label, copy: copy };
@@ -250,6 +258,12 @@
       session = E.createSession(def);
     }
     show("game");
+    if (window.CabinetSfx) {
+      window.CabinetSfx.play("deal");
+      if (session.lastEvent && session.lastEvent.kind === "deal") {
+        session._sfxSeen = session.lastEvent;
+      }
+    }
     renderGame();
   }
   async function loadGame(id) {
@@ -353,48 +367,65 @@
     E.stay(session);
     renderGame();
   });
+  function sfxNewSitting(sess) {
+    if (!window.CabinetSfx || !sess) return;
+    window.CabinetSfx.play("deal");
+    if (sess.lastEvent && sess.lastEvent.kind === "deal") {
+      sess._sfxSeen = sess.lastEvent;
+    } else {
+      sess._sfxSeen = null;
+    }
+  }
   ui.deal.addEventListener("click", function () {
     if (!session) return;
     if (isColumns()) return;
     if (isRunLanes()) {
       if (session.status !== "done") return;
       E.dealRunLanes(session);
+      sfxNewSitting(session);
       renderGame();
       return;
     }
     if (isEleven()) {
       session = E.createElevenSession(gameDef);
+      sfxNewSitting(session);
       renderGame();
       return;
     }
     if (isPower()) {
       session = E.createPatienceSession(gameDef);
+      sfxNewSitting(session);
       renderGame();
       return;
     }
     if (isYacht()) {
       if (session.status !== "done") return;
       session = E.createYachtSession(gameDef);
+      sfxNewSitting(session);
       renderGame();
       return;
     }
     if (isSudoku()) {
       E.dealSudoku(session);
+      sfxNewSitting(session);
       renderGame();
       return;
     }
     if (isReversi()) {
       session = E.createReversiSession(gameDef);
+      sfxNewSitting(session);
       renderGame();
       return;
     }
     if (isHoops()) {
       session = E.createHoopsSession(gameDef);
+      sfxNewSitting(session);
       renderGame();
       return;
     }
     if (isQuiz()) {
       session = E.createQuizSession(gameDef);
+      sfxNewSitting(session);
       renderGame();
       return;
     }
@@ -403,10 +434,12 @@
       if (gameType() === "blast") session = E.createBlastSession(gameDef);
       else if (gameType() === "triple") session = E.createTripleSession(gameDef);
       else session = E.createChimeSession(gameDef);
+      sfxNewSitting(session);
       renderGame();
       return;
     }
     E.deal(session);
+    sfxNewSitting(session);
     renderGame();
   });
   ui.next.addEventListener("click", function () {
@@ -625,6 +658,28 @@
   ui.back.addEventListener("click", function () {
     location.hash = "#/";
   });
+  function paintSfx() {
+    const btn = ui.sfx;
+    if (!btn) return;
+    const isOff = window.CabinetSfx ? window.CabinetSfx.isMuted() : false;
+    btn.setAttribute("aria-pressed", isOff ? "true" : "false");
+    btn.textContent = isOff ? "MUTED" : "SOUND";
+    btn.classList.toggle("is-muted", isOff);
+  }
+  if (ui.sfx) {
+    ui.sfx.addEventListener("click", function () {
+      if (!window.CabinetSfx) return;
+      const nowMuted = window.CabinetSfx.toggle();
+      paintSfx();
+      if (!nowMuted) window.CabinetSfx.play("tap");
+    });
+  }
+  if (window.CabinetSfx) {
+    window.CabinetSfx.onMuteChange(paintSfx);
+    paintSfx();
+    document.addEventListener("pointerdown", window.CabinetSfx.unlock, { once: false });
+    document.addEventListener("touchstart", window.CabinetSfx.unlock, { once: false, passive: true });
+  }
   function registerSw() {
     if (!("serviceWorker" in navigator)) return;
     navigator.serviceWorker.register("sw.js").catch(function () {});
