@@ -389,7 +389,6 @@
     if (ui.playSudoku) ui.playSudoku.dataset.n = String(n);
     ui.sudokuGrid.dataset.n = String(n);
     ui.sudokuGrid.style.gridTemplateColumns = "repeat(" + n + ", minmax(0, 1fr))";
-    ui.sudokuPad.style.gridTemplateColumns = "repeat(" + n + ", minmax(0, 1fr))";
     ui.sudokuGrid.replaceChildren();
     snap.grid.forEach(function (v, i) {
       const btn = document.createElement("button");

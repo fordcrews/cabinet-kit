@@ -38,27 +38,60 @@
   width: 100%;
 }
 
+#view-game .sudoku-table {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  gap: 8px;
+}
+
+.sudoku-board {
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  container-type: size;
+  display: grid;
+  place-items: center;
+}
+
 .sudoku-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 4px;
-  width: 100%;
-  max-width: 420px;
+  grid-auto-rows: 1fr;
+  gap: 3px;
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+  aspect-ratio: 1;
+  max-width: 100%;
+  max-height: 100%;
   margin: 0 auto;
 }
 .sudoku-grid[data-n="9"] {
-  max-width: 480px;
   gap: 2px;
 }
 
+@supports not (width: 1cqh) {
+  .sudoku-grid {
+    width: min(100%, 58dvh);
+    height: auto;
+    aspect-ratio: 1;
+  }
+}
+
 .sudoku-cell {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  padding: 0;
   border: 2px solid var(--gold-dim);
-  border-radius: 8px;
+  border-radius: 6px;
   background: linear-gradient(#16382c, #0d241c);
   color: var(--cream);
-  font-size: 1.25rem;
+  font-size: clamp(0.65rem, 8cqw, 1.25rem);
   font-weight: 800;
 }
 
@@ -77,37 +110,41 @@
 }
 
 .sudoku-pad {
+  flex: 0 0 auto;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 6px;
   width: 100%;
-  max-width: 420px;
+  max-width: 100%;
   margin: 0 auto;
+  align-self: stretch;
 }
-.sudoku-table[data-n="9"] .sudoku-grid,
 .sudoku-table[data-n="9"] .sudoku-pad {
-  max-width: 480px;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
 }
 .sudoku-grid[data-n="9"] .sudoku-cell {
-  min-width: 0;
-  min-height: 36px;
-  font-size: 1rem;
   border-radius: 4px;
 }
 
 .sudoku-digit {
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
   border: 2px solid var(--gold-dim);
   border-radius: 10px;
   background: var(--gold);
   color: #111;
-  font-size: 1.1rem;
+  font-size: clamp(0.8rem, 4.5vw, 1.1rem);
   font-weight: 800;
+  padding: 0;
 }
 
 .sudoku-clear {
   grid-column: 1 / -1;
+  aspect-ratio: auto;
+  height: clamp(1.6rem, 5.5dvh, 2.4rem);
   font-size: 0.72rem;
   letter-spacing: 0.06em;
 }
@@ -235,24 +272,51 @@
 @media (orientation: landscape) {
   .sudoku-table {
     flex-direction: row;
-    align-items: center;
+    align-items: stretch;
+  }
+
+  .sudoku-board {
+    flex: 1 1 0;
+    height: auto;
+    align-self: stretch;
   }
 
   .sudoku-grid {
-    flex: 1;
-    max-width: none;
+    width: min(100cqw, 100cqh);
+    height: min(100cqw, 100cqh);
   }
 
   .sudoku-pad {
     flex: 0 0 auto;
-    grid-template-columns: 44px;
-    grid-template-rows: repeat(7, minmax(44px, 1fr));
-    max-width: 56px;
+    width: min(22vw, 7.5rem);
+    max-width: 8rem;
+    height: auto;
+    max-height: 100%;
+    margin: 0;
+    gap: 4px;
+    grid-template-columns: 1fr;
+    grid-auto-rows: minmax(0, 1fr);
+    align-content: stretch;
+    align-self: stretch;
+  }
+
+  .sudoku-table[data-n="9"] .sudoku-pad {
+    width: min(32vw, 10.5rem);
+    max-width: 11rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sudoku-digit {
+    height: auto;
+    aspect-ratio: 1;
+    min-height: 0;
   }
 
   .sudoku-clear {
-    grid-column: 1;
+    grid-column: 1 / -1;
     font-size: 0.62rem;
+    height: auto;
+    min-height: 1.4rem;
   }
 
   .reversi-board {
@@ -289,14 +353,8 @@
 .sudoku-cell.box-top {
   border-top-width: 3px;
 }
-.sudoku-digit {
-  min-height: 44px;
-}
 .sudoku-digit.is-current {
   box-shadow: 0 0 0 3px var(--felt-edge), 0 0 0 5px var(--gold);
-}
-.sudoku-clear {
-  min-height: 44px;
 }
 
 .reversi-board {
@@ -346,6 +404,6 @@
 @media (orientation: landscape) {
   .reversi-cell { min-height: 44px; }
   .quiz-choice { min-height: 48px; }
-  .sudoku-digit { min-height: 44px; }
+  .sudoku-digit { min-height: 0; }
   .hoops-court { min-height: 0; }
 }

@@ -627,7 +627,8 @@ button {
   #view-game .columns-table,
   #view-game .eleven-table,
   #view-game .power-table,
-  #view-game .yacht-table {
+  #view-game .yacht-table,
+  #view-game .sudoku-table {
     flex: 1 1 0;
     min-width: 0;
     min-height: 0;
