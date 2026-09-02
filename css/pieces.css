@@ -135,12 +135,12 @@
 }
 
 .card-mini .card-rank {
-  font-size: 0.92rem;
+  font-size: clamp(0.85rem, 28cqi, 1.35rem);
 }
 
 .card-mini .card-suit {
-  width: 14px;
-  height: 14px;
+  width: clamp(12px, 22cqi, 18px);
+  height: clamp(12px, 22cqi, 18px);
   margin-top: 0;
 }
 

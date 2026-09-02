@@ -382,6 +382,7 @@ button {
 }
 
 .column-well {
+  container-type: inline-size;
   min-height: 160px;
   min-width: 44px;
   padding: 6px 4px 8px;
@@ -478,6 +479,8 @@ button {
   align-items: center;
   justify-content: flex-end;
   min-height: 88px;
+  min-width: 0;
+  width: 100%;
 }
 
 .column-total {
@@ -490,23 +493,38 @@ button {
 }
 
 .card.card-mini {
-  width: 40px;
-  height: 34px;
-  padding: 2px 4px;
-  margin-bottom: -10px;
-  border-radius: 6px;
+  width: min(90%, 7.5rem);
+  height: auto;
+  aspect-ratio: 5 / 7;
+  max-height: 38%;
+  padding: 0.28em 0.32em 0.22em;
+  margin-bottom: -52%;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.column-stack .card.card-mini:last-child,
+.column-stack .mug-mini:last-child {
+  margin-bottom: 0;
 }
 
 .card-mini .card-suit-lg {
-  display: none;
+  display: block;
+  width: 42%;
+  height: auto;
+  aspect-ratio: 1;
+  max-width: 2.6rem;
+  margin-top: auto;
 }
 
 .card-mini .card-rank {
-  font-size: 0.78rem;
+  font-size: clamp(0.85rem, 28cqi, 1.4rem);
 }
 
 .card-mini .card-suit {
-  font-size: 0.7rem;
+  width: clamp(12px, 22cqi, 20px);
+  height: clamp(12px, 22cqi, 20px);
+  font-size: 0;
 }
 
 .mug {
@@ -547,20 +565,23 @@ button {
 }
 
 .mug-mini {
-  width: 34px;
-  height: 38px;
-  margin-bottom: -10px;
-  border-radius: 6px 6px 14px 14px;
+  width: min(78%, 5.75rem);
+  height: auto;
+  aspect-ratio: 4 / 5;
+  max-height: 36%;
+  margin-bottom: -40%;
+  border-radius: 8px 8px 18px 18px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .mug-mini .mug-rank {
-  font-size: 0.85rem;
+  font-size: clamp(1rem, 32cqi, 1.85rem);
 }
 
 .incoming .card {
-  width: 92px;
-  height: 128px;
+  width: clamp(4.75rem, 12vw, 7.75rem);
+  height: auto;
+  aspect-ratio: 5 / 7;
 }
 
 
@@ -677,8 +698,9 @@ button {
   }
 
   .incoming .card {
-    width: 70px;
-    height: 98px;
+    width: clamp(5rem, 14vh, 7.75rem);
+    height: auto;
+    aspect-ratio: 5 / 7;
   }
 
   .mug-lg {
@@ -699,6 +721,18 @@ button {
 
   .column-well {
     min-height: 0;
+  }
+
+  .columns .card.card-mini {
+    width: min(92%, 8rem);
+    max-height: 42%;
+    margin-bottom: -58%;
+  }
+
+  .columns .mug-mini {
+    width: min(82%, 6.25rem);
+    max-height: 40%;
+    margin-bottom: -46%;
   }
 
   .hand { min-height: 96px; }
