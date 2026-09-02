@@ -1,7 +1,7 @@
 {
   "categories": [
     { "id": "card", "title": "Card", "games": ["run21.json","zip21.json","chug21.json","elevenup.json","solitaire.json","freecell.json","spider.json","yacht.json"] },
-    { "id": "puzzle", "title": "Puzzle", "games": ["sudoku6.json"] },
+    { "id": "puzzle", "title": "Puzzle", "games": ["sudoku6.json", "sudoku9.json"] },
     { "id": "match", "title": "Match", "games": ["blast.json", "triple.json", "chime.json"] },
     { "id": "strategy", "title": "Strategy", "games": ["reversi.json"] },
     { "id": "sports", "title": "Sports", "games": ["hoops.json"] },

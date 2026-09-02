@@ -36,7 +36,8 @@
     "nextPuzzle": "NEXT PUZZLE"
   },
   "copy": {
-    "playing": "Tap a cell, then 1–6.",
+    "playing": "Tap a cell or a digit 1–6.",
+    "ink": "Digit primed — tap a cell.",
     "locked": "That cell is given.",
     "conflict": "Duplicate in a row, column, or box.",
     "won": "Grid clear.",

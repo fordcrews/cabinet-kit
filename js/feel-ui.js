@@ -54,17 +54,21 @@
     var snap = ctx.E.snapshotSudoku(ctx.session);
     ui.deal.textContent = ctx.label("nextPuzzle", "NEXT PUZZLE");
     ui.deal.classList.remove("ghost");
+    var n = snap.size || 6;
+    var boxC = snap.boxC || 3;
+    var boxR = snap.boxR || (n === 9 ? 3 : 2);
     ui.sudokuGrid.querySelectorAll(".sudoku-cell").forEach(function (btn, i) {
-      var r = Math.floor(i / 6);
-      var c = i % 6;
+      var r = Math.floor(i / n);
+      var c = i % n;
       if (!snap.given[i]) btn.classList.add("is-entry");
-      if (c % 3 === 0) btn.classList.add("box-left");
-      if (r % 2 === 0) btn.classList.add("box-top");
+      if (c % boxC === 0) btn.classList.add("box-left");
+      if (r % boxR === 0) btn.classList.add("box-top");
     });
     var selVal = snap.selected != null ? snap.grid[snap.selected] : 0;
+    var ink = snap.ink || 0;
     ui.sudokuPad.querySelectorAll(".sudoku-digit").forEach(function (btn) {
       var d = Number(btn.getAttribute("data-digit"));
-      btn.classList.toggle("is-current", selVal === d && d > 0);
+      btn.classList.toggle("is-current", (ink === d || selVal === d) && d > 0);
     });
   });
 

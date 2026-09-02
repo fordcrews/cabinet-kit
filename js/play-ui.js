@@ -47,7 +47,7 @@
     const eleven = type === "elevenup";
     const power = type === "klondike" || type === "freecell" || type === "spider" || type === "powersol";
     const yacht = type === "yacht";
-    const sudoku = type === "sudoku6";
+    const sudoku = type === "sudoku6" || type === "sudoku9";
     const reversi = type === "reversi";
     const hoops = type === "hoops";
     const quiz = type === "quiznight";
@@ -385,6 +385,11 @@
     ui.deal.classList.toggle("hidden", snap.status !== "won");
     ui.back.textContent = label("back", "CABINET");
     const playing = snap.status === "playing";
+    const n = snap.size || 6;
+    if (ui.playSudoku) ui.playSudoku.dataset.n = String(n);
+    ui.sudokuGrid.dataset.n = String(n);
+    ui.sudokuGrid.style.gridTemplateColumns = "repeat(" + n + ", minmax(0, 1fr))";
+    ui.sudokuPad.style.gridTemplateColumns = "repeat(" + n + ", minmax(0, 1fr))";
     ui.sudokuGrid.replaceChildren();
     snap.grid.forEach(function (v, i) {
       const btn = document.createElement("button");
@@ -392,24 +397,30 @@
       const given = snap.given[i];
       const sel = snap.selected === i;
       const bad = snap.conflicts[i];
+      const r = Math.floor(i / n);
+      const c = i % n;
+      const boxC = snap.boxC || (n === 9 ? 3 : 3);
+      const boxR = snap.boxR || (n === 9 ? 3 : 2);
       btn.className =
         "sudoku-cell" +
-        (given ? " is-given" : "") +
+        (given ? " is-given" : " is-entry") +
         (sel ? " is-selected" : "") +
-        (bad ? " is-conflict" : "");
+        (bad ? " is-conflict" : "") +
+        (c % boxC === 0 ? " box-left" : "") +
+        (r % boxR === 0 ? " box-top" : "");
       btn.dataset.sudoku = String(i);
-      btn.disabled = !playing || given;
+      btn.disabled = !playing;
       btn.textContent = v ? String(v) : "";
       ui.sudokuGrid.appendChild(btn);
     });
     ui.sudokuPad.replaceChildren();
-    for (let d = 1; d <= 6; d++) {
+    for (let d = 1; d <= n; d++) {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "sudoku-digit";
+      btn.className = "sudoku-digit" + (snap.ink === d ? " is-current" : "");
       btn.dataset.digit = String(d);
       btn.textContent = String(d);
-      btn.disabled = !playing || snap.selected == null;
+      btn.disabled = !playing;
       ui.sudokuPad.appendChild(btn);
     }
     const clr = document.createElement("button");
@@ -417,10 +428,11 @@
     clr.className = "sudoku-digit sudoku-clear";
     clr.dataset.digit = "0";
     clr.textContent = label("clear", "CLEAR");
-    clr.disabled = !playing || snap.selected == null;
+    clr.disabled = !playing;
     ui.sudokuPad.appendChild(clr);
     ui.banner.className = "banner";
     const ev = snap.lastEvent;
+    const digits = n === 9 ? "1–9" : "1–6";
     if (snap.status === "won") {
       ui.banner.classList.add("run");
       ui.banner.textContent = copy("won", "Grid clear.") + " · " + snap.score;
@@ -429,8 +441,12 @@
     } else if (snap.conflicts.some(Boolean)) {
       ui.banner.classList.add("bust");
       ui.banner.textContent = copy("conflict", "Duplicate in a row, column, or box.");
+    } else if (snap.ink) {
+      ui.banner.textContent = copy("ink", "Digit " + snap.ink + " — tap a cell.");
+    } else if (snap.selected == null) {
+      ui.banner.textContent = copy("playing", "Tap a cell or a digit (" + digits + ").");
     } else {
-      ui.banner.textContent = copy("playing", "Tap a cell, then 1–6. Givens stay put.");
+      ui.banner.textContent = copy("playing", "Tap a cell, then " + digits + ". Givens stay put.");
     }
     notePlayHigh(ctx, snap.score, snap);
   }

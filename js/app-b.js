@@ -145,7 +145,7 @@
       setMode("yacht");
       window.CabinetPlay.renderYacht(ctx);
     } else if (isSudoku()) {
-      setMode("sudoku6");
+      setMode(gameType());
       window.CabinetPlay.renderSudoku(ctx);
     } else if (isReversi()) {
       setMode("reversi");
@@ -215,6 +215,7 @@
       spider: 1,
       yacht: 1,
       sudoku6: 1,
+      sudoku9: 1,
       reversi: 1,
       hoops: 1,
       quiznight: 1,
@@ -224,7 +225,7 @@
     };
     if (!def || !PLAYABLE[def.type]) {
       ui.list.innerHTML =
-        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "klondike", "freecell", "spider", "yacht", "sudoku6", "reversi", "hoops", "quiznight", "blast", "triple", "chime", and "run21". See README.</li>';
+        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "klondike", "freecell", "spider", "yacht", "sudoku6", "sudoku9", "reversi", "hoops", "quiznight", "blast", "triple", "chime", and "run21". See README.</li>';
       openCabinet();
       return;
     }
@@ -240,7 +241,7 @@
       session = E.createPatienceSession(def);
     } else if (def.type === "yacht") {
       session = E.createYachtSession(def);
-    } else if (def.type === "sudoku6") {
+    } else if (def.type === "sudoku6" || def.type === "sudoku9") {
       session = E.createSudokuSession(def);
     } else if (def.type === "reversi") {
       session = E.createReversiSession(def);
@@ -586,6 +587,20 @@
       renderGame();
     });
   }
+  window.addEventListener("keydown", function (ev) {
+    if (!session || !isSudoku() || session.status !== "playing") return;
+    if (ev.key === "Backspace" || ev.key === "Delete" || ev.key === "0") {
+      E.setSudokuDigit(session, 0);
+      renderGame();
+      return;
+    }
+    const d = Number(ev.key);
+    const max = (session.size || 6);
+    if (d >= 1 && d <= max) {
+      E.setSudokuDigit(session, d);
+      renderGame();
+    }
+  });
   if (ui.reversiBoard) {
     ui.reversiBoard.addEventListener("click", function (ev) {
       if (!session || !isReversi() || session.status !== "playing") return;

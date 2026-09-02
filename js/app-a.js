@@ -101,7 +101,8 @@
     return gameType() === "yacht";
   }
   function isSudoku() {
-    return gameType() === "sudoku6";
+    const t = gameType();
+    return t === "sudoku6" || t === "sudoku9";
   }
   function isReversi() {
     return gameType() === "reversi";
@@ -181,7 +182,7 @@
     if (type === "columns21") return E.snapshotColumns(session).score;
     if (type === "elevenup") return E.snapshotEleven(session).score;
     if (type === "klondike" || type === "freecell" || type === "spider") return E.snapshotPatience(session).score;
-    if (type === "sudoku6") return E.snapshotSudoku(session).score;
+    if (type === "sudoku6" || type === "sudoku9") return E.snapshotSudoku(session).score;
     if (type === "hoops") return E.snapshotHoops(session).score;
     if (type === "quiznight") return E.snapshotQuiz(session).score;
     if (type === "blast") return E.snapshotBlast(session).score;

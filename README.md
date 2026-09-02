@@ -2,7 +2,7 @@
 
 Phone-browser card cabinet. Short sessions, big buttons, no App Store, no accounts, no ads, no IAP. Remix by duplicating JSON.
 
-v0.15 ships fifteen playable samples — **Run 21**, **Zip 21**, **Chug 21**, **11 Up**, **Solitaire**, **FreeCell**, **Spider**, **Yacht**, **Sudoku 6**, **Blast**, **Triple**, **Chime**, **Reversi**, **Hoops**, and **Quiz Night** — plus an author format so another title is a file drop, not a rewrite. The cabinet list is grouped by category (Card, Puzzle, Match, Strategy, Sports, Quiz).
+v0.16 ships sixteen playable samples — **Run 21**, **Zip 21**, **Chug 21**, **11 Up**, **Solitaire**, **FreeCell**, **Spider**, **Yacht**, **Sudoku 6**, **Sudoku 9**, **Blast**, **Triple**, **Chime**, **Reversi**, **Hoops**, and **Quiz Night** — plus an author format so another title is a file drop, not a rewrite. The cabinet list is grouped by category (Card, Puzzle, Match, Strategy, Sports, Quiz).
 
 ## Play on a phone
 
@@ -132,9 +132,16 @@ Public-domain five-dice scorecard (not a licensed clone). Original felt/gold cab
 
 6×6 puzzle. Digits 1–6 in 2×3 boxes. Original cabinet rules, not a branded clone.
 
-- Tap an empty cell, then 1–6 or **CLEAR**. Given cells stay locked.
+- Tap an empty cell **or** a digit first, then the other. **CLEAR** or Backspace empties the selected cell. Given cells stay locked (tap them for the locked banner).
 - A duplicate in a row, column, or 2×3 box is marked. Win when the grid matches the solution (or is a valid complete fill).
-- Score +1 per puzzle cleared. **DEAL AGAIN** loads the next puzzle in the JSON bank (five shipped).
+- Score +1 per puzzle cleared. **NEXT PUZZLE** loads the next puzzle in the JSON bank (five shipped).
+
+## Sudoku 9
+
+Classic 9×9. Digits 1–9 in 3×3 boxes. Same cabinet controls as Sudoku 6.
+
+- Tap a cell or a digit (1–9), then fill. Givens stay locked.
+- Duplicates in a row, column, or 3×3 box are marked. Five puzzles in `games/sudoku9.json`.
 
 ## Blast
 
@@ -188,12 +195,12 @@ Mixed trivia and jumble rounds from JSON. Four big answer buttons.
 
 ## How to add a game
 
-1. Duplicate a JSON file under `games/` (run21, zip21, chug21, elevenup, solitaire, freecell, spider, yacht, sudoku6, blast, triple, chime, reversi, hoops, or quiznight).
+1. Duplicate a JSON file under `games/` (run21, zip21, chug21, elevenup, solitaire, freecell, spider, yacht, sudoku6, sudoku9, blast, triple, chime, reversi, hoops, or quiznight).
 2. Change id, title, labels, copy, and the knobs for that type.
 3. Add the filename to a category `games` array in `games/index.json` (or the flat `games` array if you are not using categories).
 4. Reload. The cabinet groups rows under category headings.
 
-Engine keys: `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), `elevenup` (11 Up pairs), `klondike` (Solitaire stacks), `freecell`, `spider`, `yacht` (Yacht five-dice scorecard), `sudoku6`, `blast` (tap-to-pop clusters), `triple` (swap match-3), `chime` (row/column wrap slide), `reversi`, `hoops`, `quiznight`, and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
+Engine keys: `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), `elevenup` (11 Up pairs), `klondike` (Solitaire stacks), `freecell`, `spider`, `yacht` (Yacht five-dice scorecard), `sudoku6`, `sudoku9`, `blast` (tap-to-pop clusters), `triple` (swap match-3), `chime` (row/column wrap slide), `reversi`, `hoops`, `quiznight`, and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
 
 ## JSON fields
 
@@ -201,7 +208,7 @@ Unknown extra fields are ignored.
 
 Shared:
 - id (string): Hash route id. Unique. Played at `#/play/:id`.
-- type (string): `runlanes`, `columns21`, `elevenup`, `klondike`, `freecell`, `spider`, `yacht`, `sudoku6`, `blast`, `triple`, `chime`, `reversi`, `hoops`, `quiznight`, or `run21`.
+- type (string): `runlanes`, `columns21`, `elevenup`, `klondike`, `freecell`, `spider`, `yacht`, `sudoku6`, `sudoku9`, `blast`, `triple`, `chime`, `reversi`, `hoops`, `quiznight`, or `run21`.
 - title, tagline, blurb: Cabinet row + in-game marquee.
 - target (number): Bust line (21).
 - thinDeck (number): Run 21 reshuffles under this. Columns games default 0 (one shoe, then done).
@@ -233,6 +240,8 @@ Spider (`spider`) extras: columns (10), runScore (100), suits (1), suit (`♠`),
 Yacht (`yacht`) extras: upperBonus (35), upperThreshold (63), fullHouse (25), smallStraight (30), largeStraight (40), yacht (50), rolls (3), labels.roll hold aces…sixes threekind fourkind fullhouse smallstraight largestraight yacht chance, copy.idle playing mustScore done.
 
 Sudoku 6 (`sudoku6`) extras: puzzles (array of `{ puzzle, solution }` 36-char strings, 0 = empty), clearScore (1).
+
+Sudoku 9 (`sudoku9`) extras: size 9, puzzles (81-char `{ puzzle, solution }` strings, 0 = empty), clearScore (1).
 
 Blast (`blast`) extras: cols (8), rows (8), colors (5), moves (20), minGroup (2), groupScore (`n*(n-1)` or `n*10`), bigGroup (5), bigBonus (20).
 
@@ -272,7 +281,9 @@ Spider: 104 cards, deal-row blocked if a column is empty, completing K–A remov
 
 Yacht: roll yields five dice 1–6, hold keeps a face on the next roll, a fourth roll throws, aces sum ones, full house 25 / junk 0, small straight 30 / large 40, yacht 50, a category cannot be scored twice, upper bonus at 63, thirteen scores then done.
 
-Sudoku 6: given cells are locked, a duplicate in a row is invalid, a completed correct grid wins, 2×3 boxes reject duplicates.
+Sudoku 6: given cells are locked, a duplicate in a row is invalid, a completed correct grid wins, 2×3 boxes reject duplicates, a digit can be primed before tapping a cell.
+
+Sudoku 9: 81-cell givens stay locked, 3×3 boxes reject duplicates, a completed correct grid wins.
 
 Blast: a group of 1 does not pop; a group of 2+ pops; remaining cubes fall down; moves decrement; sitting is done at 0 moves.
 

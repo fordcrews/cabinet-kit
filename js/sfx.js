@@ -23,6 +23,8 @@
     select: "tap",
     hold: "tap",
     set: "tap",
+    ink: "tap",
+    "ink-clear": "tap",
     deselect: "tap",
     locked: "tap",
     place: "place",

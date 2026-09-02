@@ -40,11 +40,15 @@
 
 .sudoku-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(44px, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 4px;
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
+}
+.sudoku-grid[data-n="9"] {
+  max-width: 480px;
+  gap: 2px;
 }
 
 .sudoku-cell {
@@ -74,11 +78,21 @@
 
 .sudoku-pad {
   display: grid;
-  grid-template-columns: repeat(6, minmax(44px, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 6px;
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
+}
+.sudoku-table[data-n="9"] .sudoku-grid,
+.sudoku-table[data-n="9"] .sudoku-pad {
+  max-width: 480px;
+}
+.sudoku-grid[data-n="9"] .sudoku-cell {
+  min-width: 0;
+  min-height: 36px;
+  font-size: 1rem;
+  border-radius: 4px;
 }
 
 .sudoku-digit {

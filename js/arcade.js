@@ -1,5 +1,5 @@
 /**
- * Cabinet Kit — Sudoku 6, Reversi, Hoops, Quiz Night (browser + Node).
+ * Cabinet Kit — Sudoku 6/9, Reversi, Hoops, Quiz Night (browser + Node).
  * Extends CabinetEngine; Node: require this file to get the combined API.
  */
 (function (root, factory) {
@@ -47,23 +47,37 @@
     return a;
   }
 
-  const SUDOKU_N = 6;
-  const SUDOKU_BOX_R = 2;
-  const SUDOKU_BOX_C = 3;
-  const SUDOKU_CELLS = 36;
+  function sudokuSizeOf(gameOrGrid) {
+    if (gameOrGrid && typeof gameOrGrid === "object" && !Array.isArray(gameOrGrid)) {
+      const t = gameOrGrid.type || (gameOrGrid.config && gameOrGrid.config.type) || "";
+      if (gameOrGrid.size) return Number(gameOrGrid.size) === 9 ? 9 : 6;
+      if (t === "sudoku9") return 9;
+      if (gameOrGrid.grid && gameOrGrid.grid.length > 36) return 9;
+      return 6;
+    }
+    const len = gameOrGrid && gameOrGrid.length;
+    return len > 36 ? 9 : 6;
+  }
 
-  function parseSudokuString(s) {
+  function sudokuBox(n) {
+    return n === 9 ? { r: 3, c: 3 } : { r: 2, c: 3 };
+  }
+
+  function parseSudokuString(s, size) {
+    const n = size === 9 ? 9 : 6;
+    const cells = n * n;
     const out = [];
     const str = String(s || "");
-    for (let i = 0; i < SUDOKU_CELLS; i++) {
+    for (let i = 0; i < cells; i++) {
       const ch = str.charAt(i);
       const d = ch ? Number(ch) : 0;
-      out.push(d >= 1 && d <= 6 ? d : 0);
+      out.push(d >= 1 && d <= n ? d : 0);
     }
     return out;
   }
 
   function normalizePuzzles(game) {
+    const n = sudokuSizeOf(game);
     const raw = (game && game.puzzles) || [];
     const sols = (game && game.solutions) || [];
     const list = [];
@@ -71,24 +85,25 @@
       const item = raw[i];
       if (typeof item === "string") {
         list.push({
-          puzzle: parseSudokuString(item),
-          solution: parseSudokuString(sols[i] || item),
+          puzzle: parseSudokuString(item, n),
+          solution: parseSudokuString(sols[i] || item, n),
         });
       } else if (item && typeof item === "object") {
         const p = item.puzzle || item.grid || item.givens || "";
         const s = item.solution || item.sol || p;
-        list.push({ puzzle: parseSudokuString(p), solution: parseSudokuString(s) });
+        list.push({ puzzle: parseSudokuString(p, n), solution: parseSudokuString(s, n) });
       }
     }
     return list;
   }
 
-  function sudokuUnitOk(vals) {
-    const seen = [0, 0, 0, 0, 0, 0, 0];
+  function sudokuUnitOk(vals, n) {
+    const max = n || vals.length;
+    const seen = new Array(max + 1).fill(0);
     for (let i = 0; i < vals.length; i++) {
       const v = vals[i];
       if (!v) continue;
-      if (v < 1 || v > 6) return false;
+      if (v < 1 || v > max) return false;
       if (seen[v]) return false;
       seen[v] = 1;
     }
@@ -96,34 +111,41 @@
   }
 
   function sudokuValid(gridOrSession) {
-    const grid = gridOrSession && gridOrSession.grid ? gridOrSession.grid : gridOrSession;
-    if (!grid || grid.length < SUDOKU_CELLS) return false;
-    for (let r = 0; r < SUDOKU_N; r++) {
+    const sessionLike = gridOrSession && gridOrSession.grid ? gridOrSession : null;
+    const grid = sessionLike ? sessionLike.grid : gridOrSession;
+    const n = sudokuSizeOf(sessionLike || grid);
+    const box = sudokuBox(n);
+    const cells = n * n;
+    if (!grid || grid.length < cells) return false;
+    for (let r = 0; r < n; r++) {
       const row = [];
-      for (let c = 0; c < SUDOKU_N; c++) row.push(grid[r * SUDOKU_N + c]);
-      if (!sudokuUnitOk(row)) return false;
+      for (let c = 0; c < n; c++) row.push(grid[r * n + c]);
+      if (!sudokuUnitOk(row, n)) return false;
     }
-    for (let c = 0; c < SUDOKU_N; c++) {
+    for (let c = 0; c < n; c++) {
       const col = [];
-      for (let r = 0; r < SUDOKU_N; r++) col.push(grid[r * SUDOKU_N + c]);
-      if (!sudokuUnitOk(col)) return false;
+      for (let r = 0; r < n; r++) col.push(grid[r * n + c]);
+      if (!sudokuUnitOk(col, n)) return false;
     }
-    for (let br = 0; br < SUDOKU_N; br += SUDOKU_BOX_R) {
-      for (let bc = 0; bc < SUDOKU_N; bc += SUDOKU_BOX_C) {
-        const box = [];
-        for (let dr = 0; dr < SUDOKU_BOX_R; dr++) {
-          for (let dc = 0; dc < SUDOKU_BOX_C; dc++) {
-            box.push(grid[(br + dr) * SUDOKU_N + (bc + dc)]);
+    for (let br = 0; br < n; br += box.r) {
+      for (let bc = 0; bc < n; bc += box.c) {
+        const bx = [];
+        for (let dr = 0; dr < box.r; dr++) {
+          for (let dc = 0; dc < box.c; dc++) {
+            bx.push(grid[(br + dr) * n + (bc + dc)]);
           }
         }
-        if (!sudokuUnitOk(box)) return false;
+        if (!sudokuUnitOk(bx, n)) return false;
       }
     }
     return true;
   }
 
-  function sudokuConflicts(grid) {
-    const bad = new Array(SUDOKU_CELLS).fill(false);
+  function sudokuConflicts(grid, size) {
+    const n = size || sudokuSizeOf(grid);
+    const box = sudokuBox(n);
+    const cells = n * n;
+    const bad = new Array(cells).fill(false);
     function markDupes(idxs) {
       const map = {};
       idxs.forEach(function (i) {
@@ -140,22 +162,22 @@
         }
       });
     }
-    for (let r = 0; r < SUDOKU_N; r++) {
+    for (let r = 0; r < n; r++) {
       const idxs = [];
-      for (let c = 0; c < SUDOKU_N; c++) idxs.push(r * SUDOKU_N + c);
+      for (let c = 0; c < n; c++) idxs.push(r * n + c);
       markDupes(idxs);
     }
-    for (let c = 0; c < SUDOKU_N; c++) {
+    for (let c = 0; c < n; c++) {
       const idxs = [];
-      for (let r = 0; r < SUDOKU_N; r++) idxs.push(r * SUDOKU_N + c);
+      for (let r = 0; r < n; r++) idxs.push(r * n + c);
       markDupes(idxs);
     }
-    for (let br = 0; br < SUDOKU_N; br += SUDOKU_BOX_R) {
-      for (let bc = 0; bc < SUDOKU_N; bc += SUDOKU_BOX_C) {
+    for (let br = 0; br < n; br += box.r) {
+      for (let bc = 0; bc < n; bc += box.c) {
         const idxs = [];
-        for (let dr = 0; dr < SUDOKU_BOX_R; dr++) {
-          for (let dc = 0; dc < SUDOKU_BOX_C; dc++) {
-            idxs.push((br + dr) * SUDOKU_N + (bc + dc));
+        for (let dr = 0; dr < box.r; dr++) {
+          for (let dc = 0; dc < box.c; dc++) {
+            idxs.push((br + dr) * n + (bc + dc));
           }
         }
         markDupes(idxs);
@@ -164,26 +186,50 @@
     return bad;
   }
 
-  function sudokuComplete(grid) {
-    for (let i = 0; i < SUDOKU_CELLS; i++) {
+  function sudokuComplete(grid, session) {
+    const n = sudokuSizeOf(session || grid);
+    const cells = n * n;
+    for (let i = 0; i < cells; i++) {
       if (!grid[i]) return false;
     }
-    return sudokuValid(grid);
+    return sudokuValid(session || grid);
   }
 
   function sudokuMatches(grid, solution) {
     if (!solution) return sudokuComplete(grid);
-    for (let i = 0; i < SUDOKU_CELLS; i++) {
+    const cells = Math.min(grid.length, solution.length);
+    for (let i = 0; i < cells; i++) {
       if (grid[i] !== solution[i]) return false;
+    }
+    return cells === grid.length;
+  }
+
+  function placeSudokuDigit(session, idx, val) {
+    const n = session.size;
+    const cells = n * n;
+    if (idx == null || idx < 0 || idx >= cells) return false;
+    if (session.given[idx]) {
+      session.lastEvent = { kind: "locked" };
+      return false;
+    }
+    session.grid[idx] = val;
+    if (sudokuMatches(session.grid, session.solution) || sudokuComplete(session.grid, session)) {
+      session.status = "won";
+      session.cleared += 1;
+      session.score += session.config.clearScore;
+      session.lastEvent = { kind: "won", points: session.config.clearScore };
+    } else {
+      session.lastEvent = { kind: val ? "set" : "clear", digit: val };
     }
     return true;
   }
 
   function loadSudokuPuzzle(session, index) {
     const puzzles = session.puzzles;
-    const n = puzzles.length || 1;
-    const i = ((index % n) + n) % n;
-    const pack = puzzles[i] || { puzzle: new Array(SUDOKU_CELLS).fill(0), solution: new Array(SUDOKU_CELLS).fill(0) };
+    const nP = puzzles.length || 1;
+    const i = ((index % nP) + nP) % nP;
+    const cells = session.size * session.size;
+    const pack = puzzles[i] || { puzzle: new Array(cells).fill(0), solution: new Array(cells).fill(0) };
     session.puzzleIndex = i;
     session.grid = pack.puzzle.slice();
     session.solution = pack.solution.slice();
@@ -191,22 +237,28 @@
       return v > 0;
     });
     session.selected = null;
+    session.ink = 0;
     session.status = "playing";
     session.lastEvent = { kind: "deal" };
   }
 
   function createSudokuSession(game, opts) {
     const options = opts || {};
-    const puzzles = normalizePuzzles(game);
+    const size = sudokuSizeOf(game);
+    const type = (game && game.type) || (size === 9 ? "sudoku9" : "sudoku6");
+    const puzzles = normalizePuzzles(game || { type: type, size: size });
+    const cells = size * size;
     const session = {
-      type: "sudoku6",
-      config: { type: "sudoku6", clearScore: num(game && game.clearScore, 1) },
+      type: type,
+      size: size,
+      config: { type: type, size: size, clearScore: num(game && game.clearScore, 1) },
       puzzles: puzzles.length
         ? puzzles
-        : [{ puzzle: new Array(SUDOKU_CELLS).fill(0), solution: new Array(SUDOKU_CELLS).fill(0) }],
+        : [{ puzzle: new Array(cells).fill(0), solution: new Array(cells).fill(0) }],
       score: num(options.score, 0),
       cleared: num(options.cleared, 0),
       selected: null,
+      ink: 0,
       lastEvent: null,
     };
     loadSudokuPuzzle(session, num(options.puzzleIndex, 0));
@@ -221,52 +273,59 @@
 
   function tapSudokuCell(session, i) {
     const idx = Number(i);
+    const n = session.size || 6;
+    const cells = n * n;
     if (session.status !== "playing") return snapshotSudoku(session);
-    if (idx < 0 || idx >= SUDOKU_CELLS) return snapshotSudoku(session);
+    if (idx < 0 || idx >= cells) return snapshotSudoku(session);
     if (session.given[idx]) {
-      session.selected = null;
+      session.selected = idx;
       session.lastEvent = { kind: "locked" };
       return snapshotSudoku(session);
     }
     session.selected = idx;
+    if (session.ink) {
+      placeSudokuDigit(session, idx, session.ink);
+      return snapshotSudoku(session);
+    }
     session.lastEvent = { kind: "select", index: idx };
     return snapshotSudoku(session);
   }
 
   function setSudokuDigit(session, digit) {
+    const n = session.size || 6;
+    const cells = n * n;
     const d = Number(digit);
-    const val = d >= 1 && d <= 6 ? d : 0;
+    const val = d >= 1 && d <= n ? d : 0;
     if (session.status !== "playing") return snapshotSudoku(session);
     const idx = session.selected;
-    if (idx == null || idx < 0 || idx >= SUDOKU_CELLS) return snapshotSudoku(session);
-    if (session.given[idx]) {
-      session.lastEvent = { kind: "locked" };
+    if (idx == null || idx < 0 || idx >= cells || session.given[idx]) {
+      session.ink = val;
+      session.lastEvent = { kind: val ? "ink" : "ink-clear", digit: val };
       return snapshotSudoku(session);
     }
-    session.grid[idx] = val;
-    if (sudokuMatches(session.grid, session.solution) || sudokuComplete(session.grid)) {
-      session.status = "won";
-      session.cleared += 1;
-      session.score += session.config.clearScore;
-      session.lastEvent = { kind: "won", points: session.config.clearScore };
-    } else {
-      session.lastEvent = { kind: val ? "set" : "clear", digit: val };
-    }
+    session.ink = val;
+    placeSudokuDigit(session, idx, val);
     return snapshotSudoku(session);
   }
 
   function snapshotSudoku(session) {
-    const conflicts = sudokuConflicts(session.grid);
+    const n = session.size || 6;
+    const box = sudokuBox(n);
+    const conflicts = sudokuConflicts(session.grid, n);
     return {
-      type: "sudoku6",
+      type: session.type || (n === 9 ? "sudoku9" : "sudoku6"),
+      size: n,
+      boxR: box.r,
+      boxC: box.c,
       status: session.status,
       score: session.score,
       cleared: session.cleared,
       grid: session.grid.slice(),
       given: session.given.slice(),
       selected: session.selected,
+      ink: session.ink || 0,
       conflicts: conflicts,
-      valid: sudokuValid(session.grid),
+      valid: sudokuValid(session),
       puzzleIndex: session.puzzleIndex,
       lastEvent: session.lastEvent,
     };

@@ -80,6 +80,17 @@ test("2x3 box rejects a duplicate", () => {
 });
 
 
+test("digit pad works before a cell is selected", () => {
+  const session = E.createSudokuSession(def);
+  const empty = session.given.findIndex(function (g) {
+    return !g;
+  });
+  E.setSudokuDigit(session, 3);
+  assert.equal(session.ink, 3);
+  E.tapSudokuCell(session, empty);
+  assert.equal(session.grid[empty], 3);
+});
+
 test("dealSudoku advances to the next puzzle", () => {
   const session = E.createSudokuSession(def, { puzzleIndex: 0 });
   assert.equal(session.puzzleIndex, 0);
