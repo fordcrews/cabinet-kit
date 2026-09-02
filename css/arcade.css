@@ -288,35 +288,42 @@
 
   .sudoku-pad {
     flex: 0 0 auto;
-    width: min(22vw, 7.5rem);
-    max-width: 8rem;
+    width: min(28vw, 13rem);
+    max-width: 14rem;
     height: auto;
     max-height: 100%;
     margin: 0;
-    gap: 4px;
-    grid-template-columns: 1fr;
-    grid-auto-rows: minmax(0, 1fr);
-    align-content: stretch;
-    align-self: stretch;
+    gap: 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-auto-rows: minmax(0, auto);
+    align-content: center;
+    align-self: center;
+    overflow: visible;
+  }
+
+  .sudoku-table[data-n="6"] .sudoku-pad,
+  .sudoku-table[data-n="9"] .sudoku-pad {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
   .sudoku-table[data-n="9"] .sudoku-pad {
-    width: min(32vw, 10.5rem);
-    max-width: 11rem;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: min(32vw, 15rem);
+    max-width: 16rem;
   }
 
   .sudoku-digit {
     height: auto;
     aspect-ratio: 1;
-    min-height: 0;
+    min-height: 2.5rem;
+    max-height: none;
   }
 
   .sudoku-clear {
     grid-column: 1 / -1;
     font-size: 0.62rem;
     height: auto;
-    min-height: 1.4rem;
+    min-height: 2.25rem;
+    aspect-ratio: auto;
   }
 
   .reversi-board {
