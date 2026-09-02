@@ -228,6 +228,8 @@
     ui.skip.textContent = label("skip", "SKIP") + " " + snap.skipsLeft;
     ui.skip.disabled = !snap.canSkip;
     ui.skip.classList.toggle("is-ready", !!snap.canSkip);
+    ui.deal.textContent = label("again", "DEAL AGAIN");
+    ui.deal.classList.toggle("hidden", snap.status !== "done");
     ui.back.textContent = label("back", "CABINET");
     ui.incoming.replaceChildren();
     ui.incoming.classList.toggle("is-live", !!snap.incoming);

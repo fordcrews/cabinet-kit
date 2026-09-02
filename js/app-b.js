@@ -379,7 +379,13 @@
   }
   ui.deal.addEventListener("click", function () {
     if (!session) return;
-    if (isColumns()) return;
+    if (isColumns()) {
+      if (session.status !== "done") return;
+      session = E.createColumnsSession(gameDef);
+      sfxNewSitting(session);
+      renderGame();
+      return;
+    }
     if (isRunLanes()) {
       if (session.status !== "done") return;
       E.dealRunLanes(session);

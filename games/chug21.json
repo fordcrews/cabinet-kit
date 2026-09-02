@@ -21,7 +21,8 @@
     "skips": "SPILLS",
     "deck": "BAR",
     "incoming": "UP NEXT",
-    "total": "MUGS"
+    "total": "MUGS",
+    "again": "DEAL AGAIN"
   },
   "copy": {
     "playing": "Park the mug. Chug a 21.",

@@ -70,8 +70,10 @@
     if (ui.take) ui.take.classList.toggle("hidden", !(eleven || quiz));
     if (ui.roll) ui.roll.classList.toggle("hidden", !yacht);
     if (ui.shoot) ui.shoot.classList.toggle("hidden", !hoops);
-    if (type === "columns21") ui.deal.classList.add("hidden");
-    else if (type === "runlanes") {
+    if (type === "columns21") {
+      ui.hit.classList.add("hidden");
+      ui.stay.classList.add("hidden");
+    } else if (type === "runlanes") {
       ui.hit.classList.add("hidden");
       ui.stay.classList.add("hidden");
     } else if (eleven) ui.deal.classList.add("hidden");

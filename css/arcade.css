@@ -160,8 +160,8 @@
 }
 
 .reversi-cell {
-  min-width: 36px;
-  min-height: 36px;
+  min-width: 0;
+  min-height: 0;
   aspect-ratio: 1;
   padding: 4px;
   border: 1px solid var(--felt-edge);
@@ -196,7 +196,8 @@
 .hoops-court {
   position: relative;
   flex: 1;
-  min-height: 180px;
+  min-height: 140px;
+  min-width: 0;
   border: 2px solid var(--gold-dim);
   border-radius: 14px;
   background:
@@ -369,7 +370,7 @@
 }
 .reversi-cell {
   min-width: 0;
-  min-height: 44px;
+  min-height: 0;
 }
 .reversi-hint {
   width: 28%;
@@ -409,7 +410,7 @@
 }
 
 @media (orientation: landscape) {
-  .reversi-cell { min-height: 44px; }
+  .reversi-cell { min-height: 0; }
   .quiz-choice { min-height: 48px; }
   .sudoku-digit { min-height: 0; }
   .hoops-court { min-height: 0; }

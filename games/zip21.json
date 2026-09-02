@@ -21,7 +21,8 @@
     "skips": "SKIPS",
     "deck": "DECK",
     "incoming": "NEXT",
-    "total": "LANE"
+    "total": "LANE",
+    "again": "DEAL AGAIN"
   },
   "copy": {
     "playing": "Drop the card. Hit 21 to Zip.",

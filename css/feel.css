@@ -121,7 +121,7 @@
 
 .column-stay-btn { min-height: 44px; padding: 8px 6px; }
 .btn { min-height: 44px; }
-.reversi-cell { min-height: 44px; }
+.reversi-cell { min-height: 0; min-width: 0; }
 .sudoku-cell, .sudoku-digit { min-height: 0; min-width: 0; }
 .quiz-choice { min-height: 56px; font-size: 1rem; }
 .quiz-q[data-kind]::before { display: block; font-size: 0.7rem; letter-spacing: 0.16em; font-weight: 800; margin-bottom: 6px; color: var(--gold); content: attr(data-kind); }
@@ -137,7 +137,8 @@
 .sudoku-cell.box-top { border-top-width: 3px; }
 .sudoku-digit.is-current { box-shadow: 0 0 0 2px var(--gold); }
 @media (orientation: landscape) {
-  #view-game .columns-table, #view-game .eleven-table, #view-game .power-table, #view-game .yacht-table, #view-game .reversi-table, #view-game .hoops-table, #view-game .quiz-table, #view-game .match-table { flex: 1 1 0; min-width: 0; min-height: 0; overflow: auto; }
+  #view-game .columns-table, #view-game .eleven-table, #view-game .power-table, #view-game .yacht-table, #view-game .reversi-table, #view-game .hoops-table, #view-game .quiz-table { flex: 1 1 0; min-width: 0; min-height: 0; overflow: auto; }
+  #view-game .match-table { flex: 1 1 0; min-width: 0; min-height: 0; overflow: hidden; }
   #view-game .sudoku-table { flex: 1 1 0; min-width: 0; min-height: 0; overflow: hidden; }
   #view-game .controls { align-content: start; overflow: auto; }
   .btn.ghost { min-height: 44px; }
