@@ -337,6 +337,7 @@
           btn.className = "power-card-btn" + (isTop ? "" : " stacked") + (picked ? " is-selected" : "");
           btn.dataset.pcol = String(i);
           btn.dataset.idx = String(n);
+          if (type === "spider") btn.style.zIndex = String(n + 1);
           btn.disabled = !playing || c.faceUp === false;
           if (!isTop) btn.classList.add("is-stacked");
           btn.appendChild(node);

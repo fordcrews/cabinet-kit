@@ -115,8 +115,13 @@
   max-width: none;
 }
 
+.power-table.is-spider .power-card-btn {
+  position: relative;
+}
+
 .power-table.is-spider .power-card-btn.is-stacked {
   margin-bottom: -70%;
+  z-index: auto;
 }
 
 .power-table.is-illegal .power-col.is-selected,
