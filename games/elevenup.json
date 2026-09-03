@@ -3,12 +3,13 @@
   "type": "elevenup",
   "title": "11 Up",
   "tagline": "Pairs that make 11. Clear the table.",
-  "blurb": "Open cards on a 4×4 grid. Pull two that sum to 11, or two of a face. Next card costs. Clear the table for a bonus.",
-  "pairScore": 11,
-  "passPenalty": 5,
-  "clearBonus": 50,
+  "blurb": "Full 4×4 like the bar-top. A+10, 2+9, 3+8, 4+7, 5+6, or a matching face pair. Next Card fills a hole and costs. Clear the layout and more cards drop. Two rounds.",
+  "pairScore": 2000,
+  "passPenalty": 1000,
+  "clearBonus": 25000,
   "cells": 16,
-  "dealCount": 12,
+  "dealCount": 16,
+  "rounds": 2,
   "labels": {
     "next": "NEXT CARD",
     "take": "TAKE SCORE",
@@ -19,13 +20,14 @@
     "pair": "11"
   },
   "copy": {
-    "playing": "Tap two cards that make 11.",
+    "playing": "Tap two open cards that make 11, or two of the same face.",
     "pair": "Pair off.",
     "illegal": "Those two don't make 11.",
-    "next": "Pass. New card.",
+    "next": "Pass. Card on the table.",
     "take": "Score banked.",
-    "clear": "Table clear.",
+    "clear": "Table clear. Bonus. New layout.",
+    "round": "Next round. Fresh deck.",
     "done": "Sitting over.",
-    "full": "No empty cell. Pair or take score."
+    "full": "Table full. Pair or take score."
   }
 }

@@ -101,7 +101,11 @@
     const label = ctx.label, copy = ctx.copy;
     ui.scoreLabel.textContent = label("score", "SCORE");
     ui.scoreValue.textContent = String(snap.score);
-    ui.hudRound.textContent = label("stock", "STOCK") + " " + snap.stockCount;
+    ui.hudRound.textContent =
+      (snap.rounds > 1 ? label("round", "ROUND") + " " + snap.round + "/" + snap.rounds + " · " : "") +
+      label("stock", "STOCK") +
+      " " +
+      snap.stockCount;
     ui.hudDeck.textContent = "";
     ui.next.textContent = label("next", "NEXT CARD");
     ui.take.textContent = label("take", "TAKE SCORE");
@@ -133,6 +137,12 @@
       } else {
         ui.banner.textContent = copy("done", "Sitting over. Deal again.") + " · " + snap.score;
       }
+    } else if (ev && ev.kind === "clear") {
+      ui.banner.classList.add("run");
+      ui.banner.textContent = copy("clear", "Table clear. Bonus. New layout.") + " · +" + ev.points;
+    } else if (ev && ev.kind === "round") {
+      ui.banner.classList.add("run");
+      ui.banner.textContent = copy("round", "Next round. Fresh deck.") + " · " + snap.score;
     } else if (ev && ev.kind === "pair") {
       ui.banner.classList.add("run");
       ui.banner.textContent = "+" + ev.points + " · " + copy("pair", "Pair off.");
@@ -337,7 +347,7 @@
           btn.className = "power-card-btn" + (isTop ? "" : " stacked") + (picked ? " is-selected" : "");
           btn.dataset.pcol = String(i);
           btn.dataset.idx = String(n);
-          if (type === "spider") btn.style.zIndex = String(n + 1);
+          btn.style.zIndex = String(n + 1);
           btn.disabled = !playing || c.faceUp === false;
           if (!isTop) btn.classList.add("is-stacked");
           btn.appendChild(node);

@@ -60,8 +60,9 @@
   background: transparent;
   color: inherit;
   box-shadow: none;
-  min-height: 0;
   border-radius: 0;
+  position: relative;
+  flex: 0 0 auto;
 }
 
 .power-card-btn:disabled {
@@ -69,15 +70,19 @@
 }
 
 .power-card-btn.is-stacked {
-  margin-bottom: 0;
-  height: 20px;
+  height: 26px;
   overflow: hidden;
-  position: relative;
-  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+.power-card-btn:not(.is-stacked) {
+  height: auto;
+  min-height: 52px;
+  overflow: visible;
 }
 
 .power-card-btn.is-stacked .card {
-  min-height: 44px;
+  min-height: 52px;
   margin-bottom: 0;
 }
 
@@ -85,13 +90,13 @@
   width: 100%;
   max-width: 64px;
   height: auto;
-  min-height: 44px;
+  min-height: 52px;
   aspect-ratio: 2 / 2.6;
   pointer-events: none;
 }
 
 .power-col .power-card-btn.is-stacked .card {
-  min-height: 44px;
+  min-height: 52px;
 }
 
 .power-card-btn.is-selected .card,
@@ -112,7 +117,7 @@
 
 .power-table.is-spider .power-col .card,
 .power-table.is-spider .power-card-btn .card {
-  min-height: 36px;
+  min-height: 44px;
   max-width: none;
 }
 
@@ -121,8 +126,12 @@
 }
 
 .power-table.is-spider .power-card-btn.is-stacked {
-  height: 16px;
+  height: 22px;
   margin-bottom: 0;
+}
+
+.power-table.is-spider .power-card-btn:not(.is-stacked) {
+  min-height: 44px;
 }
 
 .power-table.is-illegal .power-col.is-selected,
@@ -157,7 +166,7 @@
 
   .power-table.is-spider .power-col .card,
   .power-table.is-spider .power-card-btn .card {
-    min-height: 32px;
+    min-height: 44px;
   }
 
   .patience-top {

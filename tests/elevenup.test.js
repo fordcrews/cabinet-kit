@@ -37,17 +37,21 @@ test("11 Up JSON id type title and scoring knobs", () => {
   assert.equal(elevenDef.title, "11 Up");
   const session = E.createElevenSession(elevenDef, seedRng(1));
   assert.equal(session.config.type, "elevenup");
-  assert.equal(session.config.pairScore, 11);
-  assert.equal(session.config.passPenalty, 5);
-  assert.equal(session.config.clearBonus, 50);
+  assert.equal(session.config.pairScore, 2000);
+  assert.equal(session.config.passPenalty, 1000);
+  assert.equal(session.config.clearBonus, 25000);
+  assert.equal(session.config.dealCount, 16);
+  assert.equal(session.config.rounds, 2);
   assert.equal(session.grid.length, 16);
   const filled = session.grid.filter(Boolean).length;
-  assert.equal(filled, 12);
-  assert.equal(session.stock.length, 40);
+  assert.equal(filled, 16);
+  assert.equal(session.stock.length, 36);
   const snap = E.snapshotEleven(session);
   assert.equal(snap.type, "elevenup");
   assert.equal(snap.status, "playing");
-  assert.equal(snap.stockCount, 40);
+  assert.equal(snap.stockCount, 36);
+  assert.equal(snap.round, 1);
+  assert.equal(snap.rounds, 2);
 });
 
 test("pair 5+6 legal", () => {
@@ -138,7 +142,7 @@ test("next places into the first empty cell", () => {
 });
 
 test("take score on clear adds bonus", () => {
-  const session = primed({ clearBonus: 50, pairScore: 11 });
+  const session = primed({ clearBonus: 50, pairScore: 11, rounds: 1 });
   session.grid[0] = card("5");
   session.grid[1] = card("6");
   E.tapEleven(session, 0);
@@ -158,7 +162,7 @@ test("take score on clear adds bonus", () => {
 });
 
 test("take without a clear banks current score only", () => {
-  const session = primed();
+  const session = primed({ rounds: 1 });
   session.grid[0] = card("4");
   session.score = 22;
   E.takeEleven(session);
@@ -190,4 +194,37 @@ test("cannot next on empty stock", () => {
   assert.throws(function () {
     E.nextEleven(session);
   }, /empty stock/);
+});
+
+test("clearing the table redeals from the same stock", () => {
+  const session = primed({ pairScore: 11, clearBonus: 50, dealCount: 16, rounds: 1 });
+  session.grid = session.grid.map(function () {
+    return null;
+  });
+  session.grid[0] = card("5");
+  session.grid[1] = card("6");
+  session.stock = [card("A"), card("2"), card("3")];
+  E.tapEleven(session, 0);
+  E.tapEleven(session, 1);
+  assert.equal(session.status, "playing");
+  assert.equal(session.score, 61);
+  assert.equal(session.lastEvent.kind, "clear");
+  const filled = session.grid.filter(Boolean).length;
+  assert.equal(filled, 3);
+  assert.equal(session.stock.length, 0);
+});
+
+test("take score starts a second round then done", () => {
+  const session = primed({ rounds: 2, dealCount: 16 });
+  session.score = 4000;
+  session.grid[0] = card("4");
+  E.takeEleven(session);
+  assert.equal(session.status, "playing");
+  assert.equal(session.round, 2);
+  assert.equal(session.lastEvent.kind, "round");
+  assert.equal(session.score, 4000);
+  assert.equal(session.grid.filter(Boolean).length, 16);
+  E.takeEleven(session);
+  assert.equal(session.status, "done");
+  assert.equal(session.lastEvent.kind, "take");
 });

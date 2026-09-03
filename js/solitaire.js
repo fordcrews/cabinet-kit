@@ -48,6 +48,7 @@
     clearBonus: 50,
     cells: 16,
     dealCount: 12,
+    rounds: 1,
   });
 
   function configFromElevenGame(game) {
@@ -59,6 +60,7 @@
       clearBonus: num(src.clearBonus, DEFAULT_ELEVEN.clearBonus),
       cells: Math.max(4, Math.floor(num(src.cells, DEFAULT_ELEVEN.cells))),
       dealCount: Math.max(1, Math.floor(num(src.dealCount, DEFAULT_ELEVEN.dealCount))),
+      rounds: Math.max(1, Math.floor(num(src.rounds, DEFAULT_ELEVEN.rounds))),
     };
   }
 
@@ -126,6 +128,7 @@
       grid: emptyElevenGrid(config.cells),
       selected: null,
       score: 0,
+      round: 1,
       status: "playing",
       lastEvent: null,
     };
@@ -169,6 +172,18 @@
       session.grid[i] = null;
       session.score += session.config.pairScore;
       session.selected = null;
+      if (elevenGridEmpty(session)) {
+        session.score += session.config.clearBonus;
+        session.lastEvent = {
+          kind: "clear",
+          cells: [a, i],
+          points: session.config.pairScore + session.config.clearBonus,
+        };
+        if (session.stock.length) {
+          dealElevenGrid(session);
+        }
+        return session;
+      }
       session.lastEvent = {
         kind: "pair",
         cells: [a, i],
@@ -209,12 +224,25 @@
     }
     const cleared = elevenGridEmpty(session);
     let bonus = 0;
-    if (cleared) {
+    if (cleared && (!session.lastEvent || session.lastEvent.kind !== "clear")) {
       bonus = session.config.clearBonus;
       session.score += bonus;
     }
-    session.status = "done";
     session.selected = null;
+    if (session.round < session.config.rounds) {
+      session.round += 1;
+      session.stock = shuffle(createDeck(), session.rng);
+      dealElevenGrid(session);
+      session.status = "playing";
+      session.lastEvent = {
+        kind: "round",
+        points: bonus,
+        round: session.round,
+        cleared: cleared,
+      };
+      return session;
+    }
+    session.status = "done";
     session.lastEvent = {
       kind: cleared ? "clear" : "take",
       points: bonus,
@@ -238,6 +266,8 @@
       pairScore: session.config.pairScore,
       passPenalty: session.config.passPenalty,
       clearBonus: session.config.clearBonus,
+      round: session.round || 1,
+      rounds: session.config.rounds || 1,
       canNext:
         session.status === "playing" &&
         session.stock.length > 0 &&
