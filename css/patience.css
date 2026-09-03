@@ -69,13 +69,15 @@
 }
 
 .power-card-btn.is-stacked {
-  margin-bottom: -58%;
+  margin-bottom: 0;
+  height: 20px;
+  overflow: hidden;
   position: relative;
-  z-index: 1;
+  flex-shrink: 0;
 }
 
 .power-card-btn.is-stacked .card {
-  min-height: 28px;
+  min-height: 44px;
   margin-bottom: 0;
 }
 
@@ -89,8 +91,7 @@
 }
 
 .power-col .power-card-btn.is-stacked .card {
-  min-height: 24px;
-  aspect-ratio: auto;
+  min-height: 44px;
 }
 
 .power-card-btn.is-selected .card,
@@ -120,8 +121,8 @@
 }
 
 .power-table.is-spider .power-card-btn.is-stacked {
-  margin-bottom: -70%;
-  z-index: auto;
+  height: 16px;
+  margin-bottom: 0;
 }
 
 .power-table.is-illegal .power-col.is-selected,
