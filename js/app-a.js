@@ -58,12 +58,15 @@
     quizChoices: $("quiz-choices"),
     playMatch: $("play-match"),
     matchGrid: $("match-grid"),
+    playSlot: $("play-slot"),
+    slotCanvas: $("slot-canvas"),
     roll: $("btn-roll"),
     shoot: $("btn-shoot"),
     back: $("btn-back"),
     sfx: $("btn-sfx"),
   };
   if (window.CabinetPlay) window.CabinetPlay.attachUi(ui);
+  if (window.CabinetSlot) window.CabinetSlot.attachUi(ui);
   const gamesById = new Map();
   let session = null;
   let gameDef = null;
@@ -117,6 +120,9 @@
   function isMatch() {
     const t = gameType();
     return t === "blast" || t === "triple" || t === "chime";
+  }
+  function isSlot() {
+    return gameType() === "slot";
   }
   function isArcadePlay() {
     return isSudoku() || isReversi() || isHoops() || isQuiz();
@@ -189,11 +195,19 @@
     if (type === "blast") return E.snapshotBlast(session).score;
     if (type === "triple") return E.snapshotTriple(session).score;
     if (type === "chime") return E.snapshotChime(session).score;
+    if (type === "slot") {
+      if (window.CabinetSlot) return window.CabinetSlot.getScore();
+      return Number(session && session.score) || 0;
+    }
     return Number(session && session.score) || 0;
   }
   function shouldRecordHigh() {
     const type = gameType();
     const status = session && session.status;
+    if (type === "slot") {
+      const st = window.CabinetSlot ? window.CabinetSlot.getStatus() : status;
+      return st === "done";
+    }
     if (type === "reversi") return status === "done";
     if (type === "runlanes" || type === "columns21" || type === "elevenup") {
       return status === "done";
