@@ -1,0 +1,9 @@
+/* Cabinet menu scroll: long game lists (Sports/Orbit) must be reachable */
+#view-cabinet.active {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.game-list {
+  flex: 0 0 auto; /* grow with content; the VIEW scrolls */
+}
