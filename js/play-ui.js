@@ -96,6 +96,10 @@
   }
 
   function renderEleven(ctx) {
+    if (window.ElevenUpPlay && typeof window.ElevenUpPlay.render === "function") {
+      window.ElevenUpPlay.render(ctx);
+      return;
+    }
     const E = ctx.E, ui = ctx.ui, session = ctx.session;
     const snap = E.snapshotEleven(session);
     const label = ctx.label, copy = ctx.copy;
@@ -597,6 +601,10 @@
   }
 
   function renderQuiz(ctx) {
+    if (window.QuizNightPlay && typeof window.QuizNightPlay.render === "function") {
+      window.QuizNightPlay.render(ctx);
+      return;
+    }
     const E = ctx.E, ui = ctx.ui, session = ctx.session;
     const snap = E.snapshotQuiz(session);
     const label = ctx.label, copy = ctx.copy;
@@ -743,6 +751,7 @@
       ui.playHoops = $("play-hoops");
       ui.playQuiz = $("play-quiz");
       ui.elevenGrid = $("eleven-grid");
+      ui.elevenStocks = $("eleven-stocks");
       ui.powerFoundations = $("power-foundations");
       ui.powerStocks = $("power-stocks");
       ui.powerTableau = $("power-tableau");

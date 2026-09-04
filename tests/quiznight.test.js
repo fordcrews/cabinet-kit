@@ -2,7 +2,7 @@
 
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const E = require("../js/arcade.js");
+const E = require("../js/app-quiznight.js");
 const def = require("../games/quiznight.json");
 
 test("Quiz Night JSON id type title and bank", () => {

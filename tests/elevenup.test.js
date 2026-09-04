@@ -2,7 +2,7 @@
 
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const E = require("../js/solitaire.js");
+const E = require("../js/11up.js");
 const elevenDef = require("../games/elevenup.json");
 
 function card(rank, suit) {

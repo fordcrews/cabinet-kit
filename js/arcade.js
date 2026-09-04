@@ -1,5 +1,5 @@
 /**
- * Cabinet Kit — Sudoku 6/9, Reversi, Hoops, Quiz Night (browser + Node).
+ * Cabinet Kit — Sudoku 6/9, Reversi, Hoops (browser + Node).
  * Extends CabinetEngine; Node: require this file to get the combined API.
  */
 (function (root, factory) {
@@ -585,111 +585,6 @@
     };
   }
 
-  function normalizeQuestions(game) {
-    const raw = (game && game.questions) || [];
-    return raw.map(function (q) {
-      return {
-        q: String(q.q || q.prompt || ""),
-        choices: (q.choices || []).slice(0, 4),
-        answerIndex: num(q.answerIndex, 0),
-        kind: q.kind === "jumble" ? "jumble" : "trivia",
-      };
-    });
-  }
-
-  function createQuizSession(game, rng) {
-    const all = normalizeQuestions(game);
-    const sitting = num(game && game.sitting, 12);
-    const rand = rng || defaultRng();
-    const shuffled = shuffle(all, rand);
-    const picked = shuffled.slice(0, Math.min(sitting, shuffled.length));
-    return {
-      type: "quiznight",
-      config: {
-        type: "quiznight",
-        triviaPoints: num(game && game.triviaPoints, 10),
-        jumblePoints: num(game && game.jumblePoints, 15),
-        sitting: sitting,
-      },
-      bank: all,
-      questions: picked,
-      index: 0,
-      score: 0,
-      asked: 0,
-      locked: false,
-      picked: null,
-      status: "playing",
-      lastEvent: { kind: "deal" },
-    };
-  }
-
-  function currentQuiz(session) {
-    return session.questions[session.index] || null;
-  }
-
-  function answerQuiz(session, i) {
-    if (session.status !== "playing" || session.locked) return snapshotQuiz(session);
-    const q = currentQuiz(session);
-    if (!q) {
-      session.status = "done";
-      return snapshotQuiz(session);
-    }
-    const choice = Number(i);
-    session.locked = true;
-    session.picked = choice;
-    session.asked += 1;
-    const ok = choice === q.answerIndex;
-    const pts = q.kind === "jumble" ? session.config.jumblePoints : session.config.triviaPoints;
-    if (ok) session.score += pts;
-    session.lastEvent = { kind: ok ? "correct" : "wrong", points: ok ? pts : 0, kindQ: q.kind };
-    return snapshotQuiz(session);
-  }
-
-  function quizNext(session) {
-    if (session.status !== "playing") return snapshotQuiz(session);
-    if (!session.locked) return snapshotQuiz(session);
-    if (session.index + 1 >= session.questions.length) {
-      session.status = "done";
-      session.lastEvent = { kind: "done" };
-      return snapshotQuiz(session);
-    }
-    session.index += 1;
-    session.locked = false;
-    session.picked = null;
-    session.lastEvent = { kind: "next" };
-    return snapshotQuiz(session);
-  }
-
-  function takeQuiz(session) {
-    session.status = "done";
-    session.lastEvent = { kind: "take" };
-    return snapshotQuiz(session);
-  }
-
-  function snapshotQuiz(session) {
-    const q = currentQuiz(session);
-    const last = session.index + 1 >= session.questions.length;
-    return {
-      type: "quiznight",
-      status: session.status,
-      score: session.score,
-      index: session.index,
-      total: session.questions.length,
-      asked: session.asked,
-      locked: session.locked,
-      picked: session.picked,
-      canNext: session.status === "playing" && session.locked && !last,
-      canTake: session.status === "playing" && session.locked && last,
-      question: q ? q.q : "",
-      choices: q ? q.choices.slice() : [],
-      kind: q ? q.kind : "trivia",
-      answerIndex: q ? q.answerIndex : -1,
-      triviaPoints: session.config.triviaPoints,
-      jumblePoints: session.config.jumblePoints,
-      lastEvent: session.lastEvent,
-    };
-  }
-
   E.createSudokuSession = createSudokuSession;
   E.dealSudoku = dealSudoku;
   E.tapSudokuCell = tapSudokuCell;
@@ -709,9 +604,4 @@
   E.hoopsShoot = hoopsShoot;
   E.snapshotHoops = snapshotHoops;
 
-  E.createQuizSession = createQuizSession;
-  E.answerQuiz = answerQuiz;
-  E.quizNext = quizNext;
-  E.takeQuiz = takeQuiz;
-  E.snapshotQuiz = snapshotQuiz;
 });

@@ -1,9 +1,10 @@
 /* Cabinet Kit service worker — network-first, cache fallback */
-const CACHE = "cabinet-kit-v0.17.0";
+const CACHE = "cabinet-kit-v0.17.1";
 const ASSETS = [
   "./",
   "./index.html",
   "./css/app.css",
+  "./css/11up.css",
   "./css/arcade.css",
   "./css/patience.css",
   "./css/match.css",
@@ -27,8 +28,10 @@ const ASSETS = [
   "./js/engine.js",
   "./js/solitaire.js",
   "./js/play-ui.js",
+  "./js/11up.js",
   "./js/yacht.js",
   "./js/arcade.js",
+  "./js/app-quiznight.js",
   "./js/match.js",
   "./js/feel-engine.js",
   "./js/feel-ui.js",
