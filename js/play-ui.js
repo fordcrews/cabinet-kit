@@ -117,17 +117,52 @@
     ui.deal.classList.toggle("hidden", playing);
     ui.next.disabled = !snap.canNext;
     ui.take.disabled = !playing;
+    const n = snap.grid.length;
+    const stacks = n % 3 === 0 ? 3 : 4;
+    const depth = Math.max(1, Math.floor(n / stacks));
+    if (ui.elevenStocks) {
+      ui.elevenStocks.replaceChildren();
+      const left = snap.stockCount || 0;
+      for (let s = 0; s < 3; s++) {
+        const pile = document.createElement("div");
+        pile.className = "eleven-stock";
+        const share = Math.floor(left / 3) + (s < left % 3 ? 1 : 0);
+        const show = Math.min(3, share);
+        for (let k = 0; k < show; k++) {
+          pile.appendChild(cardNode({ rank: "", suit: "", faceUp: false }, false, false));
+        }
+        const meta = document.createElement("span");
+        meta.className = "eleven-stock-meta";
+        meta.textContent = String(share);
+        pile.appendChild(meta);
+        ui.elevenStocks.appendChild(pile);
+      }
+    }
     ui.elevenGrid.replaceChildren();
-    snap.grid.forEach(function (c, i) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      const sel = snap.selected === i;
-      btn.className = "eleven-cell" + (c ? "" : " is-empty") + (sel ? " is-selected" : "");
-      btn.dataset.cell = String(i);
-      btn.disabled = !playing;
-      if (c) btn.appendChild(cardNode(c, false, sel));
-      ui.elevenGrid.appendChild(btn);
-    });
+    ui.elevenGrid.style.gridTemplateColumns = "repeat(" + stacks + ", minmax(0, 1fr))";
+    for (let col = 0; col < stacks; col++) {
+      const wrap = document.createElement("div");
+      wrap.className = "eleven-col";
+      for (let row = 0; row < depth; row++) {
+        const i = col * depth + row;
+        const c = snap.grid[i];
+        const btn = document.createElement("button");
+        btn.type = "button";
+        const sel = snap.selected === i;
+        const isTop = row === depth - 1;
+        btn.className =
+          "eleven-cell" +
+          (c ? "" : " is-empty") +
+          (sel ? " is-selected" : "") +
+          (!isTop && c ? " is-stacked" : "");
+        btn.dataset.cell = String(i);
+        btn.disabled = !playing || !c;
+        btn.style.zIndex = String(row + 1);
+        if (c) btn.appendChild(cardNode(c, !isTop, sel));
+        wrap.appendChild(btn);
+      }
+      ui.elevenGrid.appendChild(wrap);
+    }
     ui.banner.className = "banner";
     const ev = snap.lastEvent;
     if (snap.status === "done") {

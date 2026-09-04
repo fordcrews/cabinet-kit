@@ -40,16 +40,17 @@ test("11 Up JSON id type title and scoring knobs", () => {
   assert.equal(session.config.pairScore, 2000);
   assert.equal(session.config.passPenalty, 1000);
   assert.equal(session.config.clearBonus, 25000);
-  assert.equal(session.config.dealCount, 16);
+  assert.equal(session.config.dealCount, 12);
+  assert.equal(session.config.cells, 12);
   assert.equal(session.config.rounds, 2);
-  assert.equal(session.grid.length, 16);
+  assert.equal(session.grid.length, 12);
   const filled = session.grid.filter(Boolean).length;
-  assert.equal(filled, 16);
-  assert.equal(session.stock.length, 36);
+  assert.equal(filled, 12);
+  assert.equal(session.stock.length, 40);
   const snap = E.snapshotEleven(session);
   assert.equal(snap.type, "elevenup");
   assert.equal(snap.status, "playing");
-  assert.equal(snap.stockCount, 36);
+  assert.equal(snap.stockCount, 40);
   assert.equal(snap.round, 1);
   assert.equal(snap.rounds, 2);
 });
@@ -215,7 +216,7 @@ test("clearing the table redeals from the same stock", () => {
 });
 
 test("take score starts a second round then done", () => {
-  const session = primed({ rounds: 2, dealCount: 16 });
+  const session = primed({ rounds: 2, dealCount: 12, cells: 12 });
   session.score = 4000;
   session.grid[0] = card("4");
   E.takeEleven(session);
@@ -223,7 +224,7 @@ test("take score starts a second round then done", () => {
   assert.equal(session.round, 2);
   assert.equal(session.lastEvent.kind, "round");
   assert.equal(session.score, 4000);
-  assert.equal(session.grid.filter(Boolean).length, 16);
+  assert.equal(session.grid.filter(Boolean).length, 12);
   E.takeEleven(session);
   assert.equal(session.status, "done");
   assert.equal(session.lastEvent.kind, "take");

@@ -38,6 +38,7 @@
     playPower: $("play-power"),
     playYacht: $("play-yacht"),
     elevenGrid: $("eleven-grid"),
+    elevenStocks: $("eleven-stocks"),
     powerFoundations: $("power-foundations"),
     powerStocks: $("power-stocks"),
     powerTableau: $("power-tableau"),
