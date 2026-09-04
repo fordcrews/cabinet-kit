@@ -1,5 +1,5 @@
-/* Cabinet Kit service worker — cache-first static player */
-const CACHE = "cabinet-kit-v0.16.7";
+/* Cabinet Kit service worker — network-first, cache fallback */
+const CACHE = "cabinet-kit-v0.17.0";
 const ASSETS = [
   "./",
   "./index.html",
@@ -78,15 +78,16 @@ self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
   event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req).then((res) => {
+    fetch(req)
+      .then((res) => {
         const copy = res.clone();
         if (res.ok && new URL(req.url).origin === self.location.origin) {
           caches.open(CACHE).then((cache) => cache.put(req, copy));
         }
         return res;
-      }).catch(() => caches.match("./index.html"));
-    })
+      })
+      .catch(() =>
+        caches.match(req).then((cached) => cached || caches.match("./index.html"))
+      )
   );
 });

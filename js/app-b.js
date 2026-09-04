@@ -703,7 +703,9 @@
   }
   function registerSw() {
     if (!("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.register("sw.js").catch(function () {});
+    navigator.serviceWorker.register("sw.js").then(function (reg) {
+      if (reg.update) reg.update();
+    }).catch(function () {});
   }
   loadCatalog()
     .then(function () {
