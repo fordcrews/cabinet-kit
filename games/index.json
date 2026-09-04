@@ -4,7 +4,7 @@
     { "id": "puzzle", "title": "Puzzle", "games": ["sudoku6.json", "sudoku9.json"] },
     { "id": "match", "title": "Match", "games": ["blast.json", "triple.json", "chime.json"] },
     { "id": "strategy", "title": "Strategy", "games": ["reversi.json"] },
-    { "id": "sports", "title": "Sports", "games": ["hoops.json"] },
+    { "id": "sports", "title": "Sports", "games": ["hoops.json", "orbit.json"] },
     { "id": "quiz", "title": "Quiz", "games": ["quiznight.json"] }
   ]
 }

@@ -1,0 +1,26 @@
+{
+  "id": "orbit",
+  "type": "slot",
+  "title": "Orbit",
+  "tagline": "Keep the puck in the wedge.",
+  "blurb": "A puck orbits the center ring. Tap when it sits inside the gold scoring wedge. Twelves taps a sitting — two points in the wedge, three near the center.",
+  "module": "games/orbit/game.js",
+  "shots": 12,
+  "makePoints": 2,
+  "longPoints": 3,
+  "puckSpeed": 1.55,
+  "wedgeSpeed": 0.35,
+  "wedgeHalf": 0.42,
+  "labels": {
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "score": "SCORE",
+    "shots": "SHOTS"
+  },
+  "copy": {
+    "playing": "Tap when the puck is in the gold wedge.",
+    "make": "In the wedge.",
+    "miss": "Outside.",
+    "done": "Twelve taps."
+  }
+}
