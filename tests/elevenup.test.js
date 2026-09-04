@@ -99,14 +99,16 @@ test("J+Q illegal", () => {
 });
 
 test("tap removes a legal pair and scores pairScore", () => {
-  const session = primed();
-  session.grid[0] = card("5", "♠");
-  session.grid[1] = card("6", "♥");
-  E.tapEleven(session, 0);
-  assert.equal(session.selected, 0);
-  E.tapEleven(session, 1);
-  assert.equal(session.grid[0], null);
-  assert.equal(session.grid[1], null);
+  const session = primed({ pairScore: 11, clearBonus: 50 });
+  session.grid[18] = card("5", "♠");
+  session.grid[19] = card("6", "♥");
+  session.grid[20] = card("7", "♦");
+  E.tapEleven(session, 18);
+  assert.equal(session.selected, 18);
+  E.tapEleven(session, 19);
+  assert.equal(session.grid[18], null);
+  assert.equal(session.grid[19], null);
+  assert.equal(session.grid[20].rank, "7");
   assert.equal(session.score, 11);
   assert.equal(session.selected, null);
   assert.equal(session.lastEvent.kind, "pair");
@@ -114,12 +116,12 @@ test("tap removes a legal pair and scores pairScore", () => {
 
 test("illegal second tap deselects without removing", () => {
   const session = primed();
-  session.grid[0] = card("2");
-  session.grid[1] = card("8");
-  E.tapEleven(session, 0);
-  E.tapEleven(session, 1);
-  assert.equal(session.grid[0].rank, "2");
-  assert.equal(session.grid[1].rank, "8");
+  session.grid[18] = card("2");
+  session.grid[19] = card("8");
+  E.tapEleven(session, 18);
+  E.tapEleven(session, 19);
+  assert.equal(session.grid[18].rank, "2");
+  assert.equal(session.grid[19].rank, "8");
   assert.equal(session.selected, null);
   assert.equal(session.score, 0);
   assert.equal(session.lastEvent.kind, "illegal");
@@ -157,14 +159,11 @@ test("next places into the first empty cell", () => {
 
 test("take score on clear adds bonus", () => {
   const session = primed({ clearBonus: 50, pairScore: 11, rounds: 1 });
-  session.grid[0] = card("5");
-  session.grid[1] = card("6");
-  E.tapEleven(session, 0);
-  E.tapEleven(session, 1);
-  assert.equal(session.score, 11);
+  session.score = 11;
   session.grid = session.grid.map(function () {
     return null;
   });
+  session.stock = [];
   E.takeEleven(session);
   assert.equal(session.status, "done");
   assert.equal(session.score, 61);
@@ -229,11 +228,11 @@ test("clearing the table redeals from the same stock", () => {
   session.grid = session.grid.map(function () {
     return null;
   });
-  session.grid[0] = card("5");
-  session.grid[1] = card("6");
+  session.grid[18] = card("5");
+  session.grid[19] = card("6");
   session.stock = [card("A"), card("2"), card("3")];
-  E.tapEleven(session, 0);
-  E.tapEleven(session, 1);
+  E.tapEleven(session, 18);
+  E.tapEleven(session, 19);
   assert.equal(session.status, "playing");
   assert.equal(session.score, 61);
   assert.equal(session.lastEvent.kind, "clear");
