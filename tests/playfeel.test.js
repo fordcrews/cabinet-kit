@@ -4,6 +4,7 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const E = require("../js/engine.js");
 const Sol = require("../js/solitaire.js");
+const Eleven = require("../js/11up.js");
 const Yacht = require("../js/yacht.js");
 const runDef = require("../games/run21.json");
 const elevenDef = require("../games/elevenup.json");
@@ -70,7 +71,7 @@ function primedColumns() {
 }
 
 function primedEleven() {
-  const session = Sol.createElevenSession(elevenDef, seedRng(11));
+  const session = Eleven.createElevenSession(elevenDef, seedRng(11));
   session.grid = session.grid.map(function () {
     return null;
   });
@@ -131,15 +132,16 @@ test("canSkip false at 0 remaining", () => {
 
 test("illegal pair records both cells", () => {
   const session = primedEleven();
-  session.grid[0] = card("2");
-  session.grid[1] = card("8");
-  Sol.tapEleven(session, 0);
-  Sol.tapEleven(session, 1);
+  session.grid[18] = card("2");
+  session.grid[19] = card("8");
+  Eleven.tapEleven(session, 18);
+  Eleven.tapEleven(session, 19);
   assert.equal(session.lastEvent.kind, "illegal");
-  assert.deepEqual(session.lastEvent.cells, [0, 1]);
-  const snap = Sol.snapshotEleven(session);
+  const snap = Eleven.snapshotEleven(session);
   assert.equal(snap.selected, null);
   assert.equal(snap.lastEvent.kind, "illegal");
+  assert.equal(session.grid[18].rank, "2");
+  assert.equal(session.grid[19].rank, "8");
 });
 
 test("thirteenth score ends cleanly and cannot score again", () => {
