@@ -111,7 +111,7 @@
     if (result && result.isNew && hostUi && hostUi.banner) {
       const t = hostUi.banner.textContent || "";
       if (t.indexOf("NEW HIGH") < 0) {
-        hostUi.banner.textContent = t ? t + " \u00b7 NEW HIGH" : "NEW HIGH";
+        hostUi.banner.textContent = t ? t + " · NEW HIGH" : "NEW HIGH";
       }
     }
     return result;
@@ -350,13 +350,51 @@
     return Promise.resolve(activeHandle);
   }
 
+  function wrapPlayUi() {
+    if (typeof window === "undefined" || !window.CabinetPlay) return;
+    if (window.CabinetPlay.__slotModeWrapped) return;
+    const orig = window.CabinetPlay.applyMode;
+    if (typeof orig !== "function") return;
+    window.CabinetPlay.applyMode = function (ui, type) {
+      orig(ui, type);
+      const slot = type === "slot";
+      if (!ui) return;
+      ui.playSlot = ui.playSlot || document.getElementById("play-slot");
+      ui.slotCanvas = ui.slotCanvas || document.getElementById("slot-canvas");
+      if (ui.playSlot) ui.playSlot.classList.toggle("hidden", !slot);
+      if (!slot) return;
+      if (ui.playRun) ui.playRun.classList.add("hidden");
+      if (ui.playColumns) ui.playColumns.classList.add("hidden");
+      if (ui.playEleven) ui.playEleven.classList.add("hidden");
+      if (ui.playPower) ui.playPower.classList.add("hidden");
+      if (ui.playYacht) ui.playYacht.classList.add("hidden");
+      if (ui.playSudoku) ui.playSudoku.classList.add("hidden");
+      if (ui.playReversi) ui.playReversi.classList.add("hidden");
+      if (ui.playHoops) ui.playHoops.classList.add("hidden");
+      if (ui.playQuiz) ui.playQuiz.classList.add("hidden");
+      if (ui.playMatch) ui.playMatch.classList.add("hidden");
+      if (ui.hit) ui.hit.classList.add("hidden");
+      if (ui.stay) ui.stay.classList.add("hidden");
+      if (ui.skip) ui.skip.classList.add("hidden");
+      if (ui.deal) ui.deal.classList.add("hidden");
+      if (ui.next) ui.next.classList.add("hidden");
+      if (ui.take) ui.take.classList.add("hidden");
+      if (ui.roll) ui.roll.classList.add("hidden");
+      if (ui.shoot) ui.shoot.classList.add("hidden");
+    };
+    window.CabinetPlay.__slotModeWrapped = true;
+  }
+
   function attachUi(ui) {
     hostUi = ui;
     if (ui) {
       ui.playSlot = ui.playSlot || document.getElementById("play-slot");
       ui.slotCanvas = ui.slotCanvas || document.getElementById("slot-canvas");
     }
+    wrapPlayUi();
   }
+
+  wrapPlayUi();
 
   return {
     resolveModulePath: resolveModulePath,
