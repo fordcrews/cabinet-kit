@@ -1,1 +1,1 @@
-file:///workspace/cabinet-kit-build/js/app-b.js
+/* Split: app.js loads app-b.part0.js .. part2.js */
