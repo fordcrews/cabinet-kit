@@ -9,6 +9,7 @@
   "clearBonus": 25000,
   "stacks": 3,
   "pyramidRows": 3,
+  "feltSlots": 6,
   "rounds": 2,
   "labels": {
     "next": "NEXT CARD",

@@ -41,11 +41,12 @@ test("11 Up JSON id type title and scoring knobs", () => {
   assert.equal(session.config.passPenalty, 1000);
   assert.equal(session.config.clearBonus, 25000);
   assert.equal(session.config.dealCount, 18);
-  assert.equal(session.config.cells, 18);
+  assert.equal(session.config.cells, 24);
+  assert.equal(session.config.feltSlots, 6);
   assert.equal(session.config.stacks, 3);
   assert.equal(session.config.pyramidRows, 3);
   assert.equal(session.config.rounds, 2);
-  assert.equal(session.grid.length, 18);
+  assert.equal(session.grid.length, 24);
   const filled = session.grid.filter(Boolean).length;
   assert.equal(filled, 18);
   assert.equal(session.stock.length, 34);
@@ -53,8 +54,18 @@ test("11 Up JSON id type title and scoring knobs", () => {
   assert.equal(snap.type, "elevenup");
   assert.equal(snap.status, "playing");
   assert.equal(snap.stockCount, 34);
+  assert.equal(snap.canNext, true);
   assert.equal(snap.round, 1);
   assert.equal(snap.rounds, 2);
+});
+
+test("next card is legal on a fresh deal because felt slots are empty", () => {
+  const session = E.createElevenSession(elevenDef, seedRng(1));
+  const snap = E.snapshotEleven(session);
+  assert.equal(snap.canNext, true);
+  E.nextEleven(session);
+  assert.equal(session.grid[18].rank != null, true);
+  assert.equal(session.lastEvent.kind, "next");
 });
 
 test("pair 5+6 legal", () => {

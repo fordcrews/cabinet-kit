@@ -50,6 +50,7 @@
     pyramidRows: 3,
     cells: 18,
     dealCount: 18,
+    feltSlots: 6,
     rounds: 1,
   });
 
@@ -64,7 +65,8 @@
     const stacks = Math.max(1, Math.floor(num(src.stacks, DEFAULT_ELEVEN.stacks)));
     const pyramidRows = Math.max(2, Math.floor(num(src.pyramidRows, DEFAULT_ELEVEN.pyramidRows)));
     const per = pyramidSize(pyramidRows);
-    const cells = stacks * per;
+    const feltSlots = Math.max(0, Math.floor(num(src.feltSlots, DEFAULT_ELEVEN.feltSlots)));
+    const pyramidCells = stacks * per;
     return {
       type: "elevenup",
       pairScore: num(src.pairScore, DEFAULT_ELEVEN.pairScore),
@@ -72,10 +74,20 @@
       clearBonus: num(src.clearBonus, DEFAULT_ELEVEN.clearBonus),
       stacks: stacks,
       pyramidRows: pyramidRows,
-      cells: cells,
-      dealCount: cells,
+      feltSlots: feltSlots,
+      pyramidCells: pyramidCells,
+      cells: pyramidCells + feltSlots,
+      dealCount: pyramidCells,
       rounds: Math.max(1, Math.floor(num(src.rounds, DEFAULT_ELEVEN.rounds))),
     };
+  }
+
+  function pyramidCellsOf(session) {
+    return session.config.pyramidCells || session.config.stacks * pyramidSize(session.config.pyramidRows);
+  }
+
+  function isFeltIndex(session, i) {
+    return i >= pyramidCellsOf(session);
   }
 
   function locOf(session, i) {
@@ -98,6 +110,7 @@
   }
 
   function coveringIndexes(session, i) {
+    if (isFeltIndex(session, i)) return [];
     const loc = locOf(session, i);
     const next = loc.row + 1;
     if (next >= session.config.pyramidRows) return [];
@@ -287,6 +300,8 @@
       rounds: session.config.rounds || 1,
       stacks: session.config.stacks || 3,
       pyramidRows: session.config.pyramidRows || 3,
+      feltSlots: session.config.feltSlots || 0,
+      pyramidCells: pyramidCellsOf(session),
       canNext: session.status === "playing" && session.stock.length > 0 && emptyAt >= 0,
       cleared: elevenGridEmpty(session),
     };
@@ -365,16 +380,38 @@
       ui.elevenGrid.appendChild(pyr);
     }
 
+    const pyrN = snap.pyramidCells || stacks * per;
+    if (snap.grid.length > pyrN) {
+      const felt = document.createElement("div");
+      felt.className = "eleven-felt";
+      for (let i = pyrN; i < snap.grid.length; i++) {
+        const card = snap.grid[i];
+        const btn = document.createElement("button");
+        btn.type = "button";
+        const sel = snap.selected === i;
+        const open = !!snap.open[i];
+        btn.className =
+          "eleven-cell eleven-felt-cell" +
+          (card ? "" : " is-empty") +
+          (sel ? " is-selected" : "") +
+          (open ? " is-open" : "");
+        btn.dataset.cell = String(i);
+        btn.disabled = !playing || (card ? !open : true);
+        if (card) btn.appendChild(cardNode(card, false, sel));
+        felt.appendChild(btn);
+      }
+      ui.elevenGrid.appendChild(felt);
+    }
+
     if (ui.elevenStocks) {
       ui.elevenStocks.replaceChildren();
       const left = snap.stockCount || 0;
       const piles = 2;
       for (let s = 0; s < piles; s++) {
         const pile = document.createElement("div");
-        pile.className = "eleven-stock";
+        pile.className = "eleven-stock" + (snap.canNext ? " is-ready" : "");
         const share = Math.floor(left / piles) + (s < left % piles ? 1 : 0);
-        const show = Math.min(2, share);
-        for (let k = 0; k < show; k++) {
+        if (share > 0) {
           pile.appendChild(cardNode({ rank: "", suit: "", faceUp: false }, false, false));
         }
         const meta = document.createElement("span");

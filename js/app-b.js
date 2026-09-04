@@ -472,6 +472,14 @@
     E.takeEleven(session);
     renderGame();
   });
+  if (ui.elevenStocks) {
+    ui.elevenStocks.addEventListener("click", function () {
+      if (!session || !isEleven() || session.status !== "playing") return;
+      if (!E.snapshotEleven(session).canNext) return;
+      E.nextEleven(session);
+      renderGame();
+    });
+  }
   ui.elevenGrid.addEventListener("click", function (ev) {
     if (!session || !isEleven() || session.status !== "playing") return;
     const cell = ev.target.closest("[data-cell]");
