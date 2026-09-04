@@ -1,85 +1,51 @@
-/* 11 Up only — 3 compact predealt stacks. Do not reuse patience.css. */
+/* Megatouch 11-Up: three overlapping pyramids + deck at the bottom. */
 
 .eleven-table {
   flex: 1 1 auto;
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 14px;
-  min-height: 0;
-  padding: 8px 4px;
-}
-
-.eleven-stocks {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 10px;
-  flex: 0 0 auto;
-  width: 70px;
-}
-
-.eleven-stock {
-  position: relative;
-  min-height: 0;
-  border: 2px solid var(--gold-dim);
-  border-radius: 12px;
-  background: linear-gradient(#0a241c, #061510);
-  padding: 6px 4px 4px;
-}
-
-.eleven-stock .card {
-  width: 100%;
-  max-width: 52px;
-  min-height: 68px;
-  margin: 0 auto;
-  pointer-events: none;
-}
-
-.eleven-stock .card + .card {
-  margin-top: -52px;
-}
-
-.eleven-stock-meta {
-  display: block;
-  text-align: center;
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  color: var(--gold);
-  margin-top: 4px;
-}
-
-.eleven-grid {
-  flex: 0 1 auto;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(88px, 140px));
-  gap: 12px;
-  align-items: start;
-  width: auto;
-  min-height: 0;
-  max-height: none;
-  aspect-ratio: auto;
-}
-
-.eleven-col {
-  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  height: auto;
+  gap: 16px;
   min-height: 0;
-  padding: 8px 6px 12px;
-  border: 2px solid var(--gold-dim);
-  border-radius: 12px;
-  background: linear-gradient(#0a241c, #061510);
+  padding: 8px 8px 4px;
+  overflow: auto;
+}
+
+.eleven-grid.eleven-pyramids {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+  max-width: 920px;
+  flex: 0 0 auto;
+  aspect-ratio: auto;
+  min-height: 0;
+}
+
+.eleven-pyramid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.eleven-row {
+  display: flex;
+  justify-content: center;
+  margin-top: -42px;
+}
+
+.eleven-pyramid .eleven-row:first-child {
+  margin-top: 0;
 }
 
 .eleven-cell {
   display: block;
-  width: 100%;
-  max-width: 84px;
-  margin: 0 auto;
+  width: 72px;
+  margin: 0 -14px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -89,39 +55,35 @@
   flex: 0 0 auto;
 }
 
-.eleven-cell.is-stacked {
-  height: 26px;
-  overflow: hidden;
-  margin-bottom: 0;
-}
-
-.eleven-cell:not(.is-stacked):not(.is-empty) {
-  min-height: 96px;
-  height: auto;
-}
-
-.eleven-cell.is-empty {
-  min-height: 28px;
-  height: 28px;
-  border: 0;
-  background: transparent;
-}
-
 .eleven-cell .card {
-  width: 100%;
-  max-width: 84px;
-  min-height: 96px;
+  width: 72px;
+  max-width: 72px;
+  min-height: 100px;
   height: auto;
   pointer-events: none;
 }
 
-.eleven-cell.is-stacked .card {
-  min-height: 96px;
+.eleven-cell.is-empty {
+  min-height: 24px;
+  height: 24px;
+  width: 44px;
+  margin: 0 -6px;
+  border: 0;
+  background: transparent;
+}
+
+.eleven-cell.is-covered {
+  filter: brightness(0.92);
+}
+
+.eleven-cell.is-open .card {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
 }
 
 .eleven-cell.is-selected .card,
 .eleven-cell.is-selected {
   outline: 3px solid var(--gold);
+  outline-offset: 2px;
   box-shadow: 0 0 0 2px var(--gold-dim);
 }
 
@@ -129,11 +91,63 @@
   opacity: 1;
 }
 
+.eleven-stocks {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 16px;
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.eleven-stock {
+  min-width: 88px;
+  min-height: 0;
+  border: 2px solid var(--gold-dim);
+  border-radius: 14px;
+  background: linear-gradient(#0a241c, #061510);
+  padding: 8px 10px 6px;
+}
+
+.eleven-stock .card {
+  width: 64px;
+  max-width: 64px;
+  min-height: 88px;
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+.eleven-stock .card + .card {
+  margin-top: -70px;
+}
+
+.eleven-stock-meta {
+  display: block;
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  margin-top: 4px;
+}
+
+@media (max-width: 700px) {
+  .eleven-cell {
+    width: 56px;
+    margin: 0 -10px;
+  }
+  .eleven-cell .card {
+    width: 56px;
+    max-width: 56px;
+    min-height: 78px;
+  }
+  .eleven-row {
+    margin-top: -32px;
+  }
+}
+
 @media (orientation: landscape) {
   .eleven-table {
-    align-items: flex-start;
-  }
-  .eleven-stocks {
-    width: 64px;
+    flex-direction: column;
+    align-items: center;
   }
 }

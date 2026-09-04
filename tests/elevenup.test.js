@@ -40,17 +40,19 @@ test("11 Up JSON id type title and scoring knobs", () => {
   assert.equal(session.config.pairScore, 2000);
   assert.equal(session.config.passPenalty, 1000);
   assert.equal(session.config.clearBonus, 25000);
-  assert.equal(session.config.dealCount, 12);
-  assert.equal(session.config.cells, 12);
+  assert.equal(session.config.dealCount, 18);
+  assert.equal(session.config.cells, 18);
+  assert.equal(session.config.stacks, 3);
+  assert.equal(session.config.pyramidRows, 3);
   assert.equal(session.config.rounds, 2);
-  assert.equal(session.grid.length, 12);
+  assert.equal(session.grid.length, 18);
   const filled = session.grid.filter(Boolean).length;
-  assert.equal(filled, 12);
-  assert.equal(session.stock.length, 40);
+  assert.equal(filled, 18);
+  assert.equal(session.stock.length, 34);
   const snap = E.snapshotEleven(session);
   assert.equal(snap.type, "elevenup");
   assert.equal(snap.status, "playing");
-  assert.equal(snap.stockCount, 40);
+  assert.equal(snap.stockCount, 34);
   assert.equal(snap.round, 1);
   assert.equal(snap.rounds, 2);
 });
@@ -188,6 +190,20 @@ test("cannot next if full", () => {
   assert.equal(snap.canNext, false);
 });
 
+test("only uncovered pyramid cards are open", () => {
+  const session = primed({ rounds: 1 });
+  session.grid = session.grid.map(function () {
+    return card("7");
+  });
+  assert.equal(E.elevenIsOpen(session, 5), true);
+  assert.equal(E.elevenIsOpen(session, 4), true);
+  assert.equal(E.elevenIsOpen(session, 3), true);
+  assert.equal(E.elevenIsOpen(session, 0), false);
+  session.grid[3] = null;
+  session.grid[4] = null;
+  assert.equal(E.elevenIsOpen(session, 1), true);
+});
+
 test("cannot next on empty stock", () => {
   const session = primed();
   session.stock = [];
@@ -224,7 +240,7 @@ test("take score starts a second round then done", () => {
   assert.equal(session.round, 2);
   assert.equal(session.lastEvent.kind, "round");
   assert.equal(session.score, 4000);
-  assert.equal(session.grid.filter(Boolean).length, 12);
+  assert.equal(session.grid.filter(Boolean).length, 18);
   E.takeEleven(session);
   assert.equal(session.status, "done");
   assert.equal(session.lastEvent.kind, "take");

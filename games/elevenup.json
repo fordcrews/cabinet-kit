@@ -3,13 +3,12 @@
   "type": "elevenup",
   "title": "11 Up",
   "tagline": "Pairs that make 11. Clear the table.",
-  "blurb": "Three stacks predealt, like the bar-top. Peel two that make 11 or a matching face. Next Card drops into a hole and costs. Clear the stacks for a bonus and a new deal. Two rounds.",
+  "blurb": "Three pyramids, like the bar-top. Peel two open cards that make 11 or a matching face. Covered cards stay put. Next Card fills a hole and costs. Clear the table for a bonus. Two rounds.",
   "pairScore": 2000,
   "passPenalty": 1000,
   "clearBonus": 25000,
-  "cells": 12,
-  "dealCount": 12,
   "stacks": 3,
+  "pyramidRows": 3,
   "rounds": 2,
   "labels": {
     "next": "NEXT CARD",
@@ -29,6 +28,7 @@
     "clear": "Table clear. Bonus. New layout.",
     "round": "Next round. Fresh deck.",
     "done": "Sitting over.",
-    "full": "Table full. Pair or take score."
+    "full": "Table full. Pair or take score.",
+    "covered": "That card is covered. Peel an open 11."
   }
 }

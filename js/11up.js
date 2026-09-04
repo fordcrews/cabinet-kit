@@ -1,5 +1,5 @@
 /**
- * 11 Up — own engine + table. Do not share patience stacking CSS/JS.
+ * 11 Up — three pyramids like Megatouch (not vertical columns, not patience stacks).
  */
 (function (root, factory) {
   function loadEngine() {
@@ -38,31 +38,82 @@
   const shuffle = E.shuffle;
   const createDeck = E.createDeck;
 
+  const ROW_WIDTHS = [1, 2, 3];
+  const PYR_SIZE = 6;
+
   const DEFAULT_ELEVEN = Object.freeze({
     type: "elevenup",
     pairScore: 11,
     passPenalty: 5,
     clearBonus: 50,
-    cells: 12,
-    dealCount: 12,
     stacks: 3,
+    pyramidRows: 3,
+    cells: 18,
+    dealCount: 18,
     rounds: 1,
   });
+
+  function pyramidSize(rows) {
+    let n = 0;
+    for (let r = 0; r < rows; r++) n += r + 1;
+    return n;
+  }
 
   function configFromElevenGame(game) {
     const src = game && typeof game === "object" ? game : {};
     const stacks = Math.max(1, Math.floor(num(src.stacks, DEFAULT_ELEVEN.stacks)));
-    const cells = Math.max(stacks, Math.floor(num(src.cells, DEFAULT_ELEVEN.cells)));
+    const pyramidRows = Math.max(2, Math.floor(num(src.pyramidRows, DEFAULT_ELEVEN.pyramidRows)));
+    const per = pyramidSize(pyramidRows);
+    const cells = stacks * per;
     return {
       type: "elevenup",
       pairScore: num(src.pairScore, DEFAULT_ELEVEN.pairScore),
       passPenalty: num(src.passPenalty, DEFAULT_ELEVEN.passPenalty),
       clearBonus: num(src.clearBonus, DEFAULT_ELEVEN.clearBonus),
-      cells: cells,
-      dealCount: Math.max(1, Math.floor(num(src.dealCount, DEFAULT_ELEVEN.dealCount))),
       stacks: stacks,
+      pyramidRows: pyramidRows,
+      cells: cells,
+      dealCount: cells,
       rounds: Math.max(1, Math.floor(num(src.rounds, DEFAULT_ELEVEN.rounds))),
     };
+  }
+
+  function locOf(session, i) {
+    const per = pyramidSize(session.config.pyramidRows);
+    const p = Math.floor(i / per);
+    let o = i % per;
+    let row = 0;
+    while (row < session.config.pyramidRows && o >= row + 1) {
+      o -= row + 1;
+      row += 1;
+    }
+    return { pyramid: p, row: row, col: o };
+  }
+
+  function indexOf(session, p, row, col) {
+    const per = pyramidSize(session.config.pyramidRows);
+    let o = 0;
+    for (let r = 0; r < row; r++) o += r + 1;
+    return p * per + o + col;
+  }
+
+  function coveringIndexes(session, i) {
+    const loc = locOf(session, i);
+    const next = loc.row + 1;
+    if (next >= session.config.pyramidRows) return [];
+    return [
+      indexOf(session, loc.pyramid, next, loc.col),
+      indexOf(session, loc.pyramid, next, loc.col + 1),
+    ];
+  }
+
+  function elevenIsOpen(session, i) {
+    if (!session.grid[i]) return false;
+    const cov = coveringIndexes(session, i);
+    for (let k = 0; k < cov.length; k++) {
+      if (session.grid[cov[k]]) return false;
+    }
+    return true;
   }
 
   function elevenRank(cardOrRank) {
@@ -138,6 +189,10 @@
       session.lastEvent = { kind: "deselect" };
       return session;
     }
+    if (!elevenIsOpen(session, i)) {
+      session.lastEvent = { kind: "covered" };
+      return session;
+    }
     if (session.selected == null) {
       session.selected = i;
       session.lastEvent = { kind: "select", cell: i };
@@ -211,6 +266,9 @@
   }
   function snapshotEleven(session) {
     const emptyAt = firstEmptyEleven(session);
+    const open = session.grid.map(function (_c, i) {
+      return elevenIsOpen(session, i);
+    });
     return {
       type: session.config.type,
       status: session.status,
@@ -219,6 +277,7 @@
       grid: session.grid.map(function (c) {
         return c ? copyCard(c) : null;
       }),
+      open: open,
       selected: session.selected,
       lastEvent: session.lastEvent,
       pairScore: session.config.pairScore,
@@ -227,6 +286,7 @@
       round: session.round || 1,
       rounds: session.config.rounds || 1,
       stacks: session.config.stacks || 3,
+      pyramidRows: session.config.pyramidRows || 3,
       canNext: session.status === "playing" && session.stock.length > 0 && emptyAt >= 0,
       cleared: elevenGridEmpty(session),
     };
@@ -265,61 +325,70 @@
     ui.deal.classList.toggle("hidden", playing);
     ui.next.disabled = !snap.canNext;
     ui.take.disabled = !playing;
-    const n = snap.grid.length;
-    const stacks = snap.stacks || (n % 3 === 0 ? 3 : 4);
-    const depth = Math.max(1, Math.floor(n / stacks));
+
+    const stacks = snap.stacks || 3;
+    const rows = snap.pyramidRows || 3;
+    const per = pyramidSize(rows);
+    ui.elevenGrid.replaceChildren();
+    ui.elevenGrid.className = "eleven-grid eleven-pyramids";
+    ui.elevenGrid.style.gridTemplateColumns = "repeat(" + stacks + ", minmax(0, 1fr))";
+    for (let p = 0; p < stacks; p++) {
+      const pyr = document.createElement("div");
+      pyr.className = "eleven-pyramid";
+      let idx = p * per;
+      for (let r = 0; r < rows; r++) {
+        const rowEl = document.createElement("div");
+        rowEl.className = "eleven-row";
+        rowEl.dataset.row = String(r);
+        const width = r + 1;
+        for (let c = 0; c < width; c++) {
+          const i = idx++;
+          const card = snap.grid[i];
+          const btn = document.createElement("button");
+          btn.type = "button";
+          const sel = snap.selected === i;
+          const open = !!snap.open[i];
+          btn.className =
+            "eleven-cell" +
+            (card ? "" : " is-empty") +
+            (sel ? " is-selected" : "") +
+            (card && !open ? " is-covered" : "") +
+            (open ? " is-open" : "");
+          btn.dataset.cell = String(i);
+          btn.disabled = !playing || !card || !open;
+          btn.style.zIndex = String(r * 10 + c + 1);
+          if (card) btn.appendChild(cardNode(card, false, sel));
+          rowEl.appendChild(btn);
+        }
+        pyr.appendChild(rowEl);
+      }
+      ui.elevenGrid.appendChild(pyr);
+    }
+
     if (ui.elevenStocks) {
       ui.elevenStocks.replaceChildren();
       const left = snap.stockCount || 0;
-      for (let s = 0; s < 3; s++) {
+      const piles = 2;
+      for (let s = 0; s < piles; s++) {
         const pile = document.createElement("div");
         pile.className = "eleven-stock";
-        const share = Math.floor(left / 3) + (s < left % 3 ? 1 : 0);
-        const show = Math.min(4, share);
+        const share = Math.floor(left / piles) + (s < left % piles ? 1 : 0);
+        const show = Math.min(2, share);
         for (let k = 0; k < show; k++) {
           pile.appendChild(cardNode({ rank: "", suit: "", faceUp: false }, false, false));
         }
         const meta = document.createElement("span");
         meta.className = "eleven-stock-meta";
-        meta.textContent = String(share);
+        meta.textContent = share ? String(share) : "—";
         pile.appendChild(meta);
         ui.elevenStocks.appendChild(pile);
       }
     }
-    ui.elevenGrid.replaceChildren();
-    ui.elevenGrid.style.gridTemplateColumns = "repeat(" + stacks + ", minmax(0, 1fr))";
-    for (let col = 0; col < stacks; col++) {
-      const wrap = document.createElement("div");
-      wrap.className = "eleven-col";
-      for (let row = 0; row < depth; row++) {
-        const i = col * depth + row;
-        const c = snap.grid[i];
-        const btn = document.createElement("button");
-        btn.type = "button";
-        const sel = snap.selected === i;
-        const isTop = row === depth - 1 || !snap.grid[i + 1];
-        btn.className =
-          "eleven-cell" +
-          (c ? "" : " is-empty") +
-          (sel ? " is-selected" : "") +
-          (c && !isTop ? " is-stacked" : "");
-        btn.dataset.cell = String(i);
-        btn.disabled = !playing || !c;
-        btn.style.zIndex = String(row + 1);
-        if (c) btn.appendChild(cardNode(c, false, sel));
-        wrap.appendChild(btn);
-      }
-      ui.elevenGrid.appendChild(wrap);
-    }
+
     ui.banner.className = "banner";
     const ev = snap.lastEvent;
     if (snap.status === "done") {
-      if (ev && ev.kind === "clear") {
-        ui.banner.classList.add("run");
-        ui.banner.textContent = copy("clear", "Table clear. Bonus banked.") + " · " + snap.score;
-      } else {
-        ui.banner.textContent = copy("done", "Sitting over. Deal again.") + " · " + snap.score;
-      }
+      ui.banner.textContent = copy("done", "Sitting over. Deal again.") + " · " + snap.score;
     } else if (ev && ev.kind === "clear") {
       ui.banner.classList.add("run");
       ui.banner.textContent = copy("clear", "Table clear. Bonus. New layout.") + " · +" + ev.points;
@@ -332,6 +401,8 @@
     } else if (ev && ev.kind === "illegal") {
       ui.banner.classList.add("bust");
       ui.banner.textContent = copy("illegal", "Those two don't make 11.");
+    } else if (ev && ev.kind === "covered") {
+      ui.banner.textContent = copy("covered", "That card is covered. Peel an open 11.");
     } else if (ev && ev.kind === "next") {
       ui.banner.textContent = copy("next", "Pass. Card on the table.") + " " + ev.points;
     } else if (!snap.canNext && playing && snap.stockCount > 0) {
@@ -353,6 +424,7 @@
   E.snapshotEleven = snapshotEleven;
   E.elevenValue = elevenValue;
   E.elevenPairLegal = elevenPairLegal;
+  E.elevenIsOpen = elevenIsOpen;
 
   if (typeof window !== "undefined") {
     window.ElevenUpPlay = { render: renderEleven };
