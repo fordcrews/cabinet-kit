@@ -2,7 +2,7 @@
 
 Phone-browser card cabinet. Short sessions, big buttons, no App Store, no accounts, no ads, no IAP. Remix by duplicating JSON.
 
-v0.16 ships sixteen playable samples — **Run 21**, **Zip 21**, **Chug 21**, **11 Up**, **Solitaire**, **FreeCell**, **Spider**, **Yacht**, **Sudoku 6**, **Sudoku 9**, **Blast**, **Triple**, **Chime**, **Reversi**, **Hoops**, and **Quiz Night** — plus an author format so another title is a file drop, not a rewrite. The cabinet list is grouped by category (Card, Puzzle, Match, Strategy, Sports, Quiz).
+v0.18 ships seventeen playable samples — **Run 21**, **Zip 21**, **Chug 21**, **11 Up**, **Solitaire**, **FreeCell**, **Spider**, **Yacht**, **Sudoku 6**, **Sudoku 9**, **Blast**, **Triple**, **Chime**, **Reversi**, **Hoops**, **Orbit**, and **Quiz Night** — plus an author format so another title is a file drop, not a rewrite. The cabinet list is grouped by category (Card, Puzzle, Match, Strategy, Sports, Quiz).
 
 ## Play on a phone
 
@@ -193,6 +193,28 @@ Mixed trivia and jumble rounds from JSON. Four big answer buttons.
 - Trivia +10, jumble +15. One question at a time, then **NEXT**.
 - Twelve questions a sitting (from a bank of 20+ trivia and 8+ jumbles). **TAKE SCORE** / **DEAL AGAIN** when the sitting is over.
 
+
+
+## Orbit
+
+Sports-ish canvas slot. A puck orbits a center ring on dark felt with gold accents. Tap anywhere when the puck sits inside the scoring wedge to bank points (2, or 3 near the wedge center). Twelve taps end the sitting — then DEAL AGAIN.
+
+## Game slots (canvas / custom JS)
+
+Richer JS games with their own graphics mount through a drop-in slot host so you do not edit the cabinet core for every title.
+
+### How to add a slot game
+
+1. Create `games/<id>.json` with `type: "slot"`, `id`, `title`, `tagline`, and `module` (path to the game script; default `games/<id>/game.js`).
+2. Create `games/<id>/game.js` that assigns `window.CabinetSlotGames[<id>] = { mount(ctx) { … return { unmount, reset, getScore, getStatus }; } }`.
+3. Add the JSON filename under a category in `games/index.json`, bump `CACHE` in `sw.js`, and add every new path to `ASSETS`.
+
+### Mount contract
+
+`ctx` gives `root` (`#play-slot`), a sized `canvas`, `def`, `score.set/get`, `banner.set(text, kind?)`, `hud.round/deck`, `sfx.play(name)`, `onDone(score)`, `onScore(score)`, and `requestDealAgain()`.
+
+Canvas / WebGL is fine for slot games; SVG/CSS is still preferred for chrome and pieces overlays.
+
 ## How to add a game
 
 1. Duplicate a JSON file under `games/` (run21, zip21, chug21, elevenup, solitaire, freecell, spider, yacht, sudoku6, sudoku9, blast, triple, chime, reversi, hoops, or quiznight).
@@ -200,7 +222,7 @@ Mixed trivia and jumble rounds from JSON. Four big answer buttons.
 3. Add the filename to a category `games` array in `games/index.json` (or the flat `games` array if you are not using categories).
 4. Reload. The cabinet groups rows under category headings.
 
-Engine keys: `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), `elevenup` (11 Up pairs), `klondike` (Solitaire stacks), `freecell`, `spider`, `yacht` (Yacht five-dice scorecard), `sudoku6`, `sudoku9`, `blast` (tap-to-pop clusters), `triple` (swap match-3), `chime` (row/column wrap slide), `reversi`, `hoops`, `quiznight`, and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
+Engine keys: `slot` (canvas / custom JS via CabinetSlot), `runlanes` (Run 21 five-lane place/stay/skip), `columns21` (Zip / Chug place/skip, columns still clear), `elevenup` (11 Up pairs), `klondike` (Solitaire stacks), `freecell`, `spider`, `yacht` (Yacht five-dice scorecard), `sudoku6`, `sudoku9`, `blast` (tap-to-pop clusters), `triple` (swap match-3), `chime` (row/column wrap slide), `reversi`, `hoops`, `quiznight`, and `run21` (HIT/STAY helpers). Copy and scoring knobs stay in JSON.
 
 ## JSON fields
 
