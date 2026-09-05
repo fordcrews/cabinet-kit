@@ -1,0 +1,53 @@
+name: assemble-staging
+on:
+  push:
+    paths:
+      - "_staging/**"
+      - ".github/workflows/assemble-staging.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble staged base64 files
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          import json, base64, hashlib
+          from pathlib import Path
+          staging = Path("_staging")
+          if not staging.exists():
+              print("no staging"); raise SystemExit(0)
+          changed = False
+          for man_path in sorted(staging.glob("*.b64.json")):
+              man = json.loads(man_path.read_text())
+              target = Path(man["target"])
+              parts = [(Path(p)).read_text().strip() for p in man["parts"]]
+              raw = base64.b64decode("".join(parts))
+              expect = man.get("md5")
+              got = hashlib.md5(raw).hexdigest()
+              print(target, "md5", got, "expect", expect)
+              if expect and got != expect:
+                  raise SystemExit(f"md5 mismatch for {target}")
+              if target.exists() and target.read_bytes() == raw:
+                  print("unchanged", target); continue
+              target.parent.mkdir(parents=True, exist_ok=True)
+              target.write_bytes(raw)
+              print("wrote", target, len(raw))
+              changed = True
+          Path("/tmp/changed").write_text("1" if changed else "0")
+          PY
+          if [ "$(cat /tmp/changed)" = "1" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add js/solitaire.js js/play-ui.js || true
+            git add -u js/ || true
+            if git diff --cached --quiet; then echo "nothing staged"; exit 0; fi
+            git commit -m "Add Klondike draw/recycle options, undo, and solitaire auto-play"
+            git push
+          else
+            echo "nothing to assemble"
+          fi
