@@ -6,7 +6,7 @@
     document.body.appendChild(s);
   }
   Promise.all(
-    ["js/app-a.js", "js/app-b.part0.js", "js/app-b.part1.js", "js/app-b.part2.js"].map(function (url) {
+    ["js/app-a.js", "js/app-sets-ui.js", "js/app-b.part0.js", "js/app-b.part1.js", "js/app-b.part2.js"].map(function (url) {
       return fetch(url).then(function (res) {
         if (!res.ok) throw new Error("Missing " + url);
         return res.text();
