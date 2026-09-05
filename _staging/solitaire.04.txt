@@ -1,0 +1,109 @@
+        const col = session.tableau[c];
+        if (!col.length) continue;
+        const top = col[col.length - 1];
+        if (!top.faceUp) continue;
+        const hit = consider(top, { kind: "tableau", col: c });
+        if (hit) return hit;
+      }
+    } else if (type === "freecell") {
+      for (let i = 0; i < session.cells.length; i++) {
+        const hit = consider(session.cells[i], { kind: "cell", i: i });
+        if (hit) return hit;
+      }
+      for (let c = 0; c < session.tableau.length; c++) {
+        const col = session.tableau[c];
+        if (!col.length) continue;
+        const hit = consider(col[col.length - 1], { kind: "tableau", col: c });
+        if (hit) return hit;
+      }
+    }
+    return null;
+  }
+
+  function autoPlayPatience(session) {
+    if (!session || session.status !== "playing") return 0;
+    let moves = 0;
+    const type = session.config && session.config.type;
+    while (moves < 52 && session.status === "playing") {
+      if (type === "spider") {
+        let any = false;
+        for (let i = 0; i < session.tableau.length; i++) {
+          if (spiderTryComplete(session, i)) any = true;
+        }
+        if (!any) break;
+        moves += 1;
+        continue;
+      }
+      const hit = findSafeFoundationMove(session);
+      if (!hit) break;
+      if (!applyFoundationCard(session, hit.card, hit.from)) break;
+      moves += 1;
+    }
+    return moves;
+  }
+
+  function tapPatienceRaw(session, target) {
+    const type = session.config && session.config.type;
+    if (type === "freecell") return tapFreeCell(session, target);
+    if (type === "spider") return tapSpider(session, target);
+    return tapKlondike(session, target);
+  }
+
+  function tapPatience(session, target) {
+    const undoOn = !!(session.config && session.config.undo);
+    const before = undoOn ? capturePatienceState(session) : null;
+    tapPatienceRaw(session, target);
+    const kind = session.lastEvent && session.lastEvent.kind;
+    if (before && kind && UNDO_KINDS[kind]) {
+      pushPatienceHistory(session, before);
+    }
+    return session;
+  }
+
+  function dealSpiderWithHistory(session) {
+    const undoOn = !!(session.config && session.config.undo);
+    const before = undoOn ? capturePatienceState(session) : null;
+    dealSpider(session);
+    const kind = session.lastEvent && session.lastEvent.kind;
+    if (before && kind && UNDO_KINDS[kind]) {
+      pushPatienceHistory(session, before);
+    }
+    return session;
+  }
+
+  function snapshotPatience(session) {
+    const type = session.config && session.config.type;
+    if (type === "freecell") return snapshotFreeCell(session);
+    if (type === "spider") return snapshotSpider(session);
+    return snapshotKlondike(session);
+  }
+
+  E.DEFAULT_KLONDIKE = DEFAULT_KLONDIKE;
+  E.DEFAULT_FREECELL = DEFAULT_FREECELL;
+  E.DEFAULT_SPIDER = DEFAULT_SPIDER;
+  E.configFromKlondikeGame = configFromKlondikeGame;
+  E.configFromFreeCellGame = configFromFreeCellGame;
+  E.configFromSpiderGame = configFromSpiderGame;
+  E.createKlondikeSession = createKlondikeSession;
+  E.tapKlondike = tapKlondike;
+  E.snapshotKlondike = snapshotKlondike;
+  E.klondikeCanPlace = klondikeCanPlace;
+  E.createFreeCellSession = createFreeCellSession;
+  E.tapFreeCell = tapFreeCell;
+  E.snapshotFreeCell = snapshotFreeCell;
+  E.freeCellMaxMove = freeCellMaxMove;
+  E.createSpiderSession = createSpiderSession;
+  E.tapSpider = tapSpider;
+  E.snapshotSpider = snapshotSpider;
+  E.dealSpider = dealSpider;
+  E.dealSpiderWithHistory = dealSpiderWithHistory;
+  E.createPatienceSession = createPatienceSession;
+  E.tapPatience = tapPatience;
+  E.tapPatienceRaw = tapPatienceRaw;
+  E.snapshotPatience = snapshotPatience;
+  E.patienceAutoSafe = patienceAutoSafe;
+  E.autoPlayPatience = autoPlayPatience;
+  E.undoPatience = undoPatience;
+  E.patienceCanUndo = patienceCanUndo;
+  E.capturePatienceState = capturePatienceState;
+});

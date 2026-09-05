@@ -1,0 +1,289 @@
+      type: "spider",
+      columns: Math.max(1, Math.floor(num(src.columns, DEFAULT_SPIDER.columns))),
+      runScore: num(src.runScore, DEFAULT_SPIDER.runScore),
+      suits: 1,
+      suit: suit,
+      runs: Math.max(1, Math.floor(num(src.runs, DEFAULT_SPIDER.runs))),
+      moves: DEFAULT_SPIDER.moves,
+      undo: normalizeUndo(src.undo != null ? src.undo : DEFAULT_SPIDER.undo),
+    };
+  }
+
+  function createSpiderDeck(suit) {
+    const deck = [];
+    for (let n = 0; n < 8; n++) {
+      for (let r = 0; r < RANKS.length; r++) {
+        deck.push({ rank: RANKS[r], suit: suit });
+      }
+    }
+    return deck;
+  }
+
+  function createSpiderSession(game, rng) {
+    const config = configFromSpiderGame(game);
+    const random = rng || defaultRng();
+    const shoe = shuffle(createSpiderDeck(config.suit), random);
+    const tableau = [];
+    for (let col = 0; col < config.columns; col++) {
+      const count = col < 4 ? 6 : 5;
+      const pile = [];
+      for (let n = 0; n < count; n++) {
+        const c = shoe.pop();
+        pile.push(faceCard(c, n === count - 1));
+      }
+      tableau.push(pile);
+    }
+    return {
+      config: config,
+      rng: random,
+      tableau: tableau,
+      stock: shoe,
+      completed: 0,
+      selected: null,
+      score: 0,
+      status: "playing",
+      lastEvent: null,
+      history: [],
+    };
+  }
+
+  function spiderColumnEmpty(session) {
+    return session.tableau.some(function (col) {
+      return !col.length;
+    });
+  }
+
+  function spiderTryComplete(session, colIndex) {
+    const col = session.tableau[colIndex];
+    if (!col || col.length < 13) return false;
+    const start = col.length - 13;
+    if (!col[start].faceUp) return false;
+    for (let i = 0; i < 13; i++) {
+      const card = col[start + i];
+      if (!card.faceUp) return false;
+      if (rankIndex(card.rank) !== 12 - i) return false;
+    }
+    col.splice(start, 13);
+    flipTop(col);
+    session.completed += 1;
+    session.score += session.config.runScore;
+    if (session.completed >= session.config.runs) {
+      session.status = "won";
+      session.lastEvent = { kind: "win", points: session.config.runScore };
+    } else {
+      session.lastEvent = { kind: "complete", col: colIndex, points: session.config.runScore };
+    }
+    return true;
+  }
+
+  function dealSpider(session) {
+    if (session.status !== "playing") {
+      throw new Error("deal only while playing");
+    }
+    if (spiderColumnEmpty(session)) {
+      throw new Error("empty column");
+    }
+    if (session.stock.length < session.tableau.length) {
+      throw new Error("empty stock");
+    }
+    session.selected = null;
+    for (let i = 0; i < session.tableau.length; i++) {
+      const c = session.stock.pop();
+      session.tableau[i].push(faceCard(c, true));
+    }
+    session.lastEvent = { kind: "deal" };
+    for (let i = 0; i < session.tableau.length; i++) {
+      spiderTryComplete(session, i);
+    }
+    return session;
+  }
+
+  function spiderMoving(session, sel) {
+    if (!sel || sel.kind !== "tableau") return null;
+    const col = session.tableau[sel.col];
+    if (!col || !col.length) return null;
+    let index = sel.index;
+    if (index == null) index = col.length - 1;
+    if (index < 0 || index >= col.length) return null;
+    if (!packedRun(col, index, "rank")) return null;
+    return col.slice(index);
+  }
+
+  function spiderTake(session, sel) {
+    const moving = spiderMoving(session, sel);
+    if (!moving || !moving.length) return null;
+    const col = session.tableau[sel.col];
+    let index = sel.index;
+    if (index == null) index = col.length - moving.length;
+    col.splice(index, moving.length);
+    flipTop(col);
+    return moving.map(function (c) {
+      return faceCard(c, true);
+    });
+  }
+
+  function spiderCanDrop(session, moving, to) {
+    if (!moving || !moving.length) return false;
+    if (to.kind !== "tableau") return false;
+    if (to.col === undefined) return false;
+    const col = session.tableau[to.col];
+    if (!col) return false;
+    if (!col.length) return true;
+    return rankDown(col[col.length - 1], moving[0]);
+  }
+
+  function tapSpider(session, rawTarget) {
+    if (session.status !== "playing") {
+      throw new Error("tap only while playing");
+    }
+    const target = normalizePatience(rawTarget);
+    if (!target) throw new Error("bad target");
+    if (target.kind === "stock") {
+      try {
+        dealSpider(session);
+      } catch (err) {
+        session.selected = null;
+        session.lastEvent = { kind: "illegal" };
+      }
+      return session;
+    }
+    if (target.kind === "tableau") {
+      if (!Number.isInteger(target.col) || target.col < 0 || target.col >= session.tableau.length) {
+        throw new Error("bad column");
+      }
+    }
+    const sel = session.selected;
+    const isSrc = function (t) {
+      return spiderMoving(session, t) != null;
+    };
+    if (!sel) {
+      if (isSrc(target)) {
+        session.selected = target;
+        session.lastEvent = { kind: "select", from: target };
+      }
+      return session;
+    }
+    if (sameSel(sel, target)) {
+      session.selected = null;
+      session.lastEvent = { kind: "deselect" };
+      return session;
+    }
+    const moving = spiderMoving(session, sel);
+    if (!moving) {
+      session.selected = isSrc(target) ? target : null;
+      return session;
+    }
+    if (spiderCanDrop(session, moving, target)) {
+      const cards = spiderTake(session, sel);
+      session.tableau[target.col].push.apply(session.tableau[target.col], cards);
+      session.selected = null;
+      session.lastEvent = { kind: "move", to: "tableau", col: target.col, count: cards.length };
+      spiderTryComplete(session, target.col);
+      return session;
+    }
+    if (isSrc(target)) {
+      session.selected = target;
+      session.lastEvent = { kind: "select", from: target };
+    } else {
+      session.selected = null;
+      session.lastEvent = { kind: "illegal" };
+    }
+    return session;
+  }
+
+  function snapshotSpider(session) {
+    let tableN = 0;
+    session.tableau.forEach(function (col) {
+      tableN += col.length;
+    });
+    return {
+      type: session.config.type,
+      status: session.status,
+      score: session.score,
+      stockCount: session.stock.length,
+      tableau: session.tableau.map(function (col) {
+        return col.map(copyFace);
+      }),
+      completed: session.completed,
+      runs: session.config.runs,
+      selected: copySelected(session.selected),
+      lastEvent: session.lastEvent,
+      runScore: session.config.runScore,
+      moves: session.config.moves,
+      undo: !!session.config.undo,
+      canUndo: patienceCanUndo(session),
+      canDeal:
+        session.status === "playing" &&
+        session.stock.length >= session.tableau.length &&
+        !spiderColumnEmpty(session),
+      home: session.completed,
+      total: session.config.runs,
+      cardCount: tableN + session.stock.length + session.completed * 13,
+    };
+  }
+
+  function createPatienceSession(game, rng) {
+    const type = game && game.type;
+    if (type === "freecell") return createFreeCellSession(game, rng);
+    if (type === "spider") return createSpiderSession(game, rng);
+    return createKlondikeSession(game, rng);
+  }
+
+  function applyFoundationCard(session, card, from) {
+    if (!card) return false;
+    const suit = card.suit;
+    if (SUITS.indexOf(suit) < 0) return false;
+    if (!klondikeCanPlace(card, {
+      kind: "foundation",
+      suit: suit,
+      count: session.foundations[suit] || 0,
+    })) {
+      return false;
+    }
+    if (from.kind === "waste") {
+      session.waste.pop();
+    } else if (from.kind === "cell") {
+      session.cells[from.i] = null;
+    } else if (from.kind === "tableau") {
+      const col = session.tableau[from.col];
+      col.pop();
+      flipTop(col);
+    } else {
+      return false;
+    }
+    session.foundations[suit] += 1;
+    session.foundationTops[suit] = { rank: card.rank, suit: card.suit };
+    session.score += session.config.foundationScore;
+    session.selected = null;
+    session.lastEvent = {
+      kind: "foundation",
+      suit: suit,
+      points: session.config.foundationScore,
+      auto: true,
+    };
+    maybeWinHome(session, 52);
+    if (session.config.type === "klondike") maybeWinKlondike(session);
+    return true;
+  }
+
+  function findSafeFoundationMove(session) {
+    const type = session.config.type;
+    const foundations = session.foundations;
+    function consider(card, from) {
+      if (!card) return null;
+      if (!patienceAutoSafe(card, foundations)) return null;
+      if (!klondikeCanPlace(card, {
+        kind: "foundation",
+        suit: card.suit,
+        count: foundations[card.suit] || 0,
+      })) {
+        return null;
+      }
+      return { card: card, from: from };
+    }
+    if (type === "klondike") {
+      if (session.waste.length) {
+        const hit = consider(session.waste[session.waste.length - 1], { kind: "waste" });
+        if (hit) return hit;
+      }
+      for (let c = 0; c < session.tableau.length; c++) {

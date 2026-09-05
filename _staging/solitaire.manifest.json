@@ -1,0 +1,11 @@
+{
+  "target": "js/solitaire.js",
+  "parts": [
+    "_staging/solitaire.00.txt",
+    "_staging/solitaire.01.txt",
+    "_staging/solitaire.02.txt",
+    "_staging/solitaire.03.txt",
+    "_staging/solitaire.04.txt"
+  ],
+  "bytes": 39783
+}
