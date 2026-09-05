@@ -176,6 +176,8 @@
       renderRun();
     }
     const high = noteHigh(ctx);
+    noteSetLegIfNeeded();
+    if (inSet()) applySetChrome();
     if (window.CabinetSfx) {
       window.CabinetSfx.fromEvent(session.lastEvent, {
         status: session.status,
@@ -211,10 +213,13 @@
     if (window.CabinetSlot) window.CabinetSlot.unmount();
     session = null;
     gameDef = null;
+    clearSet();
     show("cabinet");
     ui.brand.textContent = "Cabinet";
     ui.sub.textContent = "Card kit · offline";
     ui.scoreBlock.hidden = true;
+    ensureSetStrip();
+    paintSetStrip();
   }
   function startGame(def) {
     const PLAYABLE = {
