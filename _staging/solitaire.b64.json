@@ -1,0 +1,16 @@
+{
+  "target": "js/solitaire.js",
+  "encoding": "base64",
+  "parts": [
+    "_staging/solitaire.b64.00",
+    "_staging/solitaire.b64.01",
+    "_staging/solitaire.b64.02",
+    "_staging/solitaire.b64.03",
+    "_staging/solitaire.b64.04",
+    "_staging/solitaire.b64.05",
+    "_staging/solitaire.b64.06",
+    "_staging/solitaire.b64.07",
+    "_staging/solitaire.b64.08"
+  ],
+  "md5": "eaaf840ebcdc6a8dbe047868fab37c45"
+}
