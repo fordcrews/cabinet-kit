@@ -2,8 +2,8 @@
   "id": "spider",
   "type": "spider",
   "title": "Spider",
-  "tagline": "One suit. Eight kings to ace.",
-  "blurb": "104 cards, all one suit. Ten columns. Build down in rank. A complete K–A run peels off. Deal a row only when no column is empty.",
+  "tagline": "One suit. Eight kings to ace. Optional undo.",
+  "blurb": "104 cards, all one suit. Ten columns. Build down in rank. A complete K–A run peels off. Deal a row only when no column is empty. Pre-deal undo option. Complete K–A runs auto-clear.",
   "columns": 10,
   "runScore": 100,
   "suits": 1,
@@ -16,7 +16,12 @@
     "score": "SCORE",
     "stock": "STOCK",
     "runs": "RUNS",
-    "empty": "ANY"
+    "empty": "ANY",
+    "options": "OPTIONS",
+    "undo": "UNDO",
+    "deal": "DEAL",
+    "on": "ON",
+    "off": "OFF"
   },
   "copy": {
     "playing": "Tap a descending run, then a column. Stock deals a row.",
@@ -24,6 +29,9 @@
     "complete": "Run off.",
     "illegal": "Won't take it.",
     "won": "Eight runs off.",
-    "deal": "Row dealt."
-  }
+    "deal": "Row dealt.",
+    "options": "Undo on or off, then DEAL.",
+    "undo": "Went back one move."
+  },
+  "undo": true
 }

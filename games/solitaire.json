@@ -2,8 +2,8 @@
   "id": "solitaire",
   "type": "klondike",
   "title": "Solitaire",
-  "tagline": "Klondike. Draw one. Move stacks.",
-  "blurb": "Standard 52. Kings high. Foundations A–K by suit. Tableau down alternating color. Empty column: King. Draw-1 stock, unlimited recycle. Move whole face-up runs.",
+  "tagline": "Klondike. Pick draw, undo, recycle — then deal.",
+  "blurb": "Standard 52. Kings high. Foundations A–K by suit. Tableau down alternating color. Empty column: King. Choose draw 1 or 3, undo, and waste→stock recycle (always / once / never) before DEAL. Safe auto-play to foundations. Move whole face-up runs.",
   "foundationScore": 10,
   "columns": 7,
   "moves": "run",
@@ -14,7 +14,17 @@
     "stock": "STOCK",
     "waste": "WASTE",
     "home": "HOME",
-    "empty": "KING"
+    "empty": "KING",
+    "options": "OPTIONS",
+    "draw": "DRAW",
+    "undo": "UNDO",
+    "recycle": "RECYCLE",
+    "deal": "DEAL",
+    "on": "ON",
+    "off": "OFF",
+    "always": "ALWAYS",
+    "once": "ONCE",
+    "never": "NEVER"
   },
   "copy": {
     "playing": "Tap a run, then a destination. KING on empty.",
@@ -23,6 +33,12 @@
     "illegal": "Won't take it.",
     "won": "All 52 home.",
     "draw": "Flipped to waste.",
-    "recycle": "Waste back to stock."
-  }
+    "recycle": "Waste back to stock.",
+    "options": "Pick draw, undo, and recycle, then DEAL.",
+    "undo": "Went back one move.",
+    "recycleBlocked": "No more stock passes."
+  },
+  "drawCount": 1,
+  "recycle": "always",
+  "undo": true
 }

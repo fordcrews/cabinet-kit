@@ -1,0 +1,123 @@
+/* Pre-deal options + undo + draw-3 waste fan */
+.patience-opts {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 12px 8px 4px;
+}
+
+.patience-opts.hidden {
+  display: none !important;
+}
+
+.patience-opts-title {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  color: var(--gold, #e6c56a);
+  text-align: center;
+}
+
+.patience-opt-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.patience-opt-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+
+.patience-opt-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.patience-opt-chip {
+  flex: 1 1 auto;
+  min-width: 64px;
+  padding: 10px 12px;
+  border: 1px solid var(--gold-dim, #8a7340);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.patience-opt-chip.is-on {
+  border-color: var(--gold, #e6c56a);
+  box-shadow: 0 0 0 2px var(--gold-dim, #8a7340);
+  background: rgba(230, 197, 106, 0.16);
+}
+
+.patience-opts-deal {
+  margin-top: 4px;
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+}
+
+.power-table.is-opts .patience-top,
+.power-table.is-opts .power-tableau {
+  display: none !important;
+}
+
+.power-table.is-opts .patience-opts {
+  display: flex;
+}
+
+#btn-undo.is-ready {
+  opacity: 1;
+}
+
+#btn-undo:disabled {
+  opacity: 0.4;
+}
+
+.waste-fan {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 0;
+  width: 100%;
+  min-height: 52px;
+  position: relative;
+}
+
+.waste-fan .card {
+  width: 100%;
+  max-width: 56px;
+  margin: 0;
+}
+
+.waste-fan .waste-fan-card {
+  flex: 0 0 auto;
+  width: 28px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.waste-fan .waste-fan-card:last-child {
+  width: auto;
+  max-width: 56px;
+  pointer-events: auto;
+}
+
+.waste-fan .waste-fan-card:not(:last-child) .card {
+  box-shadow: none;
+}
+
+.power-well.stock-well.is-waste-fan {
+  min-width: 96px;
+}
