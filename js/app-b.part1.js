@@ -134,11 +134,46 @@
     if (!any) {
       ui.list.innerHTML = '<li class="status-error">No games in games/index.json</li>';
     }
+    ensureSetStrip();
+    paintSetStrip();
+  }
+  async function loadParity() {
+    if (!window.CabinetSets) return;
+    try {
+      const res = await fetch("games/set-parity.json");
+      if (!res.ok) return;
+      window.CabinetSets.setParity(await res.json());
+    } catch (e) {}
   }
   function route() {
     const hash = location.hash || "#/";
+    const setPlayMatch = hash.match(/^#\/set\/([345])\/play\/([^/]+)/);
+    const setStart = hash.match(/^#\/set\/([345])\/?$/);
+    if (setPlayMatch) {
+      const size = Number(setPlayMatch[1]);
+      const id = decodeURIComponent(setPlayMatch[2]);
+      if (!inSet() || setPlay.size !== size) {
+        beginSet(size);
+        return;
+      }
+      const idx = setPlay.ids.indexOf(id);
+      if (idx >= 0) setPlay.index = idx;
+      const wantId = setPlay.ids[setPlay.index];
+      loadGame(wantId).catch(function (err) {
+        ui.list.innerHTML = '<li class="status-error"></li>';
+        ui.list.querySelector("li").textContent = String(err.message || err);
+        clearSet();
+        location.hash = "#/";
+      });
+      return;
+    }
+    if (setStart) {
+      beginSet(Number(setStart[1]));
+      return;
+    }
     const play = hash.match(/^#\/play\/([^/]+)/);
     if (play) {
+      clearSet();
       loadGame(decodeURIComponent(play[1])).catch(function (err) {
         ui.list.innerHTML = '<li class="status-error"></li>';
         ui.list.querySelector("li").textContent = String(err.message || err);
@@ -168,6 +203,15 @@
     }
   }
   ui.deal.addEventListener("click", function () {
+    if (inSet() && setPlay.phase === "legDone") {
+      advanceSetLeg();
+      return;
+    }
+    if (inSet() && setPlay.phase === "setDone") {
+      restartSetSameSize();
+      return;
+    }
+    if (inSet() && sittingEnded()) return;
     if (!session) return;
     if (isColumns()) {
       if (session.status !== "done") return;
