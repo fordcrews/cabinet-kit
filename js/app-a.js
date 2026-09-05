@@ -70,6 +70,9 @@
   const gamesById = new Map();
   let session = null;
   let gameDef = null;
+  /** Active set: { size, ids, index, parts, total, phase, legRecorded, setRank } */
+  let setPlay = null;
+  let lastSetOrder = null;
   function label(key, fallback) {
     const labels = (gameDef && gameDef.labels) || {};
     return labels[key] || fallback;
