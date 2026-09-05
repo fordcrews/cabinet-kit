@@ -38,4 +38,4 @@ GitHub Pages: enable Pages on main (root). .nojekyll is included so static files
 
 ## Game reference
 
-Per-title rules, JSON fields, and test notes: see [GAMES.md](GAMES.md).
+Per-title rules, JSON fields, and test notes: [GAMES.md](GAMES.md) and [GAMES-2.md](GAMES-2.md).
