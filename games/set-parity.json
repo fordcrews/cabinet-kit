@@ -1,0 +1,22 @@
+{
+  "scale": 1000,
+  "games": {
+    "run21": { "par": 90 },
+    "zip21": { "par": 80 },
+    "chug21": { "par": 90 },
+    "elevenup": { "par": 165 },
+    "solitaire": { "par": 200 },
+    "freecell": { "par": 200 },
+    "spider": { "par": 400 },
+    "yacht": { "par": 220 },
+    "sudoku6": { "par": 1 },
+    "sudoku9": { "par": 1 },
+    "blast": { "par": 400 },
+    "triple": { "par": 500 },
+    "chime": { "par": 400 },
+    "reversi": { "par": 40 },
+    "hoops": { "par": 24 },
+    "orbit": { "par": 28 },
+    "quiznight": { "par": 120 }
+  }
+}
