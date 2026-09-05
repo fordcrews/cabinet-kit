@@ -30,8 +30,12 @@ From this directory:
     python3 -m http.server 8080
     # or: npx serve
 
-Then visit http://localhost:8080 on the computer or http://<lan-ip>:8080 on a phone.
+Then visit http://localhost:8080 on the computer or http://\u003clan-ip\u003e:8080 on a phone.
 
     node --test tests/*.test.js
 
 GitHub Pages: enable Pages on main (root). .nojekyll is included so static files are served as-is. Relative URLs work at / or /cabinet-kit/.
+
+## Game reference
+
+Per-title rules, JSON fields, and test notes: see [GAMES.md](GAMES.md).
