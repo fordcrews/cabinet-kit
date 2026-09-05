@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="css/11up.css" />
     <link rel="stylesheet" href="css/arcade.css" />
     <link rel="stylesheet" href="css/patience.css" />
+    <link rel="stylesheet" href="css/patience-opts.css" />
     <link rel="stylesheet" href="css/match.css" />
     <link rel="stylesheet" href="css/slot.css" />
     <link rel="stylesheet" href="css/chrome.css" />
@@ -83,6 +84,7 @@
             </div>
 
             <div id="play-power" class="power-table hidden">
+              <div id="play-patience-opts" class="patience-opts hidden" aria-label="Deal options"></div>
               <div class="patience-top" id="patience-top">
                 <div class="power-cells hidden" id="power-cells"></div>
                 <div class="power-foundations" id="power-foundations"></div>
@@ -137,6 +139,7 @@
               <button type="button" class="btn" id="btn-hit">HIT</button>
               <button type="button" class="btn stay" id="btn-stay">STAY</button>
               <button type="button" class="btn deal hidden" id="btn-deal">DEAL</button>
+              <button type="button" class="btn ghost hidden" id="btn-undo">UNDO</button>
               <button type="button" class="btn skip-act hidden" id="btn-skip">SKIP</button>
               <button type="button" class="btn skip-act hidden" id="btn-next">NEXT CARD</button>
               <button type="button" class="btn stay hidden" id="btn-take">TAKE SCORE</button>
