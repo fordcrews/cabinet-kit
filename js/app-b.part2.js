@@ -218,6 +218,7 @@
     });
   }
   ui.back.addEventListener("click", function () {
+    clearSet();
     location.hash = "#/";
   });
   function paintSfx() {
@@ -248,7 +249,10 @@
       if (reg.update) reg.update();
     }).catch(function () {});
   }
-  loadCatalog()
+  loadParity()
+    .then(function () {
+      return loadCatalog();
+    })
     .then(function () {
       window.addEventListener("hashchange", route);
       route();
