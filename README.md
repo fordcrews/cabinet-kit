@@ -30,7 +30,7 @@ From this directory:
     python3 -m http.server 8080
     # or: npx serve
 
-Then visit http://localhost:8080 on the computer or http://\u003clan-ip\u003e:8080 on a phone.
+Then visit http://localhost:8080 on the computer or http://<lan-ip>:8080 on a phone.
 
     node --test tests/*.test.js
 
