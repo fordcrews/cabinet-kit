@@ -1,0 +1,16 @@
+{
+  "target": "js/play-ui.js",
+  "encoding": "base64",
+  "parts": [
+    "_staging/play-ui.b64.00",
+    "_staging/play-ui.b64.01",
+    "_staging/play-ui.b64.02",
+    "_staging/play-ui.b64.03",
+    "_staging/play-ui.b64.04",
+    "_staging/play-ui.b64.05",
+    "_staging/play-ui.b64.06",
+    "_staging/play-ui.b64.07",
+    "_staging/play-ui.b64.08"
+  ],
+  "md5": "26e043c29e469a6f872ee938230c8f23"
+}
