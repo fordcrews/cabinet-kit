@@ -1,0 +1,63 @@
+name: restore-solitaire-autoplay
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/restore-solitaire-autoplay.yml"
+permissions:
+  contents: write
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restore solitaire.js and apply FreeCell all-legal autoplay fix
+        run: |
+          set -euo pipefail
+          git show 3d2721cc8201bfbc41e0ff4eee49247dfeceffba:js/solitaire.js > js/solitaire.js
+          python3 <<'PY'
+          from pathlib import Path
+          path = Path("js/solitaire.js")
+          text = path.read_text()
+          old = (
+              "  function findSafeFoundationMove(session) {\n"
+              "    const type = session.config.type;\n"
+              "    const foundations = session.foundations;\n"
+              "    function consider(card, from) {\n"
+              "      if (!card) return null;\n"
+              "      if (!patienceAutoSafe(card, foundations)) return null;"
+          )
+          new = (
+              "  function findSafeFoundationMove(session) {\n"
+              "    const type = session.config.type;\n"
+              "    const foundations = session.foundations;\n"
+              "    // Klondike: classic safe auto (A/2 always; else both opposite-color rank-1 home).\n"
+              "    // FreeCell: every legal foundation move (common FreeCell expectation), cascaded in autoPlayPatience.\n"
+              "    const requireSafe = type !== \"freecell\";\n"
+              "    function consider(card, from) {\n"
+              "      if (!card) return null;\n"
+              "      if (requireSafe && !patienceAutoSafe(card, foundations)) return null;"
+          )
+          if 'const requireSafe = type !== "freecell"' in text:
+              print("already patched")
+          elif old not in text:
+              raise SystemExit("expected findSafeFoundationMove block not found")
+          else:
+              path.write_text(text.replace(old, new, 1))
+              print("patched")
+          text = path.read_text()
+          assert 'const requireSafe = type !== "freecell"' in text
+          assert "requireSafe && !patienceAutoSafe" in text
+          print("ok", len(text))
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add js/solitaire.js
+          if git diff --cached --quiet; then
+            echo "no change"
+            exit 0
+          fi
+          git commit -m "Restore js/solitaire.js with FreeCell all-legal cascade autoplay (Klondike classic-safe)"
+          git push
