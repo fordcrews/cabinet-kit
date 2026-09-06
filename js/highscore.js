@@ -1,5 +1,5 @@
 /**
- * Cabinet Kit — per-game high scores (localStorage, no backend).
+ * Cabinet Kit — per-game high scores + local player name (localStorage, no backend).
  * Browser: window.CabinetScores. Node: module.exports.
  */
 (function (root, factory) {
@@ -16,6 +16,8 @@
   "use strict";
 
   const KEY = "cabinet-kit-highscores";
+  const NAME_KEY = "cabinet-kit-player-name";
+  const MAX_NAME_LEN = 20;
 
   function storage() {
     try {
@@ -56,10 +58,65 @@
     return Number.isFinite(v) ? v : 0;
   }
 
+  function normalizeName(raw) {
+    if (raw == null) return "";
+    let s = String(raw).replace(/\s+/g, " ").trim();
+    if (s.length > MAX_NAME_LEN) s = s.slice(0, MAX_NAME_LEN).trim();
+    return s;
+  }
+
+  function getPlayerName() {
+    const store = storage();
+    if (!store) return "";
+    try {
+      return normalizeName(store.getItem(NAME_KEY) || "");
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function setPlayerName(raw) {
+    const name = normalizeName(raw);
+    if (!name) return { ok: false, name: "" };
+    const store = storage();
+    if (store) {
+      try {
+        store.setItem(NAME_KEY, name);
+      } catch (e) {}
+    }
+    return { ok: true, name: name };
+  }
+
+  function hasPlayerName() {
+    return getPlayerName().length > 0;
+  }
+
+  function entryScore(entry) {
+    if (entry == null) return 0;
+    if (typeof entry === "object" && !Array.isArray(entry)) {
+      return toNumber(entry.score);
+    }
+    return toNumber(entry);
+  }
+
+  function entryName(entry) {
+    if (entry && typeof entry === "object" && !Array.isArray(entry)) {
+      return normalizeName(entry.name || "");
+    }
+    return "";
+  }
+
   function get(id) {
     if (id == null || id === "") return 0;
     const map = readMap();
-    return toNumber(map[id]);
+    return entryScore(map[id]);
+  }
+
+  function getEntry(id) {
+    if (id == null || id === "") return { score: 0, name: "" };
+    const map = readMap();
+    const entry = map[id];
+    return { score: entryScore(entry), name: entryName(entry) };
   }
 
   function record(id, score) {
@@ -69,14 +126,26 @@
       return { high: prev, isNew: false };
     }
     const map = readMap();
-    map[String(id)] = val;
+    const player = getPlayerName();
+    if (player) {
+      map[String(id)] = { score: val, name: player };
+    } else {
+      map[String(id)] = val;
+    }
     writeMap(map);
-    return { high: val, isNew: true };
+    return { high: val, isNew: true, name: player || "" };
   }
 
   return {
     KEY: KEY,
+    NAME_KEY: NAME_KEY,
+    MAX_NAME_LEN: MAX_NAME_LEN,
+    normalizeName: normalizeName,
+    getPlayerName: getPlayerName,
+    setPlayerName: setPlayerName,
+    hasPlayerName: hasPlayerName,
     get: get,
+    getEntry: getEntry,
     record: record,
   };
 });
