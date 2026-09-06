@@ -103,3 +103,65 @@ test("safe if localStorage throws", () => {
   assert.equal(r.high, 99);
   assert.equal(r.isNew, true);
 });
+
+test("NAME_KEY and normalizeName", () => {
+  const S = loadScores();
+  assert.equal(S.NAME_KEY, "cabinet-kit-player-name");
+  assert.equal(S.MAX_NAME_LEN, 20);
+  assert.equal(S.normalizeName("  Ada  "), "Ada");
+  assert.equal(S.normalizeName("a".repeat(25)), "a".repeat(20));
+  assert.equal(S.normalizeName("   "), "");
+  assert.equal(S.normalizeName(null), "");
+});
+
+test("player name get/set/has", () => {
+  const S = loadScores();
+  assert.equal(S.hasPlayerName(), false);
+  assert.equal(S.getPlayerName(), "");
+  const bad = S.setPlayerName("   ");
+  assert.equal(bad.ok, false);
+  assert.equal(S.hasPlayerName(), false);
+  const ok = S.setPlayerName("  Ford  ");
+  assert.equal(ok.ok, true);
+  assert.equal(ok.name, "Ford");
+  assert.equal(S.getPlayerName(), "Ford");
+  assert.equal(S.hasPlayerName(), true);
+  assert.equal(globalThis.localStorage.getItem("cabinet-kit-player-name"), "Ford");
+});
+
+test("record stores player name when set; get still returns number", () => {
+  const S = loadScores();
+  S.setPlayerName("Ada");
+  const r = S.record("yacht", 50);
+  assert.equal(r.isNew, true);
+  assert.equal(r.high, 50);
+  assert.equal(r.name, "Ada");
+  assert.equal(S.get("yacht"), 50);
+  const entry = S.getEntry("yacht");
+  assert.equal(entry.score, 50);
+  assert.equal(entry.name, "Ada");
+});
+
+test("legacy numeric scores still read; getEntry name empty", () => {
+  globalThis.localStorage.setItem(
+    "cabinet-kit-highscores",
+    JSON.stringify({ hoops: 12 })
+  );
+  const S = loadScores();
+  assert.equal(S.get("hoops"), 12);
+  assert.equal(S.getEntry("hoops").score, 12);
+  assert.equal(S.getEntry("hoops").name, "");
+});
+
+test("beating a legacy score with name upgrades entry", () => {
+  globalThis.localStorage.setItem(
+    "cabinet-kit-highscores",
+    JSON.stringify({ blast: 5 })
+  );
+  const S = loadScores();
+  S.setPlayerName("Kit");
+  const r = S.record("blast", 9);
+  assert.equal(r.isNew, true);
+  assert.equal(S.get("blast"), 9);
+  assert.equal(S.getEntry("blast").name, "Kit");
+});

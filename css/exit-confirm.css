@@ -73,3 +73,109 @@
     backdrop-filter: none;
   }
 }
+
+
+/* Player name — reuse exit-confirm chrome; chip on cabinet */
+.player-chip {
+  margin: 0 0 14px;
+}
+.player-chip-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 14px;
+  text-align: left;
+  border: 2px solid var(--gold-dim);
+  border-radius: 12px;
+  color: var(--cream);
+  background: linear-gradient(#16382c, #0a1814);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.player-chip-btn:active {
+  transform: translateY(1px);
+}
+.player-chip-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+.player-chip-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.player-chip-edit {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--cream);
+  opacity: 0.85;
+  border: 1px solid var(--gold-dim);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.player-name-label {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  text-align: left;
+  font-weight: 800;
+}
+.player-name-input {
+  width: 100%;
+  min-height: 56px;
+  margin: 0 0 10px;
+  padding: 12px 14px;
+  border: 2px solid var(--gold-dim);
+  border-radius: 12px;
+  background: #0a1814;
+  color: var(--cream);
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+  box-sizing: border-box;
+}
+.player-name-input:focus {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+  border-color: var(--gold);
+}
+.player-name-error {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--bust);
+  letter-spacing: 0.04em;
+}
+.game-list .best {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+@media (orientation: landscape) {
+  .player-chip-btn {
+    min-height: 44px;
+  }
+  .player-name-input {
+    min-height: 48px;
+  }
+}
