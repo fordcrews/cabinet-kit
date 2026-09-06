@@ -45,6 +45,7 @@ const ASSETS = [
   "./js/sfx.js",
   "./js/slot.js",
   "./js/app-a.js",
+  "./js/app-exit-confirm.js",
   "./js/app-sets-ui.js",
   "./js/app-b.js",
   "./js/app-b.part0.js",
