@@ -30,7 +30,7 @@ Opening Solitaire, FreeCell, or Spider shows an **options** panel before the dea
 - **Solitaire (Klondike):** Draw **1** or **3**; Undo **ON/OFF**; Recycle waste→stock **ALWAYS** / **ONCE** / **NEVER**. Then **DEAL**.
 - **FreeCell / Spider:** Undo **ON/OFF**, then **DEAL**.
 - During play, **UNDO** appears when undo is on (disabled when history is empty). **DEAL AGAIN** returns to the options panel.
-- All three **auto-play** safe foundation moves (and Spider auto-clears completed K–A runs) after your taps. Set legs use saved defaults (or JSON defaults: draw 1, undo on, recycle always) and still get auto-play + undo when default undo is on.
+- **Auto-play:** Klondike classic-safe foundations; FreeCell all legal foundations (cascaded); Spider auto-clears K–A runs. Set legs use saved defaults (or JSON defaults: draw 1, undo on, recycle always) and still get auto-play + undo when default undo is on.
 
 See [GAMES.md](GAMES.md) for full rules.
 
