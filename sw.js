@@ -51,6 +51,7 @@ const ASSETS = [
   "./js/app-b.part0.js",
   "./js/app-b.part1.js",
   "./js/app-b.part2.js",
+  "./js/app-b.part3.js",
   "./manifest.webmanifest",
   "./games/index.json",
   "./games/set-parity.json",
