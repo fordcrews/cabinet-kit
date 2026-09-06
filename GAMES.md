@@ -63,7 +63,7 @@ Standard Klondike. Original cabinet rules, not a branded clone.
 - Tableau builds **descending rank, alternating color**. Empty column: **King only** (or a face-up run that starts with a King).
 - Move **whole face-up stacks**. Tap a face-up card in a packed run to select from that card to the top, then drop on a legal tableau column or (single legal card) a foundation.
 - Four suit foundations climb **A→K**. Win when all **52** are home.
-- **Auto-play:** after each user action (and after deal), safe cards go home automatically (Aces/2s always when legal; higher ranks only when both opposite-color rank−1 helpers are already home).
+- **Auto-play:** after each user action (and after deal), **safe** cards cascade home until none remain (Aces/2s always when legal; higher ranks only when both opposite-color rank−1 helpers are already home).
 - **Undo** (if ON): **UNDO** beside CABINET; one step undoes the user action plus any auto-play that followed.
 - Score **+foundationScore** (default 10) per card to a foundation.
 - **DEAL AGAIN** returns to the options panel. **CABINET** returns to the menu.
@@ -78,7 +78,7 @@ Public-domain FreeCell. Original cabinet UI, not a branded clone.
 - Each free cell holds **one** card.
 - **Supermove**: a stack move is legal only if there are enough free cells + empty cascades. Max movable = (empty free cells + 1) × 2^(empty cascades, excluding the destination if it is empty). Too big is illegal.
 - Tap a cell, a cascade card in a packed run, or a cascade top, then a destination.
-- **Auto-play** safe foundation moves after each tap (same helper rule as Solitaire). **Undo** when enabled.
+- **Auto-play:** after each tap (and after deal), **every legal** foundation move is applied repeatedly until none remain (FreeCell-style; not the Klondike “safe helper” filter). **Undo** when enabled.
 - Score **+foundationScore** (default 10) per foundation card. Win when all **52** are home. **DEAL AGAIN** returns to options.
 
 ## Spider
