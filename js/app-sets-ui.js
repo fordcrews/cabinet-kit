@@ -99,6 +99,7 @@
     if (!ids.length) {
       ui.list.innerHTML =
         '<li class="status-error">Need at least ' + size + " games for a set.</li>";
+      exitBypass = true;
       location.hash = "#/";
       return;
     }
@@ -120,6 +121,7 @@
         ui.list.innerHTML = '<li class="status-error"></li>';
         ui.list.querySelector("li").textContent = String(err.message || err);
         clearSet();
+        exitBypass = true;
         location.hash = "#/";
       });
     } else {
