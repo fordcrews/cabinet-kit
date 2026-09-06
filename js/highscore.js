@@ -121,6 +121,11 @@
 
   function record(id, score) {
     const val = toNumber(score);
+    try {
+      if (typeof submitOnlineIfPossible === "function") {
+        submitOnlineIfPossible(id, val);
+      }
+    } catch (e) {}
     const prev = get(id);
     if (!(val > prev)) {
       return { high: prev, isNew: false };
