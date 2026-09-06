@@ -3,15 +3,8 @@
   "encoding": "base64",
   "parts": [
     "_staging/solitaire.b64.00",
-    "_staging/solitaire.b64.01",
-    "_staging/solitaire.b64.02",
-    "_staging/solitaire.b64.03",
-    "_staging/solitaire.b64.04",
-    "_staging/solitaire.b64.05",
-    "_staging/solitaire.b64.06",
-    "_staging/solitaire.b64.07",
-    "_staging/solitaire.b64.08"
+    "_staging/solitaire.b64.SKIP"
   ],
-  "md5": "68ad1f6b1c798753345ebd0fc5dd0dd5",
-  "note": "cascade-autoplay-v0.22"
+  "md5": "skip-incomplete-staging",
+  "note": "Disabled: js/solitaire.js restored by restore-solitaire-autoplay workflow (cascade-autoplay-v0.22). Incomplete b64 parts left intentionally skipped."
 }
