@@ -93,6 +93,7 @@
       if (ui.roll) ui.roll.classList.add("hidden");
       if (ui.shoot) ui.shoot.classList.add("hidden");
     }
+    if (ui.undo) ui.undo.classList.toggle("hidden", !power);
   }
 
   function renderEleven(ctx) {
@@ -208,11 +209,104 @@
     return index >= start;
   }
 
+
+  function chipRow(labelText, chips, selected, dataKey) {
+    const row = document.createElement("div");
+    row.className = "patience-opt-row";
+    const lab = document.createElement("div");
+    lab.className = "patience-opt-label";
+    lab.textContent = labelText;
+    row.appendChild(lab);
+    const wrap = document.createElement("div");
+    wrap.className = "patience-opt-chips";
+    chips.forEach(function (chip) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "patience-opt-chip" + (String(chip.value) === String(selected) ? " is-on" : "");
+      btn.dataset.opt = dataKey;
+      btn.dataset.value = String(chip.value);
+      btn.textContent = chip.label;
+      wrap.appendChild(btn);
+    });
+    row.appendChild(wrap);
+    return row;
+  }
+
+  function renderPatienceOpts(ctx) {
+    const ui = ctx.ui;
+    const label = ctx.label;
+    const copy = ctx.copy;
+    const opts = ctx.patienceOpts || {};
+    const type = (ctx.gameDef && ctx.gameDef.type) || "klondike";
+    if (ui.playPower) {
+      ui.playPower.classList.add("is-opts");
+      ui.playPower.classList.toggle("is-klondike", type === "klondike");
+      ui.playPower.classList.toggle("is-freecell", type === "freecell");
+      ui.playPower.classList.toggle("is-spider", type === "spider");
+    }
+    const panel = ui.patienceOpts || $("play-patience-opts");
+    if (!panel) return;
+    panel.classList.remove("hidden");
+    panel.replaceChildren();
+    const title = document.createElement("p");
+    title.className = "patience-opts-title";
+    title.textContent = label("options", "OPTIONS");
+    panel.appendChild(title);
+    if (type === "klondike") {
+      panel.appendChild(
+        chipRow(label("draw", "DRAW"), [
+          { value: 1, label: "1" },
+          { value: 3, label: "3" },
+        ], opts.drawCount != null ? opts.drawCount : 1, "drawCount")
+      );
+      panel.appendChild(
+        chipRow(label("undo", "UNDO"), [
+          { value: "on", label: label("on", "ON") },
+          { value: "off", label: label("off", "OFF") },
+        ], opts.undo === false ? "off" : "on", "undo")
+      );
+      panel.appendChild(
+        chipRow(label("recycle", "RECYCLE"), [
+          { value: "always", label: label("always", "ALWAYS") },
+          { value: "once", label: label("once", "ONCE") },
+          { value: "never", label: label("never", "NEVER") },
+        ], opts.recycle || "always", "recycle")
+      );
+    } else {
+      panel.appendChild(
+        chipRow(label("undo", "UNDO"), [
+          { value: "on", label: label("on", "ON") },
+          { value: "off", label: label("off", "OFF") },
+        ], opts.undo === false ? "off" : "on", "undo")
+      );
+    }
+    const deal = document.createElement("button");
+    deal.type = "button";
+    deal.className = "btn patience-opts-deal";
+    deal.dataset.patienceDeal = "1";
+    deal.textContent = label("deal", "DEAL");
+    panel.appendChild(deal);
+    ui.scoreLabel.textContent = label("score", "SCORE");
+    ui.scoreValue.textContent = "—";
+    ui.hudRound.textContent = label("options", "OPTIONS");
+    ui.hudDeck.textContent = "";
+    ui.deal.classList.add("hidden");
+    if (ui.undo) {
+      ui.undo.classList.add("hidden");
+      ui.undo.disabled = true;
+    }
+    ui.back.textContent = label("back", "CABINET");
+    ui.banner.className = "banner";
+    ui.banner.textContent = copy("options", "Pick options, then DEAL.");
+  }
+
   function renderPower(ctx) {
     const E = ctx.E, ui = ctx.ui, session = ctx.session;
     const snap = E.snapshotPatience(session);
     const label = ctx.label, copy = ctx.copy;
     const type = snap.type;
+    if (ui.playPower) ui.playPower.classList.remove("is-opts");
+    if (ui.patienceOpts) ui.patienceOpts.classList.add("hidden");
     ui.scoreLabel.textContent = label("score", "SCORE");
     ui.scoreValue.textContent = String(snap.score);
     if (type === "spider") {
@@ -227,6 +321,13 @@
     ui.deal.textContent = label("again", "DEAL AGAIN");
     ui.deal.classList.remove("hidden");
     ui.back.textContent = label("back", "CABINET");
+    if (ui.undo) {
+      const showUndo = !!snap.undo;
+      ui.undo.classList.toggle("hidden", !showUndo);
+      ui.undo.textContent = label("undo", "UNDO");
+      ui.undo.disabled = !snap.canUndo;
+      ui.undo.classList.toggle("is-ready", !!snap.canUndo);
+    }
     const sel = snap.selected;
     const playing = snap.status === "playing";
     if (ui.playPower) {
@@ -310,11 +411,28 @@
 
         const wasteBtn = document.createElement("button");
         wasteBtn.type = "button";
-        wasteBtn.className = "power-well stock-well" + (sel && sel.kind === "waste" ? " is-selected" : "");
+        const fan = snap.drawCount === 3 && snap.waste && snap.waste.peek && snap.waste.peek.length > 1;
+        wasteBtn.className =
+          "power-well stock-well" +
+          (fan ? " is-waste-fan" : "") +
+          (sel && sel.kind === "waste" ? " is-selected" : "");
         wasteBtn.dataset.stock = "waste";
         wasteBtn.disabled = !playing || !snap.wasteCount;
         if (snap.waste && snap.waste.top) {
-          wasteBtn.appendChild(cardNode(snap.waste.top, false, sel && sel.kind === "waste"));
+          if (fan) {
+            const wrap = document.createElement("div");
+            wrap.className = "waste-fan";
+            snap.waste.peek.forEach(function (c, i) {
+              const slot = document.createElement("div");
+              slot.className = "waste-fan-card";
+              const isTop = i === snap.waste.peek.length - 1;
+              slot.appendChild(cardNode(c, false, isTop && sel && sel.kind === "waste"));
+              wrap.appendChild(slot);
+            });
+            wasteBtn.appendChild(wrap);
+          } else {
+            wasteBtn.appendChild(cardNode(snap.waste.top, false, sel && sel.kind === "waste"));
+          }
         } else {
           const empty = document.createElement("span");
           empty.className = "power-empty";
@@ -410,7 +528,13 @@
       ui.banner.textContent = "+" + ev.points + " · " + copy("complete", "Run off.");
     } else if (ev && ev.kind === "illegal") {
       ui.banner.classList.add("bust");
-      ui.banner.textContent = copy("illegal", "That pile won't take it.");
+      if (ev.reason === "recycle") {
+        ui.banner.textContent = copy("recycleBlocked", "No more stock passes.");
+      } else {
+        ui.banner.textContent = copy("illegal", "That pile won't take it.");
+      }
+    } else if (ev && ev.kind === "undo") {
+      ui.banner.textContent = copy("undo", "Went back one move.");
     } else if (ev && ev.kind === "move") {
       ui.banner.textContent = copy("move", "Card placed.");
     } else if (ev && ev.kind === "draw") {
@@ -736,6 +860,7 @@
     renderEleven: renderEleven,
     renderPower: renderPower,
     renderPatience: renderPower,
+    renderPatienceOpts: renderPatienceOpts,
     renderSudoku: renderSudoku,
     renderReversi: renderReversi,
     renderHoops: renderHoops,
@@ -745,6 +870,8 @@
     attachUi: function (ui) {
       ui.playEleven = $("play-eleven");
       ui.playPower = $("play-power");
+      ui.patienceOpts = $("play-patience-opts");
+      ui.undo = $("btn-undo");
       ui.playYacht = $("play-yacht");
       ui.playSudoku = $("play-sudoku");
       ui.playReversi = $("play-reversi");
