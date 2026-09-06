@@ -74,11 +74,11 @@ Columns 21 extras:
 
 11 Up (`elevenup`) extras: pairScore (11), passPenalty (5), clearBonus (50), cells (16), dealCount (12), labels.next take stock, copy.playing pair illegal next take clear done full.
 
-Solitaire (`klondike`) extras: foundationScore (10), columns (7), moves (`run`), labels.home stock waste empty again, copy.playing move foundation illegal won draw recycle.
+Solitaire (`klondike`) extras: foundationScore (10), columns (7), moves (`run`), drawCount (1|3), recycle (`always`|`once`|`never`), undo (bool), labels.home stock waste empty again options draw undo recycle deal, copy.playing move foundation illegal won draw recycle undo recycleBlocked options.
 
-FreeCell (`freecell`) extras: foundationScore (10), columns (8), cells (4), moves (`run`), labels.home cell empty again.
+FreeCell (`freecell`) extras: foundationScore (10), columns (8), cells (4), moves (`run`), undo (bool), labels.home cell empty again options undo deal, copy.options undo.
 
-Spider (`spider`) extras: columns (10), runScore (100), suits (1), suit (`♠`), runs (8), moves (`run`), labels.runs stock empty again, copy.playing move complete illegal won deal.
+Spider (`spider`) extras: columns (10), runScore (100), suits (1), suit (`♠`), runs (8), moves (`run`), undo (bool), labels.runs stock empty again options undo deal, copy.playing move complete illegal won deal undo options.
 
 Yacht (`yacht`) extras: upperBonus (35), upperThreshold (63), fullHouse (25), smallStraight (30), largeStraight (40), yacht (50), rolls (3), labels.roll hold aces…sixes threekind fourkind fullhouse smallstraight largestraight yacht chance, copy.idle playing mustScore done.
 
@@ -116,7 +116,7 @@ Columns: exact 21 clear, five-under clear, bust penalty empties the lane, skip d
 
 11 Up: 5+6 and A+10 legal, 2+8 illegal, two Jacks legal, J+Q illegal, next fills empty and penalizes, take on a clear adds bonus, cannot next if the grid is full.
 
-Solitaire (Klondike): 52-card shoe including K/Q, King only on empty column, alt-color descending, stack move of a packed run, foundation A then 2 of the same suit.
+Solitaire (Klondike): 52-card shoe including K/Q, King only on empty column, alt-color descending, stack move of a packed run, foundation A then 2 of the same suit, draw-3, recycle once/never, undo, safe auto-foundation.
 
 FreeCell: deal 52 face-up, a free cell holds one, illegal double-fill, supermove blocked with no helpers, foundation A then 2.
 

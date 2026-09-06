@@ -55,36 +55,43 @@ Original pair-off table. Not a licensed cabinet clone.
 
 Standard Klondike. Original cabinet rules, not a branded clone.
 
+- **Pre-deal options** (skipped in a SET leg): **Draw 1|3**, **Undo ON|OFF**, **Recycle ALWAYS|ONCE|NEVER**. Defaults: draw 1, undo on, recycle always. Saved per game id in `cabinet-kit-patience-opts`.
 - Standard **52-card** deck. Kings high.
 - **7 tableau columns**, Klondike deal (1…7, only the top face-up; uncovering flips).
-- One **stock** + **waste**. Tap stock to flip **1** card to waste. When the stock is empty, tap it to recycle the waste (unlimited passes in v0).
+- One **stock** + **waste**. Tap stock to flip **drawCount** cards (1 or 3) to waste; only the waste **top** is movable. Draw-3 shows a small fan of up to three waste cards.
+- **Recycle:** when stock is empty, tap stock to reverse waste onto stock — **ALWAYS** (unlimited), **ONCE** (one pass), or **NEVER** (stock stays empty).
 - Tableau builds **descending rank, alternating color**. Empty column: **King only** (or a face-up run that starts with a King).
 - Move **whole face-up stacks**. Tap a face-up card in a packed run to select from that card to the top, then drop on a legal tableau column or (single legal card) a foundation.
 - Four suit foundations climb **A→K**. Win when all **52** are home.
+- **Auto-play:** after each user action (and after deal), safe cards go home automatically (Aces/2s always when legal; higher ranks only when both opposite-color rank−1 helpers are already home).
+- **Undo** (if ON): **UNDO** beside CABINET; one step undoes the user action plus any auto-play that followed.
 - Score **+foundationScore** (default 10) per card to a foundation.
-- **DEAL AGAIN** reshuffles. **CABINET** returns to the menu.
+- **DEAL AGAIN** returns to the options panel. **CABINET** returns to the menu.
 
 ## FreeCell
 
 Public-domain FreeCell. Original cabinet UI, not a branded clone.
 
+- **Pre-deal options** (skipped in a SET leg): **Undo ON|OFF** (default ON). Then **DEAL**.
 - **52 cards**, all face-up. **8 cascades**, **4 free cells**, **4 foundations** A→K by suit.
 - Cascades build down alternating color. Empty cascade: any card or legal stack.
 - Each free cell holds **one** card.
 - **Supermove**: a stack move is legal only if there are enough free cells + empty cascades. Max movable = (empty free cells + 1) × 2^(empty cascades, excluding the destination if it is empty). Too big is illegal.
 - Tap a cell, a cascade card in a packed run, or a cascade top, then a destination.
-- Score **+foundationScore** (default 10) per foundation card. Win when all **52** are home. **DEAL AGAIN** reshuffles.
+- **Auto-play** safe foundation moves after each tap (same helper rule as Solitaire). **Undo** when enabled.
+- Score **+foundationScore** (default 10) per foundation card. Win when all **52** are home. **DEAL AGAIN** returns to options.
 
 ## Spider
 
 Quick **1-suit** Spider. Original cabinet rules, not a branded clone.
 
+- **Pre-deal options** (skipped in a SET leg): **Undo ON|OFF** (default ON). Then **DEAL**.
 - **104 cards** (two 52-card ranks, all one suit). **10 columns**. Classic deal: 6 cards in columns 0–3, 5 in 4–9; only tops face-up.
 - Remaining **50** sit in the stock. Tap stock to deal **10** (one onto each column). Cannot deal while any column is empty.
 - Build down in rank (one suit anyway). Empty column: any card or run.
 - Move packed descending runs of any length. Tap the start of the run.
-- A complete **K→A** run of 13 is removed and scores **+runScore** (default 100). Win when **8** runs are off.
-- **DEAL AGAIN** reshuffles.
+- A complete **K→A** run of 13 is removed and scores **+runScore** (default 100) — **auto-cleared** when it appears (no extra tap). Win when **8** runs are off.
+- **Undo** when enabled. **DEAL AGAIN** returns to options.
 
 ## Yacht
 

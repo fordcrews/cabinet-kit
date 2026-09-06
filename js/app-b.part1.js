@@ -12,7 +12,15 @@
     } else if (def.type === "elevenup") {
       session = E.createElevenSession(def);
     } else if (def.type === "klondike" || def.type === "freecell" || def.type === "spider") {
-      session = E.createPatienceSession(def);
+      if (inSet()) {
+        patienceOpts = null;
+        const cfg = patienceGameConfig(def, loadPatienceOpts(def.id, def.type));
+        session = E.createPatienceSession(cfg);
+        E.autoPlayPatience(session);
+      } else {
+        session = null;
+        patienceOpts = loadPatienceOpts(def.id, def.type);
+      }
     } else if (def.type === "yacht") {
       session = E.createYachtSession(def);
     } else if (def.type === "sudoku6" || def.type === "sudoku9") {
@@ -35,7 +43,7 @@
       session = E.createSession(def);
     }
     show("game");
-    if (window.CabinetSfx) {
+    if (session && window.CabinetSfx) {
       window.CabinetSfx.play("deal");
       if (session.lastEvent && session.lastEvent.kind === "deal") {
         session._sfxSeen = session.lastEvent;
@@ -234,8 +242,8 @@
       return;
     }
     if (isPower()) {
-      session = E.createPatienceSession(gameDef);
-      sfxNewSitting(session);
+      patienceOpts = loadPatienceOpts(gameDef.id, gameDef.type);
+      session = null;
       renderGame();
       return;
     }

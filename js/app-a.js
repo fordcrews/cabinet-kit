@@ -36,6 +36,8 @@
     take: $("btn-take"),
     playEleven: $("play-eleven"),
     playPower: $("play-power"),
+    patienceOptsPanel: $("play-patience-opts"),
+    undo: $("btn-undo"),
     playYacht: $("play-yacht"),
     elevenGrid: $("eleven-grid"),
     elevenStocks: $("eleven-stocks"),
@@ -70,6 +72,8 @@
   const gamesById = new Map();
   let session = null;
   let gameDef = null;
+  let patienceOpts = null;
+  const PATIENCE_OPTS_KEY = "cabinet-kit-patience-opts";
   /** Active set: { size, ids, index, parts, total, phase, legRecorded, setRank } */
   let setPlay = null;
   let lastSetOrder = null;
@@ -103,6 +107,60 @@
   }
   function isPower() {
     return isPatience();
+  }
+
+  function defaultPatienceOpts(type) {
+    if (type === "klondike") {
+      return { drawCount: 1, undo: true, recycle: "always" };
+    }
+    return { undo: true };
+  }
+  function loadPatienceOpts(id, type) {
+    const fallback = defaultPatienceOpts(type);
+    try {
+      const raw = localStorage.getItem(PATIENCE_OPTS_KEY);
+      if (!raw) return fallback;
+      const all = JSON.parse(raw);
+      const saved = all && all[id];
+      if (!saved || typeof saved !== "object") return fallback;
+      if (type === "klondike") {
+        return {
+          drawCount: saved.drawCount === 3 ? 3 : 1,
+          undo: saved.undo !== false,
+          recycle:
+            saved.recycle === "once" || saved.recycle === "never"
+              ? saved.recycle
+              : "always",
+        };
+      }
+      return { undo: saved.undo !== false };
+    } catch (e) {
+      return fallback;
+    }
+  }
+  function savePatienceOpts(id, opts) {
+    if (!id || !opts) return;
+    try {
+      const raw = localStorage.getItem(PATIENCE_OPTS_KEY);
+      const all = raw ? JSON.parse(raw) : {};
+      all[id] = opts;
+      localStorage.setItem(PATIENCE_OPTS_KEY, JSON.stringify(all));
+    } catch (e) {}
+  }
+  function patienceGameConfig(def, opts) {
+    const out = Object.assign({}, def);
+    const o = opts || defaultPatienceOpts(def && def.type);
+    if (def.type === "klondike") {
+      out.drawCount = o.drawCount === 3 ? 3 : 1;
+      out.recycle = o.recycle === "once" || o.recycle === "never" ? o.recycle : "always";
+      out.undo = o.undo !== false;
+    } else {
+      out.undo = o.undo !== false;
+    }
+    return out;
+  }
+  function inPatienceOpts() {
+    return isPower() && !session && !!patienceOpts && !!gameDef;
   }
   function isYacht() {
     return gameType() === "yacht";

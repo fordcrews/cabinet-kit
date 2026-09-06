@@ -44,14 +44,62 @@
     if (col) return { kind: "tableau", col: Number(col.getAttribute("data-pcol")) };
     return null;
   }
+  function afterPatienceUserAction() {
+    if (!session || !isPower()) return;
+    const autoN = E.autoPlayPatience(session);
+    if (autoN > 0 && window.CabinetSfx) {
+      window.CabinetSfx.play("foundation");
+    }
+    renderGame();
+  }
   function onPatienceClick(ev) {
+    if (inPatienceOpts()) {
+      const chip = ev.target.closest("[data-opt]");
+      if (chip && patienceOpts) {
+        const key = chip.getAttribute("data-opt");
+        const raw = chip.getAttribute("data-value");
+        if (key === "drawCount") patienceOpts.drawCount = raw === "3" ? 3 : 1;
+        else if (key === "undo") patienceOpts.undo = raw !== "off";
+        else if (key === "recycle") {
+          patienceOpts.recycle =
+            raw === "once" || raw === "never" ? raw : "always";
+        }
+        renderGame();
+        return;
+      }
+      const dealBtn = ev.target.closest("[data-patience-deal]");
+      if (dealBtn) {
+        savePatienceOpts(gameDef.id, patienceOpts);
+        const cfg = patienceGameConfig(gameDef, patienceOpts);
+        session = E.createPatienceSession(cfg);
+        patienceOpts = null;
+        E.autoPlayPatience(session);
+        sfxNewSitting(session);
+        renderGame();
+      }
+      return;
+    }
     if (!session || !isPower() || session.status !== "playing") return;
     const target = patienceTargetFromEvent(ev);
     if (!target) return;
+    const beforeKind = session.lastEvent && session.lastEvent.kind;
     E.tapPatience(session, target);
-    renderGame();
+    const kind = session.lastEvent && session.lastEvent.kind;
+    if (kind && kind !== "select" && kind !== "deselect") {
+      afterPatienceUserAction();
+    } else {
+      renderGame();
+    }
   }
   if (ui.playPower) ui.playPower.addEventListener("click", onPatienceClick);
+  if (ui.undo) {
+    ui.undo.addEventListener("click", function () {
+      if (!session || !isPower() || !E.patienceCanUndo(session)) return;
+      E.undoPatience(session);
+      if (window.CabinetSfx) window.CabinetSfx.play("skip");
+      renderGame();
+    });
+  }
   ui.skip.addEventListener("click", function () {
     if (!session || !usesColumnsPlayfield() || session.status !== "playing") return;
     if (session.skipsLeft <= 0) return;

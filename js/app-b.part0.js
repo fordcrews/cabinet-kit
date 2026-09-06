@@ -119,7 +119,8 @@
     }
   }
   function renderGame() {
-    if (!session || !gameDef) return;
+    if (!gameDef) return;
+    if (!session && !inPatienceOpts()) return;
     ui.deal.classList.remove("ghost", "is-reset");
     ui.skip.classList.remove("is-ready");
     if (ui.shoot) ui.shoot.classList.remove("is-hot");
@@ -129,6 +130,12 @@
     ui.scoreLabel.textContent = label("score", "SCORE");
     ui.back.textContent = label("back", "CABINET");
     const ctx = playCtx();
+    if (inPatienceOpts()) {
+      setMode(gameType());
+      window.CabinetPlay.renderPatienceOpts(ctx);
+      if (inSet()) applySetChrome();
+      return;
+    }
     if (isColumns()) {
       setMode("columns21");
       renderColumns();
@@ -188,7 +195,15 @@
     }
   }
   function playCtx() {
-    return { E: E, ui: ui, session: session, gameDef: gameDef, label: label, copy: copy };
+    return {
+      E: E,
+      ui: ui,
+      session: session,
+      gameDef: gameDef,
+      label: label,
+      copy: copy,
+      patienceOpts: patienceOpts,
+    };
   }
   let hoopsRaf = 0;
   function stopHoopsLoop() {
@@ -213,6 +228,7 @@
     if (window.CabinetSlot) window.CabinetSlot.unmount();
     session = null;
     gameDef = null;
+    patienceOpts = null;
     clearSet();
     show("cabinet");
     ui.brand.textContent = "Cabinet";
