@@ -105,11 +105,16 @@
       btn.innerHTML = '<span class="title"></span><span class="tagline"></span>';
       btn.querySelector(".title").textContent = def.title || def.id;
       btn.querySelector(".tagline").textContent = def.tagline || def.blurb || "";
-      const high = window.CabinetScores ? window.CabinetScores.get(def.id) : 0;
+      const entry =
+        window.CabinetScores && window.CabinetScores.getEntry
+          ? window.CabinetScores.getEntry(def.id)
+          : { score: window.CabinetScores ? window.CabinetScores.get(def.id) : 0, name: "" };
+      const high = entry.score || 0;
       if (high > 0) {
         const best = document.createElement("span");
         best.className = "best";
-        best.textContent = "BEST " + high;
+        best.textContent =
+          "BEST " + high + (entry.name ? " · " + entry.name : "");
         btn.appendChild(best);
       }
       btn.addEventListener("click", function () {
