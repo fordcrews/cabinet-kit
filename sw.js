@@ -1,5 +1,5 @@
 /* Cabinet Kit service worker — network-first, cache fallback */
-const CACHE = "cabinet-kit-v0.22";
+const CACHE = "cabinet-kit-v0.23";
 const ASSETS = [
   "./",
   "./index.html",
@@ -46,6 +46,7 @@ const ASSETS = [
   "./js/slot.js",
   "./js/app-a.js",
   "./js/app-exit-confirm.js",
+  "./js/app-player-name.js",
   "./js/app-sets-ui.js",
   "./js/app-b.js",
   "./js/app-b.part0.js",
