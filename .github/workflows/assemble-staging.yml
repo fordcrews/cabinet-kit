@@ -22,15 +22,27 @@ jobs:
           staging.mkdir(exist_ok=True)
           changed = False
 
-          def extract_seed(prefix):
+          def load_blob(prefix):
+              chunks = []
+              for i in range(8):
+                  p = staging / f"{prefix}.{i}"
+                  if p.exists():
+                      chunks.append(p.read_text().strip())
+                  else:
+                      break
+              if chunks:
+                  return "".join(chunks)
               a = staging / f"{prefix}.a"
               b = staging / f"{prefix}.b"
-              one = staging / prefix
-              blob = None
               if a.exists() and b.exists():
-                  blob = a.read_text().strip() + b.read_text().strip()
-              elif one.exists():
-                  blob = one.read_text().strip()
+                  return a.read_text().strip() + b.read_text().strip()
+              one = staging / prefix
+              if one.exists():
+                  return one.read_text().strip()
+              return None
+
+          def extract_seed(prefix):
+              blob = load_blob(prefix)
               if not blob:
                   return False
               raw = base64.b64decode(blob)
