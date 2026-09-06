@@ -237,6 +237,7 @@
     ensureSetStrip();
     paintSetStrip();
     if (typeof ensurePlayerNameOnCabinet === "function") ensurePlayerNameOnCabinet();
+    if (typeof ensureOnlineOnCabinet === "function") ensureOnlineOnCabinet();
   }
   function startGame(def) {
     if (
