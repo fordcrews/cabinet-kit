@@ -6,7 +6,7 @@
     document.body.appendChild(s);
   }
   Promise.all(
-    ["js/app-a.js", "js/app-exit-confirm.js", "js/app-player-name.js", "js/app-sets-ui.js", "js/app-b.part0.js", "js/app-b.part1.js", "js/app-b.part2.js", "js/app-b.part3.js"].map(function (url) {
+    ["js/app-a.js", "js/app-exit-confirm.js", "js/app-player-name.js", "js/app-online-scores.js", "js/app-sets-ui.js", "js/app-b.part0.js", "js/app-b.part1.js", "js/app-b.part2.js", "js/app-b.part3.js"].map(function (url) {
       return fetch(url).then(function (res) {
         if (!res.ok) throw new Error("Missing " + url);
         return res.text();
