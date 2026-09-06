@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Seed missing play-ui parts and assemble
+      - name: Seed staging archives and assemble
         run: |
           set -euo pipefail
           python3 <<'PY'
@@ -20,21 +20,33 @@ jobs:
           from pathlib import Path
           staging = Path("_staging")
           staging.mkdir(exist_ok=True)
-          a = staging / "play-ui-seed.tgz.b64.a"
-          b = staging / "play-ui-seed.tgz.b64.b"
-          one = staging / "play-ui-seed.tgz.b64"
-          if a.exists() and b.exists():
-              blob = a.read_text().strip() + b.read_text().strip()
+          changed = False
+
+          def extract_seed(prefix):
+              a = staging / f"{prefix}.a"
+              b = staging / f"{prefix}.b"
+              one = staging / prefix
+              blob = None
+              if a.exists() and b.exists():
+                  blob = a.read_text().strip() + b.read_text().strip()
+              elif one.exists():
+                  blob = one.read_text().strip()
+              if not blob:
+                  return False
               raw = base64.b64decode(blob)
               with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as tar:
+                  names = tar.getnames()
+                  print("extracted", prefix, names)
+                  if any(n.startswith("js/") or n.startswith("tests/") or n.endswith(".md") for n in names):
+                      tar.extractall(Path("."))
+                      return True
                   tar.extractall(staging)
-                  print("extracted", tar.getnames())
-          elif one.exists():
-              raw = base64.b64decode(one.read_text().strip())
-              with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as tar:
-                  tar.extractall(staging)
-                  print("extracted", tar.getnames())
-          changed = False
+                  return False
+
+          extract_seed("play-ui-seed.tgz.b64")
+          if extract_seed("rest-seed.tgz.b64"):
+              changed = True
+
           for man_path in sorted(staging.glob("*.b64.json")):
               man = json.loads(man_path.read_text())
               target = Path(man["target"])
@@ -61,12 +73,13 @@ jobs:
               target.write_bytes(data)
               print("wrote", target, len(data))
               changed = True
+
           Path("/tmp/changed").write_text("1" if changed else "0")
           PY
           if [ "$(cat /tmp/changed)" = "1" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -A js/ _staging/
+            git add -A js/ tests/ GAMES.md GAMES-2.md _staging/ || true
             if git diff --cached --quiet; then echo "nothing staged"; exit 0; fi
             git commit -m "Add Klondike draw/recycle options, undo, and solitaire auto-play"
             git push
