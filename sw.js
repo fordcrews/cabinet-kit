@@ -13,6 +13,7 @@ const ASSETS = [
   "./css/match.css",
   "./css/slot.css",
   "./css/chrome.css",
+  "./css/exit-confirm.css",
   "./css/feel.css",
   "./css/pieces.css",
   "./svg/card-back.svg",
