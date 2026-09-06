@@ -129,11 +129,11 @@
   display: block;
   margin: 0 0 6px;
   font-size: 0.7rem;
+  font-weight: 800;
   letter-spacing: 0.16em;
   color: var(--gold-dim);
   text-transform: uppercase;
   text-align: left;
-  font-weight: 800;
 }
 .player-name-input {
   width: 100%;
@@ -178,4 +178,112 @@
   .player-name-input {
     min-height: 48px;
   }
+}
+
+
+/* Online boards — chip + modal list */
+.boards-chip {
+  margin: 0 0 14px;
+}
+.boards-chip-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  text-align: left;
+  border: 2px solid var(--gold-dim);
+  border-radius: 12px;
+  color: var(--cream);
+  background: linear-gradient(#16382c, #0a1814);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.boards-chip-btn:active {
+  transform: translateY(1px);
+}
+.boards-chip-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+.boards-chip-title {
+  flex: 1;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+}
+.online-board-card {
+  width: min(100%, 400px);
+  max-height: min(90dvh, 640px);
+  display: flex;
+  flex-direction: column;
+}
+.online-board-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.online-board-tabs .online-tab {
+  min-height: 44px;
+  font-size: 0.85rem;
+}
+.online-board-tabs .online-tab.is-on {
+  background: var(--gold);
+  color: #111;
+  border-color: var(--gold);
+}
+.online-board-body {
+  flex: 1;
+  min-height: 120px;
+  max-height: 42dvh;
+  overflow: auto;
+  margin: 0 0 12px;
+  text-align: left;
+}
+.online-board-status {
+  margin: 12px 0;
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.9rem;
+}
+.online-board-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.online-board-row {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 10px;
+  background: #0a1814;
+}
+.obr-rank {
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+}
+.obr-name {
+  font-weight: 800;
+  color: var(--cream);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.obr-meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-align: right;
 }
