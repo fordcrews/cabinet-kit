@@ -23,28 +23,41 @@ jobs:
               print("no staging"); raise SystemExit(0)
           changed = False
           for man_path in sorted(staging.glob("*.b64.json")):
-              man = json.loads(man_path.read_text())
-              target = Path(man["target"])
-              parts = [(Path(p)).read_text().strip() for p in man["parts"]]
-              raw = base64.b64decode("".join(parts))
-              expect = man.get("md5")
-              got = hashlib.md5(raw).hexdigest()
-              print(target, "md5", got, "expect", expect)
-              if expect and got != expect:
-                  raise SystemExit(f"md5 mismatch for {target}")
-              if target.exists() and target.read_bytes() == raw:
-                  print("unchanged", target); continue
-              target.parent.mkdir(parents=True, exist_ok=True)
-              target.write_bytes(raw)
-              print("wrote", target, len(raw))
-              changed = True
+              try:
+                  man = json.loads(man_path.read_text())
+                  target = Path(man["target"])
+                  parts = []
+                  missing = False
+                  for p in man["parts"]:
+                      fp = Path(p)
+                      if not fp.exists():
+                          print("skip", man_path.name, "missing", p)
+                          missing = True
+                          break
+                      parts.append(fp.read_text().strip())
+                  if missing:
+                      continue
+                  raw = base64.b64decode("".join(parts))
+                  expect = man.get("md5")
+                  got = hashlib.md5(raw).hexdigest()
+                  print(target, "md5", got, "expect", expect)
+                  if expect and got != expect:
+                      raise SystemExit(f"md5 mismatch for {target}")
+                  if target.exists() and target.read_bytes() == raw:
+                      print("unchanged", target); continue
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  target.write_bytes(raw)
+                  print("wrote", target, len(raw))
+                  changed = True
+              except Exception as e:
+                  print("error", man_path, e)
+                  raise
           Path("/tmp/changed").write_text("1" if changed else "0")
           PY
           if [ "$(cat /tmp/changed)" = "1" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add js/solitaire.js js/play-ui.js || true
-            git add -u js/ || true
+            git add -A js/
             if git diff --cached --quiet; then echo "nothing staged"; exit 0; fi
             git commit -m "Add Klondike draw/recycle options, undo, and solitaire auto-play"
             git push
