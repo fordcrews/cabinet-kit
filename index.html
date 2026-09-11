@@ -25,9 +25,11 @@
     <link rel="stylesheet" href="css/match.css" />
     <link rel="stylesheet" href="css/slot.css" />
     <link rel="stylesheet" href="css/chrome.css" />
+    <link rel="stylesheet" href="css/mahjong.css" />
     <link rel="stylesheet" href="css/exit-confirm.css" />
     <link rel="stylesheet" href="css/feel.css" />
     <link rel="stylesheet" href="css/pieces.css" />
+    <link rel="stylesheet" href="css/mahjong-pieces.css" />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icons/icon.svg" />
@@ -147,6 +149,16 @@
               <div class="match-grid" id="match-grid"></div>
             </div>
 
+            <div id="play-mahjong" class="mahjong-table hidden">
+              <div class="mahjong-tray">
+                <div
+                  class="mahjong-board"
+                  id="mahjong-board"
+                  style="--mj-w:30; --mj-h:16; --mj-tw:36; --mj-th:48;"
+                ></div>
+              </div>
+            </div>
+
             <div id="play-slot" class="slot-table hidden">
               <canvas class="slot-canvas" id="slot-canvas"></canvas>
             </div>
@@ -158,6 +170,7 @@
               <button type="button" class="btn stay" id="btn-stay">STAY</button>
               <button type="button" class="btn deal hidden" id="btn-deal">DEAL</button>
               <button type="button" class="btn ghost hidden" id="btn-undo">UNDO</button>
+              <button type="button" class="btn ghost hidden" id="btn-hint">HINT</button>
               <button type="button" class="btn skip-act hidden" id="btn-skip">SKIP</button>
               <button type="button" class="btn skip-act hidden" id="btn-next">NEXT CARD</button>
               <button type="button" class="btn stay hidden" id="btn-take">TAKE SCORE</button>
@@ -176,6 +189,7 @@
     <script src="js/arcade.js"></script>
     <script src="js/app-quiznight.js"></script>
     <script src="js/match.js"></script>
+    <script src="js/mahjong.js"></script>
     <script src="js/feel-engine.js"></script>
     <script src="js/feel-ui.js"></script>
     <script src="js/highscore.js"></script>
