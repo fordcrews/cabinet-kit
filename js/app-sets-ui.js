@@ -2,7 +2,7 @@
     return !!(setPlay && Array.isArray(setPlay.ids) && setPlay.ids.length);
   }
   function catalogIds() {
-    return Array.from(gamesById.keys());
+    return Array.from(gameById.keys());
   }
   function sittingEnded() {
     if (!session || !gameDef) return false;
@@ -17,6 +17,9 @@
     }
     if (type === "sudoku6" || type === "sudoku9") {
       return status === "won";
+    }
+    if (type === "mahjong") {
+      return status === "won" || status === "stuck";
     }
     if (type === "run21") {
       return status === "bust" || status === "run" || status === "stay";
