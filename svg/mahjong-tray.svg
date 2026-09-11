@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-hidden="true">
+  <defs>
+    <radialGradient id="mjFeltWash" cx="50%" cy="42%" r="68%">
+      <stop offset="0%" stop-color="#145c45" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#0c2f24" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#071c16" stop-opacity="0.7"/>
+    </radialGradient>
+    <linearGradient id="mjFrame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e2b84a"/>
+      <stop offset="55%" stop-color="#b8892a"/>
+      <stop offset="100%" stop-color="#7a4a12"/>
+    </linearGradient>
+  </defs>
+  <!-- Recessed felt plate -->
+  <rect x="8" y="8" width="304" height="184" rx="14" ry="14" fill="#0c2f24"/>
+  <rect x="8" y="8" width="304" height="184" rx="14" ry="14" fill="url(#mjFeltWash)"/>
+  <!-- Thin gold frame -->
+  <rect x="10" y="10" width="300" height="180" rx="12" ry="12" fill="none" stroke="url(#mjFrame)" stroke-width="2" opacity="0.85"/>
+  <rect x="16" y="16" width="288" height="168" rx="10" ry="10" fill="none" stroke="#145c45" stroke-width="1" opacity="0.55"/>
+  <!-- Corner rivets -->
+  <circle cx="22" cy="22" r="3.2" fill="#e2b84a"/>
+  <circle cx="22" cy="22" r="1.4" fill="#7a4a12" opacity="0.7"/>
+  <circle cx="298" cy="22" r="3.2" fill="#e2b84a"/>
+  <circle cx="298" cy="22" r="1.4" fill="#7a4a12" opacity="0.7"/>
+  <circle cx="22" cy="178" r="3.2" fill="#e2b84a"/>
+  <circle cx="22" cy="178" r="1.4" fill="#7a4a12" opacity="0.7"/>
+  <circle cx="298" cy="178" r="3.2" fill="#e2b84a"/>
+  <circle cx="298" cy="178" r="1.4" fill="#7a4a12" opacity="0.7"/>
+</svg>
