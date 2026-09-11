@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 44" role="img" aria-label="Bamboo 1">
+  <title>Bamboo 1</title>
+  <rect x="13.2" y="6" width="5.6" height="32" fill="#2a6b3a" rx="1.2"/>
+  <rect x="12.4" y="12" width="7.2" height="2.2" fill="#e2b84a" rx="0.5"/>
+  <rect x="12.4" y="20" width="7.2" height="2.2" fill="#e2b84a" rx="0.5"/>
+  <rect x="12.4" y="28" width="7.2" height="2.2" fill="#e2b84a" rx="0.5"/>
+  <path d="M16 5 L18.2 8.5 L13.8 8.5 Z" fill="#2a6b3a"/>
+  <rect x="14.4" y="7.2" width="3.2" height="1.4" fill="#1e4f2a" rx="0.3"/>
+</svg>
