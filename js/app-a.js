@@ -60,6 +60,9 @@
     quizChoices: $("quiz-choices"),
     playMatch: $("play-match"),
     matchGrid: $("match-grid"),
+    playMahjong: $("play-mahjong"),
+    mahjongBoard: $("mahjong-board"),
+    hint: $("btn-hint"),
     playSlot: $("play-slot"),
     slotCanvas: $("slot-canvas"),
     roll: $("btn-roll"),
@@ -182,6 +185,9 @@
     const t = gameType();
     return t === "blast" || t === "triple" || t === "chime";
   }
+  function isMahjong() {
+    return gameType() === "mahjong";
+  }
   function isSlot() {
     return gameType() === "slot";
   }
@@ -194,7 +200,7 @@
   }
   function cardNode(card, mini) {
     const el = document.createElement("article");
-    const red = card.suit === "♥" || card.suit === "♦";
+    const red = card.suit === "\u2665" || card.suit === "\u2666";
     el.className = "card" + (red ? " card-red" : " card-black") + (mini ? " card-mini" : "");
     el.setAttribute("aria-label", card.rank + " " + card.suit);
     el.innerHTML =
@@ -224,7 +230,7 @@
     snap.hand.forEach(function (c) {
       ui.hand.appendChild(cardNode(c, false));
     });
-    ui.total.textContent = snap.hand.length ? String(snap.total) : "—";
+    ui.total.textContent = snap.hand.length ? String(snap.total) : "\u2014";
   }
   function setPlaying(playing) {
     ui.hit.classList.toggle("hidden", !playing);
@@ -256,6 +262,7 @@
     if (type === "blast") return E.snapshotBlast(session).score;
     if (type === "triple") return E.snapshotTriple(session).score;
     if (type === "chime") return E.snapshotChime(session).score;
+    if (type === "mahjong") return E.snapshotMahjong(session).score;
     if (type === "slot") {
       if (window.CabinetSlot) return window.CabinetSlot.getScore();
       return Number(session && session.score) || 0;
@@ -282,7 +289,7 @@
     if (!isNew || !ui.banner) return;
     const t = ui.banner.textContent || "";
     if (t.indexOf("NEW HIGH") >= 0) return;
-    ui.banner.textContent = t ? t + " · NEW HIGH" : "NEW HIGH";
+    ui.banner.textContent = t ? t + " \u00b7 NEW HIGH" : "NEW HIGH";
   }
   function noteHigh(playCtxObj) {
     if (!session || !gameDef) return;
@@ -353,20 +360,20 @@
       let line = copy("done", "Shoe empty.");
       if (ev && ev.kind === "clear") {
         ui.banner.classList.add("run");
-        line = label("clear", "CLEAR") + " +" + ev.points + " · " + line;
+        line = label("clear", "CLEAR") + " +" + ev.points + " \u00b7 " + line;
       } else if (ev && ev.kind === "bust") {
         ui.banner.classList.add("bust");
-        line = label("bust", "BUST") + " " + ev.points + " · " + line;
+        line = label("bust", "BUST") + " " + ev.points + " \u00b7 " + line;
       }
-      ui.banner.textContent = line + " · " + snap.score;
+      ui.banner.textContent = line + " \u00b7 " + snap.score;
     } else if (ev && ev.kind === "clear") {
       ui.banner.classList.add("run");
       ui.banner.textContent =
-        label("clear", "CLEAR") + " +" + ev.points + " · " + copy("clear", "Lane cleared.");
+        label("clear", "CLEAR") + " +" + ev.points + " \u00b7 " + copy("clear", "Lane cleared.");
     } else if (ev && ev.kind === "bust") {
       ui.banner.classList.add("bust");
       ui.banner.textContent =
-        label("bust", "BUST") + " · " + copy("bust", "Over the target.");
+        label("bust", "BUST") + " \u00b7 " + copy("bust", "Over the target.");
     } else if (ev && ev.kind === "skip") {
       ui.banner.textContent = copy("skip", "Skipped.");
     } else {
@@ -394,7 +401,7 @@
     } else if (snap.status === "bust") {
       ui.banner.classList.add("bust");
       ui.banner.textContent =
-        label("bust", "BUST") + " · " + copy("bust", "Over the target. Zero this round.");
+        label("bust", "BUST") + " \u00b7 " + copy("bust", "Over the target. Zero this round.");
       setPlaying(false);
     } else if (snap.status === "run") {
       ui.banner.classList.add("run");
@@ -402,7 +409,7 @@
         label("run", "RUN") +
         " +" +
         snap.lastRoundScore +
-        " · " +
+        " \u00b7 " +
         copy("run", "Two-card Run! Target plus bonus.");
       setPlaying(false);
     } else if (snap.status === "stay") {
@@ -410,7 +417,7 @@
         label("stayOk", "STAY") +
         " +" +
         snap.lastRoundScore +
-        " · " +
+        " \u00b7 " +
         copy("stay", "Locked in.");
       setPlaying(false);
     }
