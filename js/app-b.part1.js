@@ -1,4 +1,4 @@
-        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "klondike", "freecell", "spider", "yacht", "sudoku6", "sudoku9", "reversi", "hoops", "quiznight", "blast", "triple", "chime", "slot", and "run21". See README.</li>';
+        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "klondike", "freecell", "spider", "yacht", "sudoku6", "sudoku9", "reversi", "hoops", "quiznight", "blast", "triple", "chime", "mahjong", "slot", and "run21". See README.</li>';
       openCabinet();
       return;
     }
@@ -37,6 +37,8 @@
       session = E.createTripleSession(def);
     } else if (def.type === "chime") {
       session = E.createChimeSession(def);
+    } else if (def.type === "mahjong") {
+      session = E.createMahjongSession(def);
     } else if (def.type === "slot") {
       session = { type: "slot", status: "playing", score: 0, lastEvent: { kind: "deal" } };
     } else {
@@ -197,12 +199,12 @@
     openCabinet();
   }
   ui.hit.addEventListener("click", function () {
-    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || isArcadePlay() || isMatch() || isSlot() || session.status !== "playing") return;
+    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || isArcadePlay() || isMatch() || isMahjong() || isSlot() || session.status !== "playing") return;
     E.hit(session);
     renderGame();
   });
   ui.stay.addEventListener("click", function () {
-    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || isArcadePlay() || isMatch() || isSlot() || session.status !== "playing") return;
+    if (!session || usesColumnsPlayfield() || isEleven() || isPower() || isYacht() || isArcadePlay() || isMatch() || isMahjong() || isSlot() || session.status !== "playing") return;
     E.stay(session);
     renderGame();
   });
@@ -279,6 +281,13 @@
     }
     if (isQuiz()) {
       session = E.createQuizSession(gameDef);
+      sfxNewSitting(session);
+      renderGame();
+      return;
+    }
+    if (isMahjong()) {
+      if (session.status !== "won" && session.status !== "stuck" && session.status !== "done") return;
+      session = E.createMahjongSession(gameDef);
       sfxNewSitting(session);
       renderGame();
       return;
