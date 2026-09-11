@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 44" role="img" aria-label="Dragon Green">
+  <title>Dragon Green</title>
+  <path d="M16 7 L26 20 L16 33 L6 20 Z" fill="#2a6b3a"/>
+  <path d="M16 11.5 L21.5 20 L16 28.5 L10.5 20 Z" fill="#f4efe2"/>
+  <rect x="9.5" y="18.5" width="13" height="2.6" fill="#2a6b3a" rx="0.3"/>
+  <circle cx="11.5" cy="15.5" r="1.7" fill="#e2b84a"/>
+  <circle cx="20.5" cy="24.5" r="1.7" fill="#e2b84a"/>
+</svg>

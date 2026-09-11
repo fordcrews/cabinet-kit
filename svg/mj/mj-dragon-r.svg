@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 44" role="img" aria-label="Dragon Red">
+  <title>Dragon Red</title>
+  <rect x="7.5" y="10" width="17" height="20" fill="none" stroke="#c62828" stroke-width="2.4" rx="1"/>
+  <rect x="14.5" y="8" width="3" height="26" fill="#c62828" rx="0.4"/>
+  <circle cx="16" cy="20" r="2.2" fill="#e2b84a"/>
+</svg>
