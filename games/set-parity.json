@@ -17,6 +17,7 @@
     "reversi": { "par": 40 },
     "hoops": { "par": 24 },
     "orbit": { "par": 28 },
-    "quiznight": { "par": 120 }
+    "quiznight": { "par": 120 },
+    "mahjong": { "par": 8000 }
   }
 }
