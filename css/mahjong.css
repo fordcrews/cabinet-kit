@@ -1,0 +1,196 @@
+/* Mahjong solitaire play chrome — tray, board layout, tile shell + free/blocked/selected. Load after chrome.css, before pieces.css. Tile face art stays in pieces.css. */
+
+.mahjong-table {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mahjong-tray {
+  position: relative;
+  margin: auto;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid var(--gold-dim);
+  background-color: var(--felt);
+  background-image:
+    url(../svg/mahjong-tray.svg),
+    radial-gradient(ellipse 80% 70% at 50% 40%, var(--felt-edge) 0%, transparent 62%),
+    linear-gradient(165deg, rgba(20, 92, 69, 0.35) 0%, transparent 48%);
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-size: cover, 100% 100%, 100% 100%;
+  background-blend-mode: soft-light, normal, normal;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 28px rgba(0, 0, 0, 0.45),
+    inset 0 14px 32px rgba(0, 0, 0, 0.28),
+    0 4px 0 rgba(7, 28, 22, 0.85),
+    0 8px 18px rgba(0, 0, 0, 0.4);
+}
+
+.mahjong-board {
+  position: relative;
+  margin: auto;
+  touch-action: manipulation;
+  width: calc(var(--mj-w) * var(--mj-tw) * 0.5 * 1px + var(--mj-tw) * 1px);
+  height: calc(var(--mj-h) * var(--mj-th) * 0.5 * 1px + var(--mj-th) * 1px);
+}
+
+/* Base tile SHELL only — cream enamel body; pieces.css paints faces later. */
+.mj-tile {
+  position: absolute;
+  left: calc(var(--mx) * var(--mj-tw) * 0.5 * 1px);
+  top: calc(var(--my) * var(--mj-th) * 0.5 * 1px);
+  z-index: calc(var(--mz) * 100 + var(--my) * 2 + var(--mx));
+  box-sizing: border-box;
+  width: calc(var(--mj-tw) * 1px);
+  height: calc(var(--mj-th) * 1px);
+  min-width: 36px;
+  min-height: 36px;
+  margin: 0;
+  padding: 0;
+  border: 2px solid var(--gold-dim);
+  border-radius: 8px;
+  background:
+    linear-gradient(165deg, #fffaf0 0%, var(--cream) 42%, #e5dcc8 100%);
+  color: var(--ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -2px 0 rgba(20, 17, 13, 0.12),
+    inset -1px 0 0 rgba(20, 17, 13, 0.08),
+    2px 3px 0 rgba(7, 28, 22, 0.55),
+    3px 5px 10px rgba(0, 0, 0, 0.35);
+  transform: translate(calc(var(--mz) * 2px), calc(var(--mz) * -2px));
+  transform-origin: center center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.mj-face {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Free: full brightness, subtle gold edge lift */
+.mj-tile.is-free {
+  opacity: 1;
+  filter: none;
+  border-color: var(--gold);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -2px 0 rgba(20, 17, 13, 0.1),
+    0 0 0 1px rgba(226, 184, 74, 0.35),
+    2px 3px 0 rgba(7, 28, 22, 0.55),
+    3px 5px 10px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+/* Blocked: dimmed, no gold glow */
+.mj-tile.is-blocked {
+  opacity: 0.55;
+  filter: brightness(0.82) saturate(0.85);
+  border-color: var(--gold-dim);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    2px 3px 0 rgba(7, 28, 22, 0.4),
+    3px 5px 8px rgba(0, 0, 0, 0.28);
+  cursor: default;
+}
+
+/* Selected: gold outline + gold-dim ring (match match-cell / card.selected) */
+.mj-tile.is-selected {
+  outline: 3px solid var(--gold);
+  outline-offset: 1px;
+  border-color: var(--gold);
+  box-shadow:
+    0 0 0 2px var(--gold-dim),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    2px 3px 0 rgba(7, 28, 22, 0.55),
+    0 0 14px rgba(226, 184, 74, 0.45);
+  z-index: calc(var(--mz) * 100 + var(--my) * 2 + var(--mx) + 50);
+}
+
+/* Hint: soft gold pulse */
+.mj-tile.is-hint {
+  animation: mj-hint-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes mj-hint-pulse {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 0 0 1px rgba(226, 184, 74, 0.35),
+      2px 3px 0 rgba(7, 28, 22, 0.55),
+      0 0 6px rgba(226, 184, 74, 0.25);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      0 0 0 2px var(--gold),
+      2px 3px 0 rgba(7, 28, 22, 0.55),
+      0 0 16px rgba(226, 184, 74, 0.65);
+  }
+}
+
+/* Just-matched: short fade/scale-out */
+.mj-tile.just-match {
+  pointer-events: none;
+  animation: mj-match-out 0.32s ease-out forwards;
+}
+
+@keyframes mj-match-out {
+  0% {
+    transform: translate(calc(var(--mz) * 2px), calc(var(--mz) * -2px)) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(var(--mz) * 2px), calc(var(--mz) * -2px)) scale(0.35);
+    opacity: 0;
+  }
+}
+
+.mj-tile:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+@media (orientation: landscape) {
+  #view-game .mahjong-table {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .mahjong-tray {
+    padding: 10px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mj-tile.is-hint {
+    animation: none;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 0 0 2px var(--gold),
+      2px 3px 0 rgba(7, 28, 22, 0.55);
+  }
+
+  .mj-tile.just-match {
+    animation: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+}
