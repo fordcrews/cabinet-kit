@@ -57,7 +57,7 @@ Standard Klondike. Original cabinet rules, not a branded clone.
 
 - **Pre-deal options** (skipped in a SET leg): **Draw 1|3**, **Undo ON|OFF**, **Recycle ALWAYS|ONCE|NEVER**. Defaults: draw 1, undo on, recycle always. Saved per game id in `cabinet-kit-patience-opts`.
 - Standard **52-card** deck. Kings high.
-- **7 tableau columns**, Klondike deal (1…7, only the top face-up; uncovering flips).
+- **7 tableau columns**, Klondike deal (1–7, only the top face-up; uncovering flips).
 - One **stock** + **waste**. Tap stock to flip **drawCount** cards (1 or 3) to waste; only the waste **top** is movable. Draw-3 shows a small fan of up to three waste cards.
 - **Recycle:** when stock is empty, tap stock to reverse waste onto stock — **ALWAYS** (unlimited), **ONCE** (one pass), or **NEVER** (stock stays empty).
 - Tableau builds **descending rank, alternating color**. Empty column: **King only** (or a face-up run that starts with a King).
@@ -118,6 +118,18 @@ Classic 9×9. Digits 1–9 in 3×3 boxes. Same cabinet controls as Sudoku 6.
 
 - Tap a cell or a digit (1–9), then fill. Givens stay locked.
 - Duplicates in a row, column, or 3×3 box are marked. Five puzzles in `games/sudoku9.json`.
+
+
+## Mahjong
+
+Shanghai-style **Mahjong solitaire**. Original cabinet rules, not a branded clone.
+
+- Full **144-tile** pack on a mid-size **turtle** layout (half-step grid). Four of each suit/honor; one of each flower and season.
+- Tap a **free** tile, then a matching free tile. Free = nothing covering it on a higher layer, and open on the **left or right** (classic).
+- Identical faces match. **Any flower** matches any flower; **any season** matches any season.
+- Score **+pairScore** (default 100) per pair. Clear the board for **+clearBonus** (1000) plus a time bonus: leftover seconds from `timeBudget` (900) × `timeBonusPerSec` (1). Higher is better.
+- **UNDO** restores the last pair. **HINT** highlights one free matching pair.
+- **DEAL AGAIN** after a clear or when stuck with no free pairs.
 
 ## Blast
 
