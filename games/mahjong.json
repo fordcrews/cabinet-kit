@@ -1,0 +1,34 @@
+{
+  "id": "mahjong",
+  "type": "mahjong",
+  "title": "Mahjong",
+  "tagline": "Match free pairs. Clear the turtle.",
+  "blurb": "Classic Mahjong solitaire. Tap two identical free tiles to clear them. A tile is free when nothing sits on top and at least one side is open. Flowers match any flower; seasons match any season. Score +100 per pair; clear the board for a bonus plus leftover time.",
+  "layout": "turtle",
+  "pairScore": 100,
+  "clearBonus": 1000,
+  "timeBudget": 900,
+  "timeBonusPerSec": 1,
+  "undo": true,
+  "labels": {
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "score": "SCORE",
+    "tiles": "TILES",
+    "undo": "UNDO",
+    "hint": "HINT",
+    "time": "TIME"
+  },
+  "copy": {
+    "playing": "Tap a free tile, then its match.",
+    "select": "Tile selected — tap a match.",
+    "pair": "Pair cleared.",
+    "blocked": "That tile is blocked.",
+    "mismatch": "Those do not match. New selection.",
+    "hint": "One free pair highlighted.",
+    "stuck": "No free pairs left.",
+    "undo": "Went back one pair.",
+    "won": "Turtle clear.",
+    "done": "Sitting over."
+  }
+}
