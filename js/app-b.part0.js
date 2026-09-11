@@ -164,6 +164,9 @@
     } else if (isQuiz()) {
       setMode("quiznight");
       window.CabinetPlay.renderQuiz(ctx);
+    } else if (isMahjong()) {
+      setMode("mahjong");
+      window.CabinetPlay.renderMahjong(ctx);
     } else if (isMatch()) {
       setMode(gameType());
       window.CabinetPlay.renderMatch(ctx);
@@ -272,6 +275,7 @@
       blast: 1,
       triple: 1,
       chime: 1,
+      mahjong: 1,
       slot: 1,
     };
     if (!def || !PLAYABLE[def.type]) {
