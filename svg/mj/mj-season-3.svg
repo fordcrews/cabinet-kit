@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 44" role="img" aria-label="Season Autumn">
+  <title>Season Autumn</title>
+  <path d="M16 8 C22 12 26 18 24 26 C20 30 16 34 16 34 C16 34 12 30 8 26 C6 18 10 12 16 8 Z" fill="#c45a1a"/>
+  <path d="M16 10 L16 32 M16 16 L11 20 M16 16 L21 20 M16 24 L12 27 M16 24 L20 27" fill="none" stroke="#e2b84a" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="15" y="33" width="2" height="4" fill="#14110d" rx="0.3"/>
+</svg>

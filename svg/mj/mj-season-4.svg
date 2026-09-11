@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 44" role="img" aria-label="Season Winter">
+  <title>Season Winter</title>
+  <line x1="16" y1="20" x2="29.00" y2="20.00" stroke="#14110d" stroke-width="2.0" stroke-linecap="round"/>
+  <line x1="24.00" y1="20.00" x2="26.49" y2="16.87" stroke="#e2b84a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="24.00" y1="20.00" x2="26.49" y2="23.13" stroke="#e2b84a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="16" y1="20" x2="22.50" y2="31.26" stroke="#14110d" stroke-width="2.0" stroke-linecap="round"/>
+  <line x1="20.00" y1="26.93" x2="23.96" y2="27.51" stroke="#e2b84a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="20.00" y1="26.93" x2="18.53" y2="30.65" stroke="#e2b84a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="16" y1="20" x2="9.50" y2="31.26" stroke="#14110d" stroke-width="2.0" stroke-linecap="round"/>
+  <line x1="12.00" y1="26.93" x2="13.47" y2="30.65" stroke="#e2b84a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="12.00" y1="26.93" x2="8.04" y2="27.51" stroke="#e2b84a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="16" y1="20" x2="3.00" y2="20.00" stroke="#14110d" stroke-width="2.0" stroke-linecap="round"/>
+  <line x1="8.00" y1="20.00" x2="5.51" y2="23.13" stroke="#e2b84a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="8.00" y1="20.00" x2="5.51" y2="16.87" stroke="#e2b84a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="16" y1="20" x2="9.50" y2="8.74" stroke="#14110d" stroke-width="2.0" stroke-linecap="round"/>
+  <line x1="12.00" y1="13.07" x2="8.04" y2="12.49" stroke="#e2b84a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="12.00" y1="13.07" x2="13.47" y2="9.35" stroke="#e2b84a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="16" y1="20" x2="22.50" y2="8.74" stroke="#14110d" stroke-width="2.0" stroke-linecap="round"/>
+  <line x1="20.00" y1="13.07" x2="18.53" y2="9.35" stroke="#e2b84a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="20.00" y1="13.07" x2="23.96" y2="12.49" stroke="#e2b84a" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="16" cy="20" r="2.4" fill="#e2b84a"/>
+</svg>

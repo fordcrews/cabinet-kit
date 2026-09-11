@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 44" role="img" aria-label="Dots 4">
+  <title>Dots 4</title>
+  <circle cx="11" cy="13" r="3.4" fill="#1c3f68"/>
+  <circle cx="11" cy="13" r="1.292" fill="#e2b84a"/>
+  <circle cx="21" cy="13" r="3.4" fill="#1c3f68"/>
+  <circle cx="21" cy="13" r="1.292" fill="#e2b84a"/>
+  <circle cx="11" cy="27" r="3.4" fill="#1c3f68"/>
+  <circle cx="11" cy="27" r="1.292" fill="#e2b84a"/>
+  <circle cx="21" cy="27" r="3.4" fill="#1c3f68"/>
+  <circle cx="21" cy="27" r="1.292" fill="#e2b84a"/>
+</svg>

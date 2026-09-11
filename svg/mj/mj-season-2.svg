@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 44" role="img" aria-label="Season Summer">
+  <title>Season Summer</title>
+  <circle cx="16" cy="20" r="6.5" fill="#e2b84a"/>
+  <circle cx="16" cy="20" r="4.0" fill="#f0d078"/>
+  <circle cx="16" cy="20" r="2.0" fill="#f4efe2"/>
+  <line x1="24.50" y1="20.00" x2="28.50" y2="20.00" stroke="#e2b84a" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="22.01" y1="26.01" x2="24.84" y2="28.84" stroke="#e2b84a" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="16.00" y1="28.50" x2="16.00" y2="32.50" stroke="#e2b84a" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="9.99" y1="26.01" x2="7.16" y2="28.84" stroke="#e2b84a" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="7.50" y1="20.00" x2="3.50" y2="20.00" stroke="#e2b84a" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="9.99" y1="13.99" x2="7.16" y2="11.16" stroke="#e2b84a" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="16.00" y1="11.50" x2="16.00" y2="7.50" stroke="#e2b84a" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="22.01" y1="13.99" x2="24.84" y2="11.16" stroke="#e2b84a" stroke-width="2.2" stroke-linecap="round"/>
+</svg>
