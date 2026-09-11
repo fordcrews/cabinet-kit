@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 44" role="img" aria-label="Dots 9">
+  <title>Dots 9</title>
+  <circle cx="10" cy="10" r="2.55" fill="#1c3f68"/>
+  <circle cx="10" cy="10" r="0.969" fill="#e2b84a"/>
+  <circle cx="16" cy="10" r="2.55" fill="#1c3f68"/>
+  <circle cx="16" cy="10" r="0.969" fill="#e2b84a"/>
+  <circle cx="22" cy="10" r="2.55" fill="#1c3f68"/>
+  <circle cx="22" cy="10" r="0.969" fill="#e2b84a"/>
+  <circle cx="10" cy="20" r="2.55" fill="#1c3f68"/>
+  <circle cx="10" cy="20" r="0.969" fill="#e2b84a"/>
+  <circle cx="16" cy="20" r="2.55" fill="#1c3f68"/>
+  <circle cx="16" cy="20" r="0.969" fill="#e2b84a"/>
+  <circle cx="22" cy="20" r="2.55" fill="#1c3f68"/>
+  <circle cx="22" cy="20" r="0.969" fill="#e2b84a"/>
+  <circle cx="10" cy="30" r="2.55" fill="#1c3f68"/>
+  <circle cx="10" cy="30" r="0.969" fill="#e2b84a"/>
+  <circle cx="16" cy="30" r="2.55" fill="#1c3f68"/>
+  <circle cx="16" cy="30" r="0.969" fill="#e2b84a"/>
+  <circle cx="22" cy="30" r="2.55" fill="#1c3f68"/>
+  <circle cx="22" cy="30" r="0.969" fill="#e2b84a"/>
+</svg>
