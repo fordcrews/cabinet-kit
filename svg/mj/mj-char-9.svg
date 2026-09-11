@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 44" role="img" aria-label="Character 9">
+  <title>Character 9</title>
+  <path d="M10.5 28.5 L14.2 30.8 C18.8 30.8 23.2 27.5 23.2 19.5 C23.2 11.5 18.8 6.8 13.2 6.8 C8 6.8 4.8 10.5 4.8 15 C4.8 19.5 8 22.5 12.8 22.5 C15.8 22.5 18.2 21.2 19.2 19.2 C19.4 23.8 17.2 27 13.8 27 L10.5 25.2 Z M18.8 15.2 C18.8 12.2 16.5 10.5 13.4 10.5 C10.4 10.5 8.5 12.2 8.5 15 C8.5 17.8 10.5 19.4 13.4 19.4 C16.4 19.4 18.8 17.8 18.8 15.2 Z" fill="#14110d"/>
+  <rect x="13.25" y="33.75" width="5.5" height="5.5" fill="#c62828" rx="0.6"/>
+  <rect x="13.25" y="33.75" width="5.5" height="5.5" fill="none" stroke="#e2b84a" stroke-width="0.7" rx="0.6"/>
+  <rect x="14.2" y="34.8" width="3.6" height="0.7" fill="#e2b84a"/>
+  <path d="M16 34.2 L17.1 35.0 L14.9 35.0 Z" fill="#e2b84a"/>
+  <rect x="15.65" y="35.5" width="0.7" height="2.8" fill="#e2b84a"/>
+  <rect x="14.5" y="36.6" width="3.0" height="0.65" fill="#e2b84a"/>
+</svg>
