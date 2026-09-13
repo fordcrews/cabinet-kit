@@ -1,9 +1,52 @@
-/* Cabinet menu scroll: long game lists (Sports/Orbit) must be reachable */
+/* Cabinet menu: fill the phone interior; scroll long category/game lists inside the bezel.
+   Portrait + landscape; respects safe-area padding already on .cabinet / chrome. */
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body > .cabinet {
+  height: 100dvh;
+  height: 100svh;
+  max-height: 100dvh;
+  max-height: 100svh;
+  min-height: 100dvh;
+  min-height: 100svh;
+  box-sizing: border-box;
+}
+
+body > .cabinet > .bezel {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+body > .cabinet .screen {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 #view-cabinet.active {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  height: auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
 }
+
 .game-list {
   flex: 0 0 auto; /* grow with content; the VIEW scrolls */
+}
+
+/* Keep foot after the list; still reachable via view scroll */
+#view-cabinet.active .foot {
+  flex: 0 0 auto;
+  margin-top: 18px;
 }
