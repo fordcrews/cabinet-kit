@@ -1,32 +1,28 @@
-/* Mahjong solitaire play chrome — tray, board layout, tile shell + free/blocked/selected. Load after chrome.css, before pieces.css. Tile face art stays in pieces.css / mahjong-pieces.css. */
+/* Mahjong solitaire play chrome — tray, board layout, tile shell + free/blocked/selected.
+   Load after chrome.css, before pieces.css / mahjong-pieces.css.
+   Scale-to-fit: tray fills play shell; board sized with min(cqw, cqh*ar) so it always fits. */
 
 .mahjong-table {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   min-height: 0;
   min-width: 0;
   width: 100%;
+  height: 100%;
   overflow: hidden;
-  touch-action: manipulation;
-}
-
-/* Scaled footprint host — JS sets width/height to natural*scale so layout matches visual */
-.mahjong-fit-wrap {
-  flex: 0 0 auto;
-  position: relative;
-  max-width: 100%;
-  max-height: 100%;
-  overflow: hidden;
-  display: block;
 }
 
 .mahjong-tray {
-  position: relative;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
   margin: 0;
-  padding: 14px 16px;
-  border-radius: 14px;
+  padding: clamp(4px, 1.5%, 12px) clamp(6px, 2%, 14px);
+  border-radius: 12px;
   border: 2px solid var(--gold-dim);
   background-color: var(--felt);
   background-image:
@@ -42,43 +38,40 @@
     inset 0 14px 32px rgba(0, 0, 0, 0.28),
     0 4px 0 rgba(7, 28, 22, 0.85),
     0 8px 18px rgba(0, 0, 0, 0.4);
-  transform: scale(var(--mj-fit-scale, 1));
-  transform-origin: top center;
-  /* When wrapped, absolute so wrap owns the scaled box */
-}
-
-.mahjong-fit-wrap > .mahjong-tray {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%) scale(var(--mj-fit-scale, 1));
-  transform-origin: top center;
+  container-type: size;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
 }
 
 .mahjong-board {
+  --mj-cols: calc(var(--mj-w) * 0.5 + 1);
+  --mj-rows: calc(var(--mj-h) * 0.5 + 1);
+  --mj-ar: calc((var(--mj-cols) * var(--mj-tw)) / (var(--mj-rows) * var(--mj-th)));
+  /* Fit inside tray content box */
+  width: min(100cqw, calc(100cqh * var(--mj-ar)));
+  height: min(100cqh, calc(100cqw / var(--mj-ar)));
+  /* Tile size = board fraction (%, resolves vs board for abs children) */
+  --_tw: calc(100% / var(--mj-cols));
+  --_th: calc(100% / var(--mj-rows));
+  --_lift: clamp(1px, 0.35cqmin, 2px);
   position: relative;
-  margin: auto;
+  margin: 0;
   touch-action: manipulation;
-  width: calc(var(--mj-w) * var(--mj-tw) * 0.5 * 1px + var(--mj-tw) * 1px);
-  height: calc(var(--mj-h) * var(--mj-th) * 0.5 * 1px + var(--mj-th) * 1px);
 }
 
-/* Base tile SHELL only — cream enamel body; pieces.css paints faces later. */
 .mj-tile {
   position: absolute;
-  left: calc(var(--mx) * var(--mj-tw) * 0.5 * 1px);
-  top: calc(var(--my) * var(--mj-th) * 0.5 * 1px);
+  left: calc(var(--mx) * 0.5 * var(--_tw));
+  top: calc(var(--my) * 0.5 * var(--_th));
   z-index: calc(var(--mz) * 100 + var(--my) * 2 + var(--mx));
   box-sizing: border-box;
-  width: calc(var(--mj-tw) * 1px);
-  height: calc(var(--mj-th) * 1px);
-  /* No min size — must shrink with --mj-tw/--mj-th / parent scale on phones */
-  min-width: 0;
-  min-height: 0;
+  width: var(--_tw);
+  height: var(--_th);
   margin: 0;
   padding: 0;
   border: 2px solid var(--gold-dim);
-  border-radius: 8px;
+  border-radius: 6px;
   background:
     linear-gradient(165deg, #fffaf0 0%, var(--cream) 42%, #e5dcc8 100%);
   color: var(--ink);
@@ -86,9 +79,9 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
     inset 0 -2px 0 rgba(20, 17, 13, 0.12),
     inset -1px 0 0 rgba(20, 17, 13, 0.08),
-    2px 3px 0 rgba(7, 28, 22, 0.55),
-    3px 5px 10px rgba(0, 0, 0, 0.35);
-  transform: translate(calc(var(--mz) * 2px), calc(var(--mz) * -2px));
+    var(--_lift) calc(var(--_lift) * 1.5) 0 rgba(7, 28, 22, 0.55),
+    calc(var(--_lift) * 1.5) calc(var(--_lift) * 2.5) calc(var(--_lift) * 5) rgba(0, 0, 0, 0.35);
+  transform: translate(calc(var(--mz) * var(--_lift)), calc(var(--mz) * var(--_lift) * -1));
   transform-origin: center center;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -104,7 +97,6 @@
   pointer-events: none;
 }
 
-/* Free: full brightness, subtle gold edge lift */
 .mj-tile.is-free {
   opacity: 1;
   filter: none;
@@ -113,24 +105,22 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
     inset 0 -2px 0 rgba(20, 17, 13, 0.1),
     0 0 0 1px rgba(226, 184, 74, 0.35),
-    2px 3px 0 rgba(7, 28, 22, 0.55),
-    3px 5px 10px rgba(0, 0, 0, 0.35);
+    var(--_lift) calc(var(--_lift) * 1.5) 0 rgba(7, 28, 22, 0.55),
+    calc(var(--_lift) * 1.5) calc(var(--_lift) * 2.5) calc(var(--_lift) * 5) rgba(0, 0, 0, 0.35);
   cursor: pointer;
 }
 
-/* Blocked: dimmed, no gold glow */
 .mj-tile.is-blocked {
   opacity: 0.55;
   filter: brightness(0.82) saturate(0.85);
   border-color: var(--gold-dim);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    2px 3px 0 rgba(7, 28, 22, 0.4),
-    3px 5px 8px rgba(0, 0, 0, 0.28);
+    var(--_lift) calc(var(--_lift) * 1.5) 0 rgba(7, 28, 22, 0.4),
+    calc(var(--_lift) * 1.5) calc(var(--_lift) * 2.5) calc(var(--_lift) * 4) rgba(0, 0, 0, 0.28);
   cursor: default;
 }
 
-/* Selected: gold outline + gold-dim ring (match match-cell / card.selected) */
 .mj-tile.is-selected {
   outline: 3px solid var(--gold);
   outline-offset: 1px;
@@ -138,12 +128,11 @@
   box-shadow:
     0 0 0 2px var(--gold-dim),
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    2px 3px 0 rgba(7, 28, 22, 0.55),
+    var(--_lift) calc(var(--_lift) * 1.5) 0 rgba(7, 28, 22, 0.55),
     0 0 14px rgba(226, 184, 74, 0.45);
   z-index: calc(var(--mz) * 100 + var(--my) * 2 + var(--mx) + 50);
 }
 
-/* Hint: soft gold pulse */
 .mj-tile.is-hint {
   animation: mj-hint-pulse 1.2s ease-in-out infinite;
 }
@@ -154,19 +143,18 @@
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.9),
       0 0 0 1px rgba(226, 184, 74, 0.35),
-      2px 3px 0 rgba(7, 28, 22, 0.55),
+      var(--_lift) calc(var(--_lift) * 1.5) 0 rgba(7, 28, 22, 0.55),
       0 0 6px rgba(226, 184, 74, 0.25);
   }
   50% {
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.95),
       0 0 0 2px var(--gold),
-      2px 3px 0 rgba(7, 28, 22, 0.55),
+      var(--_lift) calc(var(--_lift) * 1.5) 0 rgba(7, 28, 22, 0.55),
       0 0 16px rgba(226, 184, 74, 0.65);
   }
 }
 
-/* Just-matched: short fade/scale-out */
 .mj-tile.just-match {
   pointer-events: none;
   animation: mj-match-out 0.32s ease-out forwards;
@@ -174,11 +162,11 @@
 
 @keyframes mj-match-out {
   0% {
-    transform: translate(calc(var(--mz) * 2px), calc(var(--mz) * -2px)) scale(1);
+    transform: translate(calc(var(--mz) * var(--_lift)), calc(var(--mz) * var(--_lift) * -1)) scale(1);
     opacity: 1;
   }
   100% {
-    transform: translate(calc(var(--mz) * 2px), calc(var(--mz) * -2px)) scale(0.35);
+    transform: translate(calc(var(--mz) * var(--_lift)), calc(var(--mz) * var(--_lift) * -1)) scale(0.35);
     opacity: 0;
   }
 }
@@ -197,7 +185,7 @@
   }
 
   .mahjong-tray {
-    padding: 10px 12px;
+    padding: clamp(3px, 1%, 8px) clamp(4px, 1.5%, 10px);
   }
 }
 
@@ -207,7 +195,7 @@
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.9),
       0 0 0 2px var(--gold),
-      2px 3px 0 rgba(7, 28, 22, 0.55);
+      var(--_lift) calc(var(--_lift) * 1.5) 0 rgba(7, 28, 22, 0.55);
   }
 
   .mj-tile.just-match {
