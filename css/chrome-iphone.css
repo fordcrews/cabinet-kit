@@ -1,0 +1,112 @@
+/* iPhone shell fill — additive chrome. Load after css/chrome.css.
+   Cabinet fills the screen; wood rail stays; safe-area respected. */
+
+html,
+body {
+  height: 100%;
+  height: 100dvh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+body > .cabinet {
+  height: 100dvh;
+  height: 100svh;
+  max-height: 100dvh;
+  max-height: 100svh;
+  min-height: 0;
+  padding:
+    max(10px, env(safe-area-inset-top))
+    max(8px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom))
+    max(8px, env(safe-area-inset-left));
+}
+
+body > .cabinet > .bezel {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+body > .cabinet .screen {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Menu fills the glass; list scrolls inside the view */
+#view-cabinet.active {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+#view-cabinet .lede {
+  flex: 0 0 auto;
+}
+
+#view-cabinet .game-list {
+  flex: 0 0 auto;
+  width: 100%;
+}
+
+#view-cabinet .foot {
+  flex: 0 0 auto;
+  margin-top: 12px;
+}
+
+/* In-game play shell also needs the leftover column/row */
+#view-game.active {
+  min-height: 0;
+}
+
+#view-game .mahjong-table {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+@media (orientation: landscape) {
+  body > .cabinet {
+    padding:
+      max(4px, env(safe-area-inset-top))
+      max(8px, env(safe-area-inset-right))
+      max(6px, env(safe-area-inset-bottom))
+      max(8px, env(safe-area-inset-left));
+  }
+
+  #view-cabinet.active {
+    padding: 8px 10px;
+  }
+
+  #view-cabinet .lede {
+    margin: 0 0 8px;
+  }
+
+  #view-cabinet .foot {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+
+  #view-game .mahjong-table {
+    flex: 1 1 0;
+  }
+}
+
+/* Narrow phones: keep 44px menu taps, slightly tighter chrome padding already above */
+@media (max-width: 430px) and (orientation: portrait) {
+  body > .cabinet {
+    padding:
+      max(8px, env(safe-area-inset-top))
+      max(6px, env(safe-area-inset-right))
+      max(10px, env(safe-area-inset-bottom))
+      max(6px, env(safe-area-inset-left));
+  }
+
+  .bezel {
+    padding: 6px;
+  }
+}
