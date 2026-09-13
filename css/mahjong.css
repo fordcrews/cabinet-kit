@@ -1,4 +1,4 @@
-/* Mahjong solitaire play chrome — tray, board layout, tile shell + free/blocked/selected. Load after chrome.css, before pieces.css. Tile face art stays in pieces.css. */
+/* Mahjong solitaire play chrome — tray, board layout, tile shell + free/blocked/selected. Load after chrome.css, before pieces.css. Tile face art stays in pieces.css / mahjong-pieces.css. */
 
 .mahjong-table {
   flex: 1;
@@ -8,13 +8,23 @@
   min-height: 0;
   min-width: 0;
   width: 100%;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+/* Scaled footprint host — JS sets width/height to natural*scale so layout matches visual */
+.mahjong-fit-wrap {
+  flex: 0 0 auto;
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  display: block;
 }
 
 .mahjong-tray {
   position: relative;
-  margin: auto;
+  margin: 0;
   padding: 14px 16px;
   border-radius: 14px;
   border: 2px solid var(--gold-dim);
@@ -32,6 +42,17 @@
     inset 0 14px 32px rgba(0, 0, 0, 0.28),
     0 4px 0 rgba(7, 28, 22, 0.85),
     0 8px 18px rgba(0, 0, 0, 0.4);
+  transform: scale(var(--mj-fit-scale, 1));
+  transform-origin: top center;
+  /* When wrapped, absolute so wrap owns the scaled box */
+}
+
+.mahjong-fit-wrap > .mahjong-tray {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%) scale(var(--mj-fit-scale, 1));
+  transform-origin: top center;
 }
 
 .mahjong-board {
@@ -51,8 +72,9 @@
   box-sizing: border-box;
   width: calc(var(--mj-tw) * 1px);
   height: calc(var(--mj-th) * 1px);
-  min-width: 36px;
-  min-height: 36px;
+  /* No min size — must shrink with --mj-tw/--mj-th / parent scale on phones */
+  min-width: 0;
+  min-height: 0;
   margin: 0;
   padding: 0;
   border: 2px solid var(--gold-dim);
@@ -171,7 +193,7 @@
     flex: 1 1 0;
     min-width: 0;
     min-height: 0;
-    overflow: auto;
+    overflow: hidden;
   }
 
   .mahjong-tray {
