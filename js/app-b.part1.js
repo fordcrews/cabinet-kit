@@ -1,4 +1,4 @@
-        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "klondike", "freecell", "spider", "yacht", "sudoku6", "sudoku9", "reversi", "hoops", "quiznight", "blast", "triple", "chime", "mahjong", "slot", and "run21". See README.</li>';
+        '<li class="status-error">This kit plays type "runlanes", "columns21", "elevenup", "klondike", "freecell", "spider", "yacht", "sudoku6", "sudoku9", "reversi", "hoops", "quiznight", "blast", "triple", "chime", "signal", "mahjong", "slot", and "run21". See README.</li>';
       openCabinet();
       return;
     }
@@ -37,6 +37,8 @@
       session = E.createTripleSession(def);
     } else if (def.type === "chime") {
       session = E.createChimeSession(def);
+    } else if (def.type === "signal") {
+      session = E.createSignalSession(def);
     } else if (def.type === "mahjong") {
       session = E.createMahjongSession(def);
     } else if (def.type === "slot") {
@@ -296,7 +298,8 @@
       if (session.status !== "done") return;
       if (gameType() === "blast") session = E.createBlastSession(gameDef);
       else if (gameType() === "triple") session = E.createTripleSession(gameDef);
-      else session = E.createChimeSession(gameDef);
+      else if (gameType() === "chime") session = E.createChimeSession(gameDef);
+      else session = E.createSignalSession(gameDef);
       sfxNewSitting(session);
       renderGame();
       return;

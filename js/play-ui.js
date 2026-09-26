@@ -51,7 +51,7 @@
     const reversi = type === "reversi";
     const hoops = type === "hoops";
     const quiz = type === "quiznight";
-    const match = type === "blast" || type === "triple" || type === "chime";
+    const match = type === "blast" || type === "triple" || type === "chime" || type === "signal";
     const hideRun = columnsPlay || eleven || power || yacht || sudoku || reversi || hoops || quiz || match;
     ui.playRun.classList.toggle("hidden", hideRun);
     ui.playColumns.classList.toggle("hidden", !columnsPlay);
@@ -786,7 +786,16 @@
     ui.scoreLabel.textContent = label("score", "SCORE");
     ui.scoreValue.textContent = String(snap.score);
     ui.hudRound.textContent = label("moves", "MOVES") + " " + snap.movesLeft;
-    ui.hudDeck.textContent = "";
+    if (snap.type === "signal") {
+      const marks = ["◉", "△", "◇", "✶", "◍"];
+      const bits = [];
+      (snap.goalsLeft || []).forEach(function (n, i) {
+        if ((snap.goals || [])[i] > 0) bits.push(marks[i] + n);
+      });
+      ui.hudDeck.textContent = "LOG " + (snap.levelIndex + 1) + "/" + snap.levelCount + " " + bits.join(" ");
+    } else {
+      ui.hudDeck.textContent = "";
+    }
     ui.deal.textContent = label("again", "DEAL AGAIN");
     ui.deal.classList.toggle("hidden", snap.status !== "done");
     ui.back.textContent = label("back", "CABINET");
@@ -806,24 +815,32 @@
     ui.matchGrid.replaceChildren();
     ui.matchGrid.style.setProperty("--cols", String(snap.cols));
     ui.matchGrid.className = "match-grid match-" + snap.type;
+    const glyphs = ["◉", "△", "◇", "✶", "◍", "●"];
     snap.grid.forEach(function (color, i) {
       const btn = document.createElement("button");
       btn.type = "button";
+      const pow = snap.power ? snap.power[i] : 0;
+      const crate = color === 8;
       btn.className =
         "match-cell" +
-        (color ? " match-c" + color : " is-empty") +
+        (crate ? " match-crate" : color ? " match-c" + color : " is-empty") +
+        (pow === 1 ? " match-beam-h" : pow === 2 ? " match-beam-v" : pow === 3 ? " match-nova" : "") +
         (snap.selected === i ? " is-selected" : "") +
         (illegal[i] ? " is-illegal" : "") +
         (popped[i] ? " just-pop" : "");
       btn.dataset.cell = String(i);
       btn.disabled = !playing;
-      btn.setAttribute("aria-label", color ? "color " + color : "empty");
+      if (snap.type === "signal" && (crate || color)) {
+        btn.textContent = crate ? "▣" : pow === 3 ? "✸" : glyphs[(color - 1) % glyphs.length];
+      }
+      btn.setAttribute("aria-label", crate ? "crate" : color ? "glyph " + color : "empty");
       ui.matchGrid.appendChild(btn);
     });
     ui.banner.className = "banner";
     if (snap.status === "done") {
-      ui.banner.classList.add("run");
-      ui.banner.textContent = copy("done", "Sitting over.") + " · " + snap.score;
+      ui.banner.classList.add(snap.outcome === "stall" ? "bust" : "run");
+      const endCopy = snap.outcome === "won" ? copy("won", "The dish answers.") : copy("done", "Sitting over.");
+      ui.banner.textContent = endCopy + " · " + snap.score;
     } else if (ev.kind === "pop") {
       ui.banner.classList.add("run");
       const size = ev.size != null ? ev.size : (ev.popped ? ev.popped.length : 0);
@@ -836,9 +853,12 @@
     } else if (ev.kind === "swap") {
       ui.banner.classList.add("run");
       ui.banner.textContent =
+        (ev.advance ? copy("level", "Next log.") + " " : "") +
+        (snap.type === "signal" && snap.brief ? snap.brief + " " : "") +
         copy("swap", "Clear.") +
         (ev.combo > 1 ? " ×" + ev.combo : "") +
-        (ev.points ? " · +" + ev.points : "");
+        (ev.points ? " · +" + ev.points : "") +
+        (ev.shuffle ? " · " + copy("shuffle", "Board restacked.") : "");
     } else if (ev.kind === "slide") {
       ui.banner.textContent = copy("slide", "Line slides.");
     } else if (ev.kind === "illegal") {
@@ -848,7 +868,7 @@
       ui.banner.classList.add("bust");
       ui.banner.textContent = copy("small", "Need two or more.");
     } else {
-      ui.banner.textContent = copy("playing", "Tap the grid.");
+      ui.banner.textContent = snap.type === "signal" && snap.brief ? snap.brief : copy("playing", "Tap the grid.");
     }
     notePlayHigh(ctx, snap.score, snap);
   }

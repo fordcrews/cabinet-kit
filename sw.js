@@ -1,5 +1,5 @@
 /* Cabinet Kit service worker — network-first, cache fallback */
-const CACHE = "cabinet-kit-v0.30";
+const CACHE = "cabinet-kit-v0.31";
 const ASSETS = [
   "./",
   "./index.html",
@@ -77,6 +77,7 @@ const ASSETS = [
   "./games/blast.json",
   "./games/triple.json",
   "./games/chime.json",
+  "./games/signal.json",
   "./css/mahjong.css",
   "./css/mahjong-pieces.css",
   "./svg/mahjong-tray.svg",

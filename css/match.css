@@ -58,6 +58,46 @@
   border-radius: 50%;
 }
 
+.match-grid.match-signal .match-cell {
+  border-radius: 16px 16px 7px 7px;
+  color: #f4efe2;
+  font: 700 clamp(14px, 3.2cqmin, 28px) / 1 ui-sans-serif, sans-serif;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+}
+
+.match-cell.match-crate {
+  background: repeating-linear-gradient(135deg, #4a4030, #4a4030 5px, #2c261c 5px, #2c261c 10px);
+  color: #e6d7b0;
+}
+
+.match-cell.match-beam-h::before,
+.match-cell.match-beam-v::before {
+  content: "";
+  position: absolute;
+  background: #f4e2a8;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.match-cell.match-beam-h::before {
+  left: 10%;
+  right: 10%;
+  top: 46%;
+  height: 10%;
+}
+
+.match-cell.match-beam-v::before {
+  top: 10%;
+  bottom: 10%;
+  left: 46%;
+  width: 10%;
+}
+
+.match-cell.match-nova {
+  box-shadow: inset 0 0 0 3px #f4e2a8, 0 0 0 2px #8a6a28;
+}
+
 .match-cell.match-c1 { background: linear-gradient(160deg, #a84848, #6e2428); }
 .match-cell.match-c2 { background: linear-gradient(160deg, #3a6ea5, #1c3f68); }
 .match-cell.match-c3 { background: linear-gradient(160deg, #3d8a5c, #1e4f36); }

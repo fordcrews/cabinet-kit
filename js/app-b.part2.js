@@ -284,7 +284,8 @@
       const t = gameType();
       if (t === "blast") E.tapBlast(session, i);
       else if (t === "triple") E.tapTriple(session, i);
-      else E.tapChime(session, i);
+      else if (t === "chime") E.tapChime(session, i);
+      else E.tapSignal(session, i);
       renderGame();
     });
   }

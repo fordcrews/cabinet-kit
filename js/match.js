@@ -1,5 +1,5 @@
 /**
- * Cabinet Kit — Blast, Triple, Chime (browser + Node).
+ * Cabinet Kit — Blast, Triple, Chime, Signal (browser + Node).
  * Original match-cabinet rules; not licensed clones.
  * Extends CabinetEngine; Node: require this file after engine.
  */
@@ -669,10 +669,422 @@
     };
   }
 
+  const SIGNAL_CRATE = 8;
+
+  function colorAt(grid, i, colors) {
+    const v = grid[i];
+    return v >= 1 && v <= colors ? v : 0;
+  }
+
+  function goalsMet(goals) {
+    if (!goals) return false;
+    for (let i = 0; i < goals.length; i++) {
+      if (goals[i] > 0) return false;
+    }
+    return true;
+  }
+
+  function findColorRuns(grid, cols, rows, colors, minLine) {
+    const need = minLine || 3;
+    const runs = [];
+    for (let r = 0; r < rows; r++) {
+      let run = [];
+      let color = 0;
+      for (let c = 0; c <= cols; c++) {
+        const v = c < cols ? colorAt(grid, idx(r, c, cols), colors) : 0;
+        if (v && v === color) {
+          run.push(idx(r, c, cols));
+        } else {
+          if (run.length >= need) runs.push({ cells: run, len: run.length, axis: "h", color: color });
+          run = v ? [idx(r, c, cols)] : [];
+          color = v;
+        }
+      }
+    }
+    for (let c = 0; c < cols; c++) {
+      let run = [];
+      let color = 0;
+      for (let r = 0; r <= rows; r++) {
+        const v = r < rows ? colorAt(grid, idx(r, c, cols), colors) : 0;
+        if (v && v === color) {
+          run.push(idx(r, c, cols));
+        } else {
+          if (run.length >= need) runs.push({ cells: run, len: run.length, axis: "v", color: color });
+          run = v ? [idx(r, c, cols)] : [];
+          color = v;
+        }
+      }
+    }
+    return runs;
+  }
+
+  function swapPair(grid, power, a, b) {
+    swapCells(grid, a, b);
+    const t = power[a];
+    power[a] = power[b];
+    power[b] = t;
+  }
+
+  function gravitySignal(grid, power, cols, rows, colors, rng) {
+    for (let c = 0; c < cols; c++) {
+      const kept = [];
+      for (let r = rows - 1; r >= 0; r--) {
+        const i = idx(r, c, cols);
+        if (grid[i]) kept.push({ v: grid[i], p: power[i] || 0 });
+      }
+      let k = 0;
+      for (let r = rows - 1; r >= 0; r--) {
+        const i = idx(r, c, cols);
+        if (k < kept.length) {
+          grid[i] = kept[k].v;
+          power[i] = kept[k].p;
+          k += 1;
+        } else {
+          grid[i] = randColor(colors, rng);
+          power[i] = 0;
+        }
+      }
+    }
+  }
+
+  function signalHasMove(grid, power, cols, rows, colors, minLine) {
+    for (let i = 0; i < grid.length; i++) {
+      if (power[i]) return true;
+    }
+    for (let i = 0; i < grid.length; i++) {
+      const r = (i / cols) | 0;
+      const c = i % cols;
+      if (c + 1 < cols) {
+        swapPair(grid, power, i, i + 1);
+        const ok = findColorRuns(grid, cols, rows, colors, minLine).length > 0;
+        swapPair(grid, power, i, i + 1);
+        if (ok) return true;
+      }
+      if (r + 1 < rows) {
+        swapPair(grid, power, i, i + cols);
+        const ok = findColorRuns(grid, cols, rows, colors, minLine).length > 0;
+        swapPair(grid, power, i, i + cols);
+        if (ok) return true;
+      }
+    }
+    return false;
+  }
+
+  function placeCrates(grid, power, count, cols) {
+    let left = count | 0;
+    for (let i = grid.length - 1; i >= 0 && left > 0; i--) {
+      const r = (i / cols) | 0;
+      const c = i % cols;
+      if (r < 3 && c < 3) continue;
+      grid[i] = SIGNAL_CRATE;
+      power[i] = 0;
+      left -= 1;
+    }
+  }
+
+  function configSignal(game) {
+    const colors = Math.max(3, Math.min(5, num(game && game.colors, 5)));
+    const raw = game && Array.isArray(game.levels) ? game.levels : [];
+    const levels = (raw.length ? raw : [{ moves: 16, goals: [8, 8, 0, 0, 0], crates: 0, brief: "Gather glyphs." }]).map(function (level) {
+      const goals = [];
+      const src = level.goals || [];
+      for (let i = 0; i < colors; i++) goals.push(Math.max(0, num(src[i], 0)));
+      return {
+        moves: Math.max(1, num(level.moves, 16)),
+        goals: goals,
+        crates: Math.max(0, num(level.crates, 0)),
+        brief: level.brief || "",
+      };
+    });
+    return {
+      type: "signal",
+      cols: Math.max(4, num(game && game.cols, 7)),
+      rows: Math.max(4, num(game && game.rows, 7)),
+      colors: colors,
+      minLine: 3,
+      gemScore: Math.max(0, num(game && game.gemScore, 10)),
+      crateScore: Math.max(0, num(game && game.crateScore, 5)),
+      moveBonus: Math.max(0, num(game && game.moveBonus, 20)),
+      levels: levels,
+    };
+  }
+
+  function loadSignalLevel(session, index) {
+    const config = session.config;
+    const level = config.levels[index];
+    const n = config.cols * config.rows;
+    const grid = new Array(n);
+    const power = new Array(n);
+    for (let i = 0; i < n; i++) power[i] = 0;
+    ensureTripleBoard(grid, config.cols, config.rows, config.colors, session.rng, config.minLine);
+    placeCrates(grid, power, level.crates, config.cols);
+    if (!signalHasMove(grid, power, config.cols, config.rows, config.colors, config.minLine)) {
+      stampTripleSwap(grid, config.cols);
+    }
+    session.grid = grid;
+    session.power = power;
+    session.levelIndex = index;
+    session.goals = level.goals.slice();
+    session.goalsLeft = level.goals.slice();
+    session.movesLeft = level.moves;
+    session.brief = level.brief;
+    session.selected = null;
+  }
+
+  function resolveSignal(session, anchors) {
+    const cols = session.config.cols;
+    const rows = session.config.rows;
+    const colors = session.config.colors;
+    const minLine = session.config.minLine;
+    let combo = 0;
+    let cleared = 0;
+    let points = 0;
+    const popped = [];
+    let useAnchors = anchors;
+    const maxWaves = Math.max(8, cols * rows);
+    while (combo < maxWaves) {
+      const runs = findColorRuns(session.grid, cols, rows, colors, minLine);
+      const clear = {};
+      const spawn = {};
+      for (let s = 0; s < runs.length; s++) {
+        const run = runs[s];
+        let spec = 0;
+        if (run.len >= 5) spec = 3;
+        else if (run.len === 4) spec = run.axis === "h" ? 1 : 2;
+        if (spec) {
+          let at = -1;
+          if (useAnchors) {
+            for (let a = 0; a < useAnchors.length; a++) {
+              if (run.cells.indexOf(useAnchors[a]) >= 0) {
+                at = useAnchors[a];
+                break;
+              }
+            }
+          }
+          if (at < 0) at = run.cells[(run.len / 2) | 0];
+          if (!spawn[at] || spec > spawn[at]) spawn[at] = spec;
+        }
+        for (let k = 0; k < run.cells.length; k++) clear[run.cells[k]] = 1;
+      }
+      Object.keys(spawn).forEach(function (k) { delete clear[k]; });
+      const queue = [];
+      Object.keys(clear).forEach(function (k) {
+        if (session.power[+k]) queue.push(+k);
+      });
+      if (useAnchors) {
+        for (let a = 0; a < useAnchors.length; a++) {
+          const an = useAnchors[a];
+          if (session.power[an]) {
+            queue.push(an);
+            clear[an] = 1;
+            delete spawn[an];
+          }
+        }
+      }
+      useAnchors = null;
+      const blasted = {};
+      while (queue.length) {
+        const i = queue.pop();
+        if (blasted[i]) continue;
+        blasted[i] = 1;
+        const p = session.power[i];
+        const add = function (j) {
+          if (spawn[j] != null) return;
+          if (!clear[j] && session.power[j] && !blasted[j]) queue.push(j);
+          clear[j] = 1;
+        };
+        const r = (i / cols) | 0;
+        const c = i % cols;
+        if (p === 1) {
+          for (let cc = 0; cc < cols; cc++) add(idx(r, cc, cols));
+        } else if (p === 2) {
+          for (let rr = 0; rr < rows; rr++) add(idx(rr, c, cols));
+        } else if (p === 3) {
+          for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+              const rr = r + dr;
+              const cc = c + dc;
+              if (rr < 0 || cc < 0 || rr >= rows || cc >= cols) continue;
+              add(idx(rr, cc, cols));
+            }
+          }
+        }
+      }
+      const extras = [];
+      Object.keys(clear).forEach(function (k) {
+        const i = +k;
+        const r = (i / cols) | 0;
+        const c = i % cols;
+        const near = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+        for (let n = 0; n < near.length; n++) {
+          const rr = r + near[n][0];
+          const cc = c + near[n][1];
+          if (rr < 0 || cc < 0 || rr >= rows || cc >= cols) continue;
+          const j = idx(rr, cc, cols);
+          if (session.grid[j] === SIGNAL_CRATE && !clear[j]) extras.push(j);
+        }
+      });
+      for (let n = 0; n < extras.length; n++) clear[extras[n]] = 1;
+      const clearKeys = Object.keys(clear);
+      const spawnKeys = Object.keys(spawn);
+      if (!clearKeys.length && !spawnKeys.length) break;
+      combo += 1;
+      for (let k = 0; k < clearKeys.length; k++) {
+        const i = +clearKeys[k];
+        const colr = colorAt(session.grid, i, colors);
+        if (colr && session.goalsLeft[colr - 1] > 0) session.goalsLeft[colr - 1] -= 1;
+        const gain = session.grid[i] === SIGNAL_CRATE ? session.config.crateScore : (colr ? session.config.gemScore : 0);
+        points += gain * combo;
+        if (session.grid[i]) {
+          cleared += 1;
+          popped.push(i);
+        }
+        session.grid[i] = 0;
+        session.power[i] = 0;
+      }
+      for (let k = 0; k < spawnKeys.length; k++) {
+        const i = +spawnKeys[k];
+        if (colorAt(session.grid, i, colors)) session.power[i] = spawn[i];
+      }
+      gravitySignal(session.grid, session.power, cols, rows, colors, session.rng);
+    }
+    return { combo: combo, cleared: cleared, points: points, popped: popped };
+  }
+
+  function createSignalSession(game, rng) {
+    const config = configSignal(game);
+    const session = {
+      type: "signal",
+      config: config,
+      rng: resolveRng(rng),
+      grid: [],
+      power: [],
+      score: 0,
+      movesLeft: 0,
+      status: "playing",
+      outcome: "",
+      selected: null,
+      levelIndex: 0,
+      goals: [],
+      goalsLeft: [],
+      brief: "",
+      lastEvent: { kind: "deal" },
+    };
+    loadSignalLevel(session, 0);
+    return session;
+  }
+
+  function finishSignalMove(session, a, b, wave) {
+    session.score += wave.points;
+    session.movesLeft -= 1;
+    session.selected = null;
+    let advance = false;
+    if (goalsMet(session.goalsLeft)) {
+      session.score += session.movesLeft * session.config.moveBonus;
+      const next = session.levelIndex + 1;
+      if (next < session.config.levels.length) {
+        loadSignalLevel(session, next);
+        advance = true;
+        session.status = "playing";
+        session.outcome = "";
+      } else {
+        session.status = "done";
+        session.outcome = "won";
+      }
+    } else if (session.movesLeft <= 0) {
+      session.movesLeft = 0;
+      session.status = "done";
+      session.outcome = "stall";
+    } else if (!signalHasMove(session.grid, session.power, session.config.cols, session.config.rows, session.config.colors, session.config.minLine)) {
+      const keepGoals = session.goalsLeft.slice();
+      const keepMoves = session.movesLeft;
+      const keepLevel = session.levelIndex;
+      loadSignalLevel(session, keepLevel);
+      session.goalsLeft = keepGoals;
+      session.movesLeft = keepMoves;
+      session.lastEvent = { kind: "swap", a: a, b: b, combo: wave.combo, cleared: wave.cleared, points: wave.points, popped: wave.popped, shuffle: true };
+      return;
+    }
+    session.lastEvent = {
+      kind: "swap",
+      a: a,
+      b: b,
+      combo: wave.combo,
+      cleared: wave.cleared,
+      points: wave.points,
+      popped: wave.popped,
+      advance: advance,
+      outcome: session.outcome,
+    };
+  }
+
+  function tapSignal(session, index) {
+    if (session.status !== "playing") return snapshotSignal(session);
+    const cols = session.config.cols;
+    const i = Number(index);
+    if (!Number.isInteger(i) || i < 0 || i >= session.grid.length || session.grid[i] === SIGNAL_CRATE) {
+      session.lastEvent = { kind: "illegal" };
+      return snapshotSignal(session);
+    }
+    if (session.selected == null) {
+      session.selected = i;
+      session.lastEvent = { kind: "select", index: i };
+      return snapshotSignal(session);
+    }
+    const a = session.selected;
+    if (a === i) {
+      session.selected = null;
+      session.lastEvent = { kind: "deselect" };
+      return snapshotSignal(session);
+    }
+    if (!adjacent(a, i, cols)) {
+      session.selected = i;
+      session.lastEvent = { kind: "select", index: i };
+      return snapshotSignal(session);
+    }
+    const b = i;
+    swapPair(session.grid, session.power, a, b);
+    const runs = findColorRuns(session.grid, cols, session.config.rows, session.config.colors, session.config.minLine);
+    const armed = session.power[a] || session.power[b];
+    if (!runs.length && !armed) {
+      swapPair(session.grid, session.power, a, b);
+      session.selected = null;
+      session.lastEvent = { kind: "illegal", a: a, b: b };
+      return snapshotSignal(session);
+    }
+    const wave = resolveSignal(session, [a, b]);
+    finishSignalMove(session, a, b, wave);
+    return snapshotSignal(session);
+  }
+
+  function snapshotSignal(session) {
+    return {
+      type: "signal",
+      status: session.status,
+      outcome: session.outcome,
+      score: session.score,
+      grid: copyGrid(session.grid),
+      power: session.power.slice(),
+      cols: session.config.cols,
+      rows: session.config.rows,
+      colors: session.config.colors,
+      movesLeft: session.movesLeft,
+      moves: session.config.levels[session.levelIndex].moves,
+      levelIndex: session.levelIndex,
+      levelCount: session.config.levels.length,
+      goals: session.goals.slice(),
+      goalsLeft: session.goalsLeft.slice(),
+      brief: session.brief,
+      selected: session.selected,
+      lastEvent: session.lastEvent,
+    };
+  }
+
   function createMatchSession(game, rng) {
     const type = game && game.type;
     if (type === "triple") return createTripleSession(game, rng);
     if (type === "chime") return createChimeSession(game, rng);
+    if (type === "signal") return createSignalSession(game, rng);
     return createBlastSession(game, rng);
   }
 
@@ -680,6 +1092,7 @@
     if (!session) return null;
     if (session.type === "triple") return tapTriple(session, index);
     if (session.type === "chime") return tapChime(session, index);
+    if (session.type === "signal") return tapSignal(session, index);
     return tapBlast(session, index);
   }
 
@@ -687,6 +1100,7 @@
     if (!session) return null;
     if (session.type === "triple") return snapshotTriple(session);
     if (session.type === "chime") return snapshotChime(session);
+    if (session.type === "signal") return snapshotSignal(session);
     return snapshotBlast(session);
   }
 
@@ -699,6 +1113,9 @@
   E.createChimeSession = createChimeSession;
   E.tapChime = tapChime;
   E.snapshotChime = snapshotChime;
+  E.createSignalSession = createSignalSession;
+  E.tapSignal = tapSignal;
+  E.snapshotSignal = snapshotSignal;
   E.createMatchSession = createMatchSession;
   E.tapMatch = tapMatch;
   E.snapshotMatch = snapshotMatch;

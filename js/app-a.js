@@ -183,7 +183,7 @@
   }
   function isMatch() {
     const t = gameType();
-    return t === "blast" || t === "triple" || t === "chime";
+    return t === "blast" || t === "triple" || t === "chime" || t === "signal";
   }
   function isMahjong() {
     return gameType() === "mahjong";
@@ -262,6 +262,7 @@
     if (type === "blast") return E.snapshotBlast(session).score;
     if (type === "triple") return E.snapshotTriple(session).score;
     if (type === "chime") return E.snapshotChime(session).score;
+    if (type === "signal") return E.snapshotSignal(session).score;
     if (type === "mahjong") return E.snapshotMahjong(session).score;
     if (type === "slot") {
       if (window.CabinetSlot) return window.CabinetSlot.getScore();

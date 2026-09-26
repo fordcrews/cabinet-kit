@@ -1,0 +1,54 @@
+{
+  "id": "signal",
+  "type": "signal",
+  "title": "Signal",
+  "tagline": "Alien glyphs. A dish goes quiet.",
+  "blurb": "Swap neighboring glyphs. Three in a line clear and count toward the log. Four leaves a beam that wipes a line; five leaves a nova. Crates crack when a clear lands beside them. Four logs, one mystery.",
+  "cols": 7,
+  "rows": 7,
+  "colors": 5,
+  "gemScore": 10,
+  "crateScore": 5,
+  "moveBonus": 20,
+  "levels": [
+    {
+      "moves": 16,
+      "goals": [8, 8, 0, 0, 0],
+      "crates": 0,
+      "brief": "Log 1. The dish stutters. Gather rust rings and tide triangles."
+    },
+    {
+      "moves": 18,
+      "goals": [0, 0, 8, 6, 0],
+      "crates": 6,
+      "brief": "Log 2. Crates jam the panel. Match beside a crate to crack it. Moss diamonds and flare stars."
+    },
+    {
+      "moves": 18,
+      "goals": [6, 0, 0, 0, 8],
+      "crates": 4,
+      "brief": "Log 3. A line of four forges a beam. Line up five and the nova punches a hole."
+    },
+    {
+      "moves": 22,
+      "goals": [5, 5, 5, 5, 5],
+      "crates": 6,
+      "brief": "Log 4. Last packet: every glyph once more, then the dish should answer."
+    }
+  ],
+  "labels": {
+    "again": "DEAL AGAIN",
+    "back": "CABINET",
+    "score": "SCORE",
+    "moves": "MOVES"
+  },
+  "copy": {
+    "playing": "Swap glyphs. Read the log.",
+    "swap": "Clear.",
+    "illegal": "That swap makes no three.",
+    "shuffle": "Board restacked.",
+    "level": "Next log.",
+    "won": "The dish answers.",
+    "done": "The signal drops."
+  }
+}

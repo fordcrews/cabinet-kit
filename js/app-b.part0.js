@@ -275,6 +275,7 @@
       blast: 1,
       triple: 1,
       chime: 1,
+      signal: 1,
       mahjong: 1,
       slot: 1,
     };
